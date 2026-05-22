@@ -1,1 +1,0 @@
-# wichmannviggo-blip.github.io

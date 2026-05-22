@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock Stacker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: #0d0a08;
+    overflow: hidden;
+    height: 100vh; width: 100vw;
+    cursor: default;
+    user-select: none;
+  }
+
+  #bg {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 30% at 55% 52%, rgba(255,200,60,0.55) 0%, transparent 70%),
+      radial-gradient(ellipse 30% 15% at 55% 56%, rgba(255,255,200,0.7) 0%, transparent 50%),
+      linear-gradient(to bottom,
+        #c8a84b 0%, #d4955a 18%, #b87040 30%,
+        #7a5230 42%, #5c3d22 52%, #3d2810 60%,
+        #2a1a08 70%, #1a0f05 100%);
+  }
+
+  #ocean {
+    position: fixed; z-index: 1;
+    left: 0; right: 0; top: 38%; height: 22%;
+    background: repeating-linear-gradient(to bottom,
+      rgba(100,120,80,0.45) 0px, rgba(80,100,60,0.3) 6px,
+      rgba(60,80,50,0.2) 12px, rgba(90,110,70,0.35) 18px,
+      rgba(70,90,55,0.25) 24px, rgba(100,120,80,0.4) 30px);
+    filter: blur(2px);
+  }
+
+  #sand {
+    position: fixed; z-index: 2;
+    left: 0; right: 0; bottom: 0; height: 35%;
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 120%, rgba(180,130,70,0.8) 0%, transparent 60%),
+      linear-gradient(to bottom, #5a3d1e 0%, #7a5228 10%, #8b6035 20%, #a07040 35%, #b8854a 55%, #c49050 100%);
+  }
+
+  #grain {
+    position: fixed; inset: 0; z-index: 3;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+    opacity: 0.18; pointer-events: none;
+  }
+
+  .bokeh {
+    position: fixed; z-index: 4; border-radius: 50%;
+    pointer-events: none;
+    animation: bokehFloat linear infinite;
+  }
+  @keyframes bokehFloat {
+    0%   { transform: translate(0,0) scale(1); opacity: var(--op); }
+    50%  { transform: translate(var(--dx), var(--dy)) scale(1.2); opacity: calc(var(--op)*0.6); }
+    100% { transform: translate(0,0) scale(1); opacity: var(--op); }
+  }
+
+  #gameCanvas { position: fixed; inset: 0; z-index: 5; display: block; }
+
+  #ui {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    padding: 18px 28px;
+    display: flex; align-items: center; gap: 16px;
+    background: linear-gradient(to bottom, rgba(10,6,2,0.55), transparent);
+  }
+
+  #ui h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.25rem; font-weight: 600;
+    color: #e8c878; letter-spacing: 0.15em;
+    text-shadow: 0 0 20px rgba(220,160,50,0.6);
+    margin-right: 12px;
+  }
+
+  .btn {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.78rem; font-weight: 400;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px solid rgba(200,160,80,0.45);
+    background: rgba(20,12,5,0.6); color: #c8a860;
+    padding: 8px 18px; border-radius: 2px;
+    cursor: pointer; transition: all 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  .btn:hover { background: rgba(200,150,60,0.2); border-color: rgba(200,160,80,0.8); color: #e8c878; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn.danger { border-color: rgba(180,80,40,0.45); color: #c87858; }
+  .btn.danger:hover { background: rgba(180,80,40,0.2); border-color: rgba(180,80,40,0.8); }
+  .btn.teal { border-color: rgba(160,200,180,0.45); color: #90c8b0; }
+  .btn.teal:hover { background: rgba(100,180,150,0.15); border-color: rgba(160,200,180,0.8); color: #b0e8d0; }
+
+  #rockCount {
+    font-family: 'Cinzel', serif; font-size: 0.75rem;
+    color: rgba(200,160,80,0.6); letter-spacing: 0.1em;
+    margin-left: auto;
+  }
+
+  #hint {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    z-index: 10; font-family: 'Lato', sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(200,160,80,0.45); pointer-events: none; transition: opacity 0.5s;
+  }
+
+  body.dragging { cursor: grabbing; }
+
+  /* ── Overlays ── */
+  #statsOverlay, #confirmOverlay {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(5,3,1,0.75); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+  }
+  #statsOverlay.open, #confirmOverlay.open { display: flex; }
+
+  #statsBox {
+    background: rgba(18,11,5,0.97);
+    border: 1px solid rgba(200,160,80,0.3); border-radius: 4px;
+    padding: 28px 32px; min-width: 340px; max-width: 90vw;
+    box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 20px rgba(200,140,50,0.08);
+  }
+  .stats-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .stats-title { font-family: 'Cinzel', serif; font-size: 1rem; color: #e8c878; letter-spacing: 0.18em; text-shadow: 0 0 16px rgba(220,160,50,0.5); }
+  .stats-close { background: none; border: none; color: rgba(200,160,80,0.5); font-size: 1rem; cursor: pointer; transition: color 0.2s; }
+  .stats-close:hover { color: #e8c878; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(200,160,80,0.12); border-radius: 3px; padding: 14px 16px; }
+  .stat-label { font-family: 'Lato', sans-serif; font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(200,160,80,0.45); margin-bottom: 6px; }
+  .stat-value { font-family: 'Cinzel', serif; font-size: 1.1rem; color: #d4a85a; letter-spacing: 0.05em; }
+
+  #confirmBox {
+    background: rgba(18,11,5,0.97);
+    border: 1px solid rgba(180,80,40,0.4); border-radius: 4px;
+    padding: 30px 32px; max-width: 380px; text-align: center;
+    box-shadow: 0 0 60px rgba(0,0,0,0.9), 0 0 20px rgba(180,80,40,0.1);
+  }
+  .confirm-icon { font-size: 2rem; margin-bottom: 12px; color: rgba(200,120,60,0.8); }
+  .confirm-title { font-family: 'Cinzel', serif; font-size: 1rem; color: #e8c878; letter-spacing: 0.12em; margin-bottom: 12px; }
+  .confirm-body { font-family: 'Lato', sans-serif; font-size: 0.8rem; color: rgba(200,160,80,0.55); line-height: 1.6; margin-bottom: 22px; }
+  .confirm-buttons { display: flex; gap: 10px; justify-content: center; }
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+<div id="ocean"></div>
+<div id="sand"></div>
+<div id="grain"></div>
+<canvas id="gameCanvas"></canvas>
+
+<div id="ui">
+  <h1>石 · Rock Stacker</h1>
+  <button class="btn" id="spawnBtn" onclick="spawnRock()">+ Spawn Rock</button>
+  <button class="btn danger" id="despawnBtn" onclick="despawnRock()" disabled>− Remove Rock</button>
+  <button class="btn" onclick="resetAll()">Reset</button>
+  <button class="btn teal" onclick="openStats()">Stats</button>
+  <span id="rockCount">0 rocks on screen</span>
+</div>
+
+<div id="hint">drag rocks to stack them</div>
+
+<!-- Stats overlay -->
+<div id="statsOverlay" onclick="if(event.target===this)closeStats()">
+  <div id="statsBox">
+    <div class="stats-header">
+      <span class="stats-title">石 · Your Stats</span>
+      <button class="stats-close" onclick="closeStats()">✕</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Time Played</div>
+        <div class="stat-value" id="statTime">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">This Session</div>
+        <div class="stat-value" id="statSession">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rocks Spawned</div>
+        <div class="stat-value" id="statRocks">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Times Visited</div>
+        <div class="stat-value" id="statVisits">—</div>
+      </div>
+    </div>
+    <button class="btn danger" style="margin-top:18px;width:100%;" onclick="resetStats()">Reset All Stats</button>
+  </div>
+</div>
+
+<!-- Confirm dialog -->
+<div id="confirmOverlay" onclick="if(event.target===this)confirmResetStats(false)">
+  <div id="confirmBox">
+    <div class="confirm-icon">⚠</div>
+    <div class="confirm-title">Reset All Stats?</div>
+    <div class="confirm-body">This will permanently erase your time played, rocks spawned, and visit count. This cannot be undone.</div>
+    <div class="confirm-buttons">
+      <button class="btn" onclick="confirmResetStats(false)">Cancel</button>
+      <button class="btn danger" onclick="confirmResetStats(true)">Yes, Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Stats ────────────────────────────────────────────────────────────
+const STATS_KEY = 'rockStacker_stats';
+const sessionStart = Date.now();
+
+function loadStats() {
+  try {
+    const raw = localStorage.getItem(STATS_KEY);
+    return raw ? JSON.parse(raw) : { totalSecondsPlayed: 0, totalRocksSpawned: 0, timesVisited: 0 };
+  } catch { return { totalSecondsPlayed: 0, totalRocksSpawned: 0, timesVisited: 0 }; }
+}
+function saveStats() {
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch {}
+}
+
+const stats = loadStats();
+stats.timesVisited++;
+saveStats();
+
+setInterval(() => { stats.totalSecondsPlayed += 10; saveStats(); }, 10000);
+
+window.addEventListener('beforeunload', () => {
+  const secs = Math.floor((Date.now() - sessionStart) / 1000);
+  stats.totalSecondsPlayed += secs - Math.floor(secs / 10) * 10;
+  saveStats();
+});
+
+function formatTime(s) {
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+  if (h > 0) return `${h}h ${m}m ${sec}s`;
+  if (m > 0) return `${m}m ${sec}s`;
+  return `${sec}s`;
+}
+
+function openStats() {
+  const sessionSecs = Math.floor((Date.now() - sessionStart) / 1000);
+  document.getElementById('statTime').textContent    = formatTime(stats.totalSecondsPlayed + sessionSecs);
+  document.getElementById('statRocks').textContent   = stats.totalRocksSpawned.toLocaleString();
+  document.getElementById('statVisits').textContent  = stats.timesVisited.toLocaleString();
+  document.getElementById('statSession').textContent = formatTime(sessionSecs);
+  document.getElementById('statsOverlay').classList.add('open');
+}
+function closeStats() {
+  document.getElementById('statsOverlay').classList.remove('open');
+}
+function resetStats() {
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function confirmResetStats(yes) {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  if (!yes) return;
+  stats.totalSecondsPlayed = 0;
+  stats.totalRocksSpawned  = 0;
+  stats.timesVisited       = 1;
+  saveStats();
+  openStats();
+}
+
+// ─── Matter.js ───────────────────────────────────────────────────────
+const { Engine, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events } = Matter;
+
+const canvas = document.getElementById('gameCanvas');
+const W = window.innerWidth, H = window.innerHeight;
+canvas.width = W; canvas.height = H;
+const ctx = canvas.getContext('2d');
+
+const engine = Engine.create({ gravity: { y: 1.2 } });
+// More solver iterations = stable stacking, no jitter
+engine.positionIterations  = 20;
+engine.velocityIterations  = 16;
+engine.constraintIterations = 4;
+const world = engine.world;
+
+// ─── Boundaries ───────────────────────────────────────────────────────
+const groundY = H * 0.65;
+const T = 300; // very thick — nothing can tunnel through
+
+const ground  = Bodies.rectangle(W/2,     groundY + T/2, W + T*2, T,   { isStatic:true, friction:0.99, frictionStatic:10, restitution:0 });
+const wallL   = Bodies.rectangle(-T/2,    H/2,           T,       H*3, { isStatic:true, friction:0.99, frictionStatic:10, restitution:0 });
+const wallR   = Bodies.rectangle(W + T/2, H/2,           T,       H*3, { isStatic:true, friction:0.99, frictionStatic:10, restitution:0 });
+const ceiling = Bodies.rectangle(W/2,     -T/2,          W + T*2, T,   { isStatic:true, friction:0.99, frictionStatic:10, restitution:0 });
+World.add(world, [ground, wallL, wallR, ceiling]);
+
+// ─── Mouse ────────────────────────────────────────────────────────────
+const mouse = Mouse.create(canvas);
+const mouseConstraint = MouseConstraint.create(engine, {
+  mouse,
+  constraint: { stiffness: 0.15, angularStiffness: 0.1, render: { visible: false } }
+});
+World.add(world, mouseConstraint);
+
+// Clamp drag so rocks can never be pulled outside the canvas
+canvas.addEventListener('mousemove', () => {
+  mouse.position.x = Math.max(2, Math.min(W - 2, mouse.position.x));
+  mouse.position.y = Math.max(2, Math.min(groundY - 2, mouse.position.y));
+}, { capture: true });
+canvas.addEventListener('touchmove', () => {
+  mouse.position.x = Math.max(2, Math.min(W - 2, mouse.position.x));
+  mouse.position.y = Math.max(2, Math.min(groundY - 2, mouse.position.y));
+}, { capture: true, passive: true });
+
+// ─── Rocks ────────────────────────────────────────────────────────────
+const PALETTES = [
+  { base:'#6b5c50', hi:'#9a8070', shadow:'#3a2e28' },
+  { base:'#4a4a52', hi:'#7a7a88', shadow:'#28282e' },
+  { base:'#7a5540', hi:'#a07860', shadow:'#3d2a20' },
+  { base:'#5a5040', hi:'#8a7a62', shadow:'#2e2820' },
+  { base:'#524848', hi:'#7e6e6e', shadow:'#2c2424' },
+  { base:'#3c4840', hi:'#657a6e', shadow:'#1e2820' },
+];
+
+const rocks = [];
+
+function spawnRock() {
+  stats.totalRocksSpawned++;
+  saveStats();
+
+  const rx = 28 + Math.random() * 30;
+  const ry = rx * (0.52 + Math.random() * 0.30);
+  const palette = PALETTES[Math.floor(Math.random() * PALETTES.length)];
+  const x = W * 0.2 + Math.random() * W * 0.6;
+  const y = groundY - 220 - Math.random() * 100;
+
+  // Bodies.polygon creates a regular polygon — then we scale it to match
+  // the visual ellipse dimensions (rx wide, ry tall) so hitbox = visual
+  const sides = 8 + Math.floor(Math.random() * 3);
+  const body = Bodies.polygon(x, y, sides, rx, {
+    friction:       0.99,
+    frictionStatic: 10,
+    frictionAir:    0.01,
+    restitution:    0.0,
+    density:        0.006,
+    slop:           0.02
+  });
+  // Squash the body vertically so it matches the drawn ry/rx ratio
+  Body.scale(body, 1, ry / rx);
+  Body.setAngle(body, Math.random() * Math.PI * 2);
+
+  const seeds = Array.from({ length: 8 }, () => Math.random());
+  rocks.push({ body, palette, rx, ry, seeds });
+  World.add(world, body);
+  updateCount();
+}
+
+function despawnRock() {
+  if (!rocks.length) return;
+  const r = rocks.pop();
+  World.remove(world, r.body);
+  updateCount();
+}
+
+function resetAll() {
+  rocks.forEach(r => World.remove(world, r.body));
+  rocks.length = 0;
+  updateCount();
+}
+
+function updateCount() {
+  document.getElementById('rockCount').textContent = `${rocks.length} rock${rocks.length !== 1 ? 's' : ''} on screen`;
+  document.getElementById('despawnBtn').disabled = rocks.length === 0;
+}
+
+// ─── Draw ─────────────────────────────────────────────────────────────
+function drawRock(r) {
+  const { body: b, palette, rx, ry, seeds } = r;
+
+  // Drop shadow on ground
+  const nearness = Math.max(0, Math.min(1, (b.position.y - (groundY - ry * 6)) / (ry * 6)));
+  if (nearness > 0) {
+    const sw = rx * 2.0 * nearness;
+    ctx.save();
+    ctx.globalAlpha = nearness * 0.25;
+    const sg = ctx.createRadialGradient(b.position.x, groundY, 0, b.position.x, groundY, sw);
+    sg.addColorStop(0, 'rgba(8,4,0,0.9)');
+    sg.addColorStop(1, 'rgba(8,4,0,0)');
+    ctx.fillStyle = sg;
+    ctx.beginPath();
+    ctx.ellipse(b.position.x, groundY, sw, sw * 0.2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Rock shape — traced from actual physics vertices so hitbox = visual exactly
+  ctx.save();
+
+  // Draw shape by tracing the actual physics vertices — hitbox and visual are identical
+  const verts = b.vertices;
+  ctx.beginPath();
+  ctx.moveTo(verts[0].x, verts[0].y);
+  for (let i = 1; i < verts.length; i++) ctx.lineTo(verts[i].x, verts[i].y);
+  ctx.closePath();
+
+  // Base fill
+  ctx.fillStyle = palette.base;
+  ctx.fill();
+
+  // Sunset highlight
+  const grd = ctx.createRadialGradient(
+    b.position.x - rx * 0.15, b.position.y - ry * 0.3, rx * 0.04,
+    b.position.x,             b.position.y,             rx * 1.2
+  );
+  grd.addColorStop(0,    'rgba(255,210,130,0.34)');
+  grd.addColorStop(0.45, 'rgba(0,0,0,0)');
+  grd.addColorStop(1,    'rgba(0,0,0,0.44)');
+  ctx.fillStyle = grd;
+  ctx.fill();
+
+  // Rim
+  ctx.strokeStyle = palette.shadow;
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.5;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Surface texture lines clipped inside shape
+  ctx.save();
+  ctx.clip();
+  ctx.globalAlpha = 0.08;
+  ctx.strokeStyle = palette.hi;
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 3; i++) {
+    const s = seeds[i];
+    ctx.beginPath();
+    ctx.moveTo(b.position.x - rx * 0.55 + s * rx * 0.3, b.position.y - ry * (0.2 - s * 0.4));
+    ctx.bezierCurveTo(
+      b.position.x - rx * 0.1 + s * 8,  b.position.y - ry * 0.05,
+      b.position.x + rx * 0.2 - s * 6,  b.position.y + ry * s * 0.3,
+      b.position.x + rx * 0.5 - s * 4,  b.position.y + ry * 0.15
+    );
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.restore();
+}
+
+// ─── Events ───────────────────────────────────────────────────────────
+Events.on(mouseConstraint, 'startdrag', () => document.body.classList.add('dragging'));
+Events.on(mouseConstraint, 'enddrag',   () => document.body.classList.remove('dragging'));
+
+let hinted = false;
+Events.on(mouseConstraint, 'startdrag', () => {
+  if (!hinted) { hinted = true; document.getElementById('hint').style.opacity = '0'; }
+});
+
+// ─── Loop ─────────────────────────────────────────────────────────────
+const runner = Runner.create();
+Runner.run(runner, engine);
+
+function gameLoop() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Safety net — delete any rock that escapes the canvas
+  for (let i = rocks.length - 1; i >= 0; i--) {
+    const p = rocks[i].body.position;
+    if (p.x < -400 || p.x > W + 400 || p.y < -400 || p.y > H + 400) {
+      World.remove(world, rocks[i].body);
+      rocks.splice(i, 1);
+      updateCount();
+    }
+  }
+
+  rocks.forEach(drawRock);
+  requestAnimationFrame(gameLoop);
+}
+gameLoop();
+
+// ─── Bokeh ────────────────────────────────────────────────────────────
+for (let i = 0; i < 14; i++) {
+  const el = document.createElement('div');
+  el.className = 'bokeh';
+  const size = 6 + Math.random() * 28;
+  const hue  = 30 + Math.random() * 40;
+  const op   = 0.04 + Math.random() * 0.18;
+  const dur  = 6 + Math.random() * 10;
+  el.style.cssText = `
+    width:${size}px;height:${size}px;
+    left:${20+Math.random()*80}%;top:${20+Math.random()*50}%;
+    background:radial-gradient(circle,hsl(${hue},80%,75%) 0%,transparent 70%);
+    --op:${op};--dx:${(Math.random()-.5)*30}px;--dy:${(Math.random()-.5)*20}px;
+    animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;
+  `;
+  document.body.appendChild(el);
+}
+
+window.addEventListener('resize', () => location.reload());
+
+// Spawn two starter rocks
+spawnRock();
+spawnRock();
+</script>
+</body>
+</html>
