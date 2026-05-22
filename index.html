@@ -6,203 +6,156 @@
 <title>Rock Stacker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Lato',sans-serif;background:#0d0a08;overflow:hidden;height:100vh;width:100vw;cursor:default;user-select:none}
+#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 60% 30% at 55% 52%,rgba(255,200,60,.55) 0%,transparent 70%),radial-gradient(ellipse 30% 15% at 55% 56%,rgba(255,255,200,.7) 0%,transparent 50%),linear-gradient(to bottom,#c8a84b 0%,#d4955a 18%,#b87040 30%,#7a5230 42%,#5c3d22 52%,#3d2810 60%,#2a1a08 70%,#1a0f05 100%)}
+#ocean{position:fixed;z-index:1;left:0;right:0;top:38%;height:22%;background:repeating-linear-gradient(to bottom,rgba(100,120,80,.45) 0px,rgba(80,100,60,.3) 6px,rgba(60,80,50,.2) 12px,rgba(90,110,70,.35) 18px,rgba(70,90,55,.25) 24px,rgba(100,120,80,.4) 30px);filter:blur(2px)}
+#sand{position:fixed;z-index:2;left:0;right:0;bottom:0;height:35%;background:radial-gradient(ellipse 80% 40% at 50% 120%,rgba(180,130,70,.8) 0%,transparent 60%),linear-gradient(to bottom,#5a3d1e 0%,#7a5228 10%,#8b6035 20%,#a07040 35%,#b8854a 55%,#c49050 100%)}
+#grain{position:fixed;inset:0;z-index:3;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");opacity:.18;pointer-events:none}
+.bokeh{position:fixed;z-index:4;border-radius:50%;pointer-events:none;animation:bokehFloat linear infinite}
+@keyframes bokehFloat{0%{transform:translate(0,0) scale(1);opacity:var(--op)}50%{transform:translate(var(--dx),var(--dy)) scale(1.2);opacity:calc(var(--op)*.6)}100%{transform:translate(0,0) scale(1);opacity:var(--op)}}
+#gameCanvas{position:fixed;inset:0;z-index:5;display:block}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── Top UI ── */
+#ui{position:fixed;top:0;left:0;right:0;z-index:10;padding:18px 28px;display:flex;align-items:center;gap:16px;background:linear-gradient(to bottom,rgba(10,6,2,.55),transparent)}
+#ui h1{font-family:'Cinzel',serif;font-size:1.25rem;font-weight:600;color:#e8c878;letter-spacing:.15em;text-shadow:0 0 20px rgba(220,160,50,.6);margin-right:12px}
+.btn{font-family:'Lato',sans-serif;font-size:.78rem;font-weight:400;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(200,160,80,.45);background:rgba(20,12,5,.6);color:#c8a860;padding:8px 18px;border-radius:2px;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px)}
+.btn:hover{background:rgba(200,150,60,.2);border-color:rgba(200,160,80,.8);color:#e8c878}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.danger{border-color:rgba(180,80,40,.45);color:#c87858}
+.btn.danger:hover{background:rgba(180,80,40,.2);border-color:rgba(180,80,40,.8)}
+.btn.teal{border-color:rgba(160,200,180,.45);color:#90c8b0}
+.btn.teal:hover{background:rgba(100,180,150,.15);border-color:rgba(160,200,180,.8);color:#b0e8d0}
+.btn.amber{border-color:rgba(220,160,60,.5);color:#d4a84a}
+.btn.amber:hover{background:rgba(220,160,60,.18);border-color:rgba(220,160,60,.9);color:#f0c860}
+#rockCount{font-family:'Cinzel',serif;font-size:.75rem;color:rgba(200,160,80,.6);letter-spacing:.1em;margin-left:auto}
 
-  body {
-    font-family: 'Lato', sans-serif;
-    background: #0d0a08;
-    overflow: hidden;
-    height: 100vh; width: 100vw;
-    cursor: default;
-    user-select: none;
-  }
+/* ── Volume — bottom right ── */
+#volCorner{position:fixed;bottom:22px;right:24px;z-index:10;display:flex;align-items:center;gap:9px;opacity:.45;transition:opacity .25s}
+#volCorner:hover{opacity:1}
+#volCorner label{font-family:'Lato',sans-serif;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:#c8a860}
+#volSlider{-webkit-appearance:none;appearance:none;width:72px;height:2px;background:rgba(200,160,80,.3);border-radius:2px;outline:none;cursor:pointer}
+#volSlider::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:#c8a860;cursor:pointer}
 
-  #bg {
-    position: fixed; inset: 0; z-index: 0;
-    background:
-      radial-gradient(ellipse 60% 30% at 55% 52%, rgba(255,200,60,0.55) 0%, transparent 70%),
-      radial-gradient(ellipse 30% 15% at 55% 56%, rgba(255,255,200,0.7) 0%, transparent 50%),
-      linear-gradient(to bottom,
-        #c8a84b 0%, #d4955a 18%, #b87040 30%,
-        #7a5230 42%, #5c3d22 52%, #3d2810 60%,
-        #2a1a08 70%, #1a0f05 100%);
-  }
+/* ── Hint ── */
+#hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:10;font-family:'Lato',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,160,80,.45);pointer-events:none;transition:opacity .5s}
+body.dragging{cursor:grabbing}
 
-  #ocean {
-    position: fixed; z-index: 1;
-    left: 0; right: 0; top: 38%; height: 22%;
-    background: repeating-linear-gradient(to bottom,
-      rgba(100,120,80,0.45) 0px, rgba(80,100,60,0.3) 6px,
-      rgba(60,80,50,0.2) 12px, rgba(90,110,70,0.35) 18px,
-      rgba(70,90,55,0.25) 24px, rgba(100,120,80,0.4) 30px);
-    filter: blur(2px);
-  }
+/* ── Overlays base ── */
+.overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(5,3,1,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center}
+.overlay.open{display:flex}
 
-  #sand {
-    position: fixed; z-index: 2;
-    left: 0; right: 0; bottom: 0; height: 35%;
-    background:
-      radial-gradient(ellipse 80% 40% at 50% 120%, rgba(180,130,70,0.8) 0%, transparent 60%),
-      linear-gradient(to bottom, #5a3d1e 0%, #7a5228 10%, #8b6035 20%, #a07040 35%, #b8854a 55%, #c49050 100%);
-  }
+/* ── Stats box ── */
+#statsBox{background:rgba(18,11,5,.97);border:1px solid rgba(200,160,80,.3);border-radius:4px;padding:28px 32px;min-width:360px;max-width:92vw;box-shadow:0 0 60px rgba(0,0,0,.8)}
+.stats-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.stats-title{font-family:'Cinzel',serif;font-size:1rem;color:#e8c878;letter-spacing:.18em;text-shadow:0 0 16px rgba(220,160,50,.5)}
+.x-btn{background:none;border:none;color:rgba(200,160,80,.5);font-size:1rem;cursor:pointer;transition:color .2s}
+.x-btn:hover{color:#e8c878}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat-card{background:rgba(255,255,255,.03);border:1px solid rgba(200,160,80,.12);border-radius:3px;padding:14px 16px}
+.stat-label{font-family:'Lato',sans-serif;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(200,160,80,.45);margin-bottom:6px}
+.stat-value{font-family:'Cinzel',serif;font-size:1.1rem;color:#d4a85a;letter-spacing:.05em}
 
-  #grain {
-    position: fixed; inset: 0; z-index: 3;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-    opacity: 0.18; pointer-events: none;
-  }
+/* ── Confirm box ── */
+#confirmBox{background:rgba(18,11,5,.97);border:1px solid rgba(180,80,40,.4);border-radius:4px;padding:30px 32px;max-width:380px;text-align:center;box-shadow:0 0 60px rgba(0,0,0,.9)}
+.confirm-icon{font-size:2rem;margin-bottom:12px;color:rgba(200,120,60,.8)}
+.confirm-title{font-family:'Cinzel',serif;font-size:1rem;color:#e8c878;letter-spacing:.12em;margin-bottom:12px}
+.confirm-body{font-family:'Lato',sans-serif;font-size:.8rem;color:rgba(200,160,80,.55);line-height:1.6;margin-bottom:22px}
+.confirm-buttons{display:flex;gap:10px;justify-content:center}
 
-  .bokeh {
-    position: fixed; z-index: 4; border-radius: 50%;
-    pointer-events: none;
-    animation: bokehFloat linear infinite;
-  }
-  @keyframes bokehFloat {
-    0%   { transform: translate(0,0) scale(1); opacity: var(--op); }
-    50%  { transform: translate(var(--dx), var(--dy)) scale(1.2); opacity: calc(var(--op)*0.6); }
-    100% { transform: translate(0,0) scale(1); opacity: var(--op); }
-  }
+/* ── Shop overlay ── */
+#shopBox{background:rgba(14,10,4,.97);border:1px solid rgba(200,160,80,.28);border-radius:6px;width:480px;max-width:94vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 0 80px rgba(0,0,0,.95),0 0 30px rgba(200,140,40,.06);overflow:hidden}
+#shopHeader{padding:20px 26px 16px;border-bottom:1px solid rgba(200,160,80,.1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+#shopTitle{font-family:'Cinzel',serif;font-size:1rem;color:#e8c878;letter-spacing:.2em;text-shadow:0 0 18px rgba(220,160,50,.45)}
+#shopSub{font-family:'Lato',sans-serif;font-size:.65rem;color:rgba(200,160,80,.38);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+#shopBody{padding:20px 26px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:14px}
 
-  #gameCanvas { position: fixed; inset: 0; z-index: 5; display: block; }
+/* Old man speech bubble */
+#speechWrap{display:flex;align-items:flex-end;gap:12px;margin-bottom:4px}
+#oldManIcon{font-size:2.4rem;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+#bubble{position:relative;background:rgba(255,245,220,.07);border:1px solid rgba(200,160,80,.22);border-radius:10px 10px 10px 2px;padding:12px 16px;flex:1;min-height:52px}
+#bubble::after{content:'';position:absolute;left:-8px;bottom:10px;width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:8px solid rgba(200,160,80,.22)}
+#bubbleText{font-family:'Lato',sans-serif;font-size:.8rem;color:rgba(220,190,130,.88);line-height:1.6;min-height:1.2em}
+#zenDisplay{font-family:'Cinzel',serif;font-size:.78rem;color:rgba(200,160,80,.55);letter-spacing:.1em;text-align:right;padding:2px 0 8px}
 
-  #ui {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
-    padding: 18px 28px;
-    display: flex; align-items: center; gap: 16px;
-    background: linear-gradient(to bottom, rgba(10,6,2,0.55), transparent);
-  }
+/* Shop deal cards */
+.deal-card{background:rgba(255,255,255,.025);border:1px solid rgba(200,160,80,.15);border-radius:4px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:border-color .2s,background .2s}
+.deal-card:hover{background:rgba(200,160,80,.05);border-color:rgba(200,160,80,.3)}
+.deal-card.disabled-card{opacity:.35;pointer-events:none}
+.deal-info{display:flex;flex-direction:column;gap:3px}
+.deal-rocks{font-family:'Cinzel',serif;font-size:.9rem;color:#d4a85a;letter-spacing:.06em}
+.deal-cost{font-family:'Lato',sans-serif;font-size:.7rem;color:rgba(200,160,80,.5);letter-spacing:.1em}
+.deal-btn{font-family:'Lato',sans-serif;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(200,160,80,.4);background:rgba(200,160,60,.1);color:#c8a860;padding:7px 16px;border-radius:2px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.deal-btn:hover{background:rgba(200,160,60,.22);border-color:rgba(200,160,80,.8);color:#f0d070}
+.deal-btn:disabled{opacity:.3;cursor:not-allowed}
 
-  #ui h1 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.25rem; font-weight: 600;
-    color: #e8c878; letter-spacing: 0.15em;
-    text-shadow: 0 0 20px rgba(220,160,50,0.6);
-    margin-right: 12px;
-  }
+/* cooldown bar */
+#cooldownWrap{display:none;flex-direction:column;gap:6px;padding:10px 14px;background:rgba(180,80,40,.06);border:1px solid rgba(180,80,40,.2);border-radius:4px}
+#cooldownLabel{font-family:'Lato',sans-serif;font-size:.7rem;color:rgba(200,120,80,.7);letter-spacing:.1em}
+#cooldownBar{height:3px;background:rgba(200,160,80,.15);border-radius:2px;overflow:hidden}
+#cooldownFill{height:100%;background:linear-gradient(to right,rgba(200,120,60,.7),rgba(220,160,80,.7));border-radius:2px;transition:width .5s}
+#shopFooter{padding:14px 26px;border-top:1px solid rgba(200,160,80,.08);flex-shrink:0;display:flex;justify-content:flex-end}
 
-  .btn {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.78rem; font-weight: 400;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    border: 1px solid rgba(200,160,80,0.45);
-    background: rgba(20,12,5,0.6); color: #c8a860;
-    padding: 8px 18px; border-radius: 2px;
-    cursor: pointer; transition: all 0.2s;
-    backdrop-filter: blur(4px);
-  }
-  .btn:hover { background: rgba(200,150,60,0.2); border-color: rgba(200,160,80,0.8); color: #e8c878; }
-  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .btn.danger { border-color: rgba(180,80,40,0.45); color: #c87858; }
-  .btn.danger:hover { background: rgba(180,80,40,0.2); border-color: rgba(180,80,40,0.8); }
-  .btn.teal { border-color: rgba(160,200,180,0.45); color: #90c8b0; }
-  .btn.teal:hover { background: rgba(100,180,150,0.15); border-color: rgba(160,200,180,0.8); color: #b0e8d0; }
-
-  #rockCount {
-    font-family: 'Cinzel', serif; font-size: 0.75rem;
-    color: rgba(200,160,80,0.6); letter-spacing: 0.1em;
-    margin-left: auto;
-  }
-
-  #hint {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-    z-index: 10; font-family: 'Lato', sans-serif;
-    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
-    color: rgba(200,160,80,0.45); pointer-events: none; transition: opacity 0.5s;
-  }
-
-  body.dragging { cursor: grabbing; }
-
-  /* ── Overlays ── */
-  #statsOverlay, #confirmOverlay {
-    display: none; position: fixed; inset: 0; z-index: 100;
-    background: rgba(5,3,1,0.75); backdrop-filter: blur(6px);
-    align-items: center; justify-content: center;
-  }
-  #statsOverlay.open, #confirmOverlay.open { display: flex; }
-
-  #statsBox {
-    background: rgba(18,11,5,0.97);
-    border: 1px solid rgba(200,160,80,0.3); border-radius: 4px;
-    padding: 28px 32px; min-width: 340px; max-width: 90vw;
-    box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 20px rgba(200,140,50,0.08);
-  }
-  .stats-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-  .stats-title { font-family: 'Cinzel', serif; font-size: 1rem; color: #e8c878; letter-spacing: 0.18em; text-shadow: 0 0 16px rgba(220,160,50,0.5); }
-  .stats-close { background: none; border: none; color: rgba(200,160,80,0.5); font-size: 1rem; cursor: pointer; transition: color 0.2s; }
-  .stats-close:hover { color: #e8c878; }
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(200,160,80,0.12); border-radius: 3px; padding: 14px 16px; }
-  .stat-label { font-family: 'Lato', sans-serif; font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(200,160,80,0.45); margin-bottom: 6px; }
-  .stat-value { font-family: 'Cinzel', serif; font-size: 1.1rem; color: #d4a85a; letter-spacing: 0.05em; }
-
-  #confirmBox {
-    background: rgba(18,11,5,0.97);
-    border: 1px solid rgba(180,80,40,0.4); border-radius: 4px;
-    padding: 30px 32px; max-width: 380px; text-align: center;
-    box-shadow: 0 0 60px rgba(0,0,0,0.9), 0 0 20px rgba(180,80,40,0.1);
-  }
-  .confirm-icon { font-size: 2rem; margin-bottom: 12px; color: rgba(200,120,60,0.8); }
-  .confirm-title { font-family: 'Cinzel', serif; font-size: 1rem; color: #e8c878; letter-spacing: 0.12em; margin-bottom: 12px; }
-  .confirm-body { font-family: 'Lato', sans-serif; font-size: 0.8rem; color: rgba(200,160,80,0.55); line-height: 1.6; margin-bottom: 22px; }
-  .confirm-buttons { display: flex; gap: 10px; justify-content: center; }
+/* ── typing cursor blink ── */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.cursor{display:inline-block;width:2px;height:.85em;background:#c8a860;margin-left:2px;vertical-align:middle;animation:blink .7s step-end infinite}
 </style>
 </head>
 <body>
-
 <div id="bg"></div>
 <div id="ocean"></div>
 <div id="sand"></div>
 <div id="grain"></div>
 <canvas id="gameCanvas"></canvas>
 
+<!-- Top UI -->
 <div id="ui">
   <h1>石 · Rock Stacker</h1>
   <button class="btn" id="spawnBtn" onclick="spawnRock()">+ Spawn Rock</button>
   <button class="btn danger" id="despawnBtn" onclick="despawnRock()" disabled>− Remove Rock</button>
   <button class="btn" onclick="resetAll()">Reset</button>
   <button class="btn teal" onclick="openStats()">Stats</button>
+  <button class="btn amber" onclick="openShop()">⛩ Shop</button>
   <span id="rockCount">0 rocks on screen</span>
+</div>
+
+<!-- Volume bottom right -->
+<div id="volCorner">
+  <label>♪</label>
+  <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.35" oninput="setVolume(this.value)">
+  <label id="volPct">35%</label>
 </div>
 
 <div id="hint">drag rocks to stack them</div>
 
-<!-- Stats overlay -->
-<div id="statsOverlay" onclick="if(event.target===this)closeStats()">
+<!-- ══ STATS OVERLAY ══ -->
+<div id="statsOverlay" class="overlay" onclick="if(event.target===this)closeStats()">
   <div id="statsBox">
     <div class="stats-header">
       <span class="stats-title">石 · Your Stats</span>
-      <button class="stats-close" onclick="closeStats()">✕</button>
+      <button class="x-btn" onclick="closeStats()">✕</button>
     </div>
     <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Time Played</div>
-        <div class="stat-value" id="statTime">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">This Session</div>
-        <div class="stat-value" id="statSession">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Rocks Spawned</div>
-        <div class="stat-value" id="statRocks">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Times Visited</div>
-        <div class="stat-value" id="statVisits">—</div>
-      </div>
+      <div class="stat-card"><div class="stat-label">Time Played</div><div class="stat-value" id="statTime">—</div></div>
+      <div class="stat-card"><div class="stat-label">This Session</div><div class="stat-value" id="statSession">—</div></div>
+      <div class="stat-card"><div class="stat-label">Rocks Spawned</div><div class="stat-value" id="statRocks">—</div></div>
+      <div class="stat-card"><div class="stat-label">Times Visited</div><div class="stat-value" id="statVisits">—</div></div>
+      <div class="stat-card"><div class="stat-label">Total Zen Earned</div><div class="stat-value" id="statZen">—</div></div>
+      <div class="stat-card"><div class="stat-label">Rocks Sold</div><div class="stat-value" id="statSold">—</div></div>
+      <div class="stat-card"><div class="stat-label">Packs Sold</div><div class="stat-value" id="statPacks">—</div></div>
+      <div class="stat-card"><div class="stat-label">Rocks Held in Air</div><div class="stat-value" id="statAir">—</div></div>
     </div>
-    <button class="btn danger" style="margin-top:18px;width:100%;" onclick="resetStats()">Reset All Stats</button>
+    <button class="btn danger" style="margin-top:18px;width:100%" onclick="resetStats()">Reset All Stats</button>
   </div>
 </div>
 
-<!-- Confirm dialog -->
-<div id="confirmOverlay" onclick="if(event.target===this)confirmResetStats(false)">
+<!-- ══ CONFIRM OVERLAY ══ -->
+<div id="confirmOverlay" class="overlay" onclick="if(event.target===this)confirmResetStats(false)">
   <div id="confirmBox">
     <div class="confirm-icon">⚠</div>
     <div class="confirm-title">Reset All Stats?</div>
-    <div class="confirm-body">This will permanently erase your time played, rocks spawned, and visit count. This cannot be undone.</div>
+    <div class="confirm-body">This will permanently erase all your progress, zen, and history. This cannot be undone.</div>
     <div class="confirm-buttons">
       <button class="btn" onclick="confirmResetStats(false)">Cancel</button>
       <button class="btn danger" onclick="confirmResetStats(true)">Yes, Reset</button>
@@ -210,16 +163,87 @@
   </div>
 </div>
 
+<!-- ══ SHOP OVERLAY ══ -->
+<div id="shopOverlay" class="overlay" onclick="if(event.target===this)closeShop()">
+  <div id="shopBox">
+    <div id="shopHeader">
+      <div>
+        <div id="shopTitle">⛩ The Old Man's Stall</div>
+        <div id="shopSub">He collects stones of the earth</div>
+      </div>
+      <button class="x-btn" onclick="closeShop()">✕</button>
+    </div>
+    <div id="shopBody">
+
+      <div id="speechWrap">
+        <div id="oldManIcon">🧓</div>
+        <div id="bubble"><span id="bubbleText"></span><span class="cursor" id="typeCursor"></span></div>
+      </div>
+
+      <div id="zenDisplay">Zen: <span id="zenVal">0</span> ✦</div>
+
+      <div class="deal-card" id="deal10">
+        <div class="deal-info">
+          <div class="deal-rocks">10 Rocks</div>
+          <div class="deal-cost">50 Zen per pack</div>
+        </div>
+        <button class="deal-btn" onclick="sellPack(10,50,'deal10')">Sell for 50 ✦</button>
+      </div>
+
+      <div class="deal-card" id="deal100">
+        <div class="deal-info">
+          <div class="deal-rocks">100 Rocks</div>
+          <div class="deal-cost">750 Zen per pack</div>
+        </div>
+        <button class="deal-btn" onclick="sellPack(100,750,'deal100')">Sell for 750 ✦</button>
+      </div>
+
+      <div class="deal-card" id="deal1000">
+        <div class="deal-info">
+          <div class="deal-rocks">1,000 Rocks</div>
+          <div class="deal-cost">10,000 Zen per pack</div>
+        </div>
+        <button class="deal-btn" onclick="sellPack(1000,10000,'deal1000')">Sell for 10,000 ✦</button>
+      </div>
+
+      <div id="cooldownWrap">
+        <div id="cooldownLabel">He needs a rest… <span id="cooldownTime"></span></div>
+        <div id="cooldownBar"><div id="cooldownFill" style="width:0%"></div></div>
+      </div>
+
+    </div>
+    <div id="shopFooter">
+      <button class="btn" onclick="closeShop()">Leave</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ─── Stats ────────────────────────────────────────────────────────────
-const STATS_KEY = 'rockStacker_stats';
+// ═══════════════════════════════════════════════════════
+//  STATS & PERSISTENCE
+// ═══════════════════════════════════════════════════════
+const STATS_KEY = 'rockStacker_stats_v3';
 const sessionStart = Date.now();
 
 function loadStats() {
   try {
-    const raw = localStorage.getItem(STATS_KEY);
-    return raw ? JSON.parse(raw) : { totalSecondsPlayed: 0, totalRocksSpawned: 0, timesVisited: 0 };
-  } catch { return { totalSecondsPlayed: 0, totalRocksSpawned: 0, timesVisited: 0 }; }
+    const r = localStorage.getItem(STATS_KEY);
+    return r ? JSON.parse(r) : defaultStats();
+  } catch { return defaultStats(); }
+}
+function defaultStats() {
+  return {
+    totalSecondsPlayed: 0,
+    totalRocksSpawned: 0,
+    timesVisited: 0,
+    zen: 0,
+    totalZenEarned: 0,
+    totalRocksSold: 0,
+    totalPacksSold: 0,
+    totalRocksInAirSec: 0,
+    packsSoldThisCooldown: 0,
+    cooldownEndsAt: 0   // epoch ms — PERSISTS across reloads
+  };
 }
 function saveStats() {
   try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch {}
@@ -230,7 +254,6 @@ stats.timesVisited++;
 saveStats();
 
 setInterval(() => { stats.totalSecondsPlayed += 10; saveStats(); }, 10000);
-
 window.addEventListener('beforeunload', () => {
   const secs = Math.floor((Date.now() - sessionStart) / 1000);
   stats.totalSecondsPlayed += secs - Math.floor(secs / 10) * 10;
@@ -238,146 +261,700 @@ window.addEventListener('beforeunload', () => {
 });
 
 function formatTime(s) {
+  s = Math.floor(s);
   const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
   if (h > 0) return `${h}h ${m}m ${sec}s`;
   if (m > 0) return `${m}m ${sec}s`;
   return `${sec}s`;
 }
 
+// ── Rocks-in-air tracker (per second) ─────────────────
+let airTrackInterval = null;
+let currentlyDragging = false;
+
+function startAirTracking() {
+  currentlyDragging = true;
+  if (airTrackInterval) return;
+  airTrackInterval = setInterval(() => {
+    if (currentlyDragging) {
+      stats.totalRocksInAirSec++;
+      // save every 5s
+      if (stats.totalRocksInAirSec % 5 === 0) saveStats();
+    }
+  }, 1000);
+}
+function stopAirTracking() {
+  currentlyDragging = false;
+}
+
+// ── Stats UI ───────────────────────────────────────────
 function openStats() {
-  const sessionSecs = Math.floor((Date.now() - sessionStart) / 1000);
-  document.getElementById('statTime').textContent    = formatTime(stats.totalSecondsPlayed + sessionSecs);
+  sfxPlay('openPanel');
+  const secs = Math.floor((Date.now() - sessionStart) / 1000);
+  document.getElementById('statTime').textContent    = formatTime(stats.totalSecondsPlayed + secs);
+  document.getElementById('statSession').textContent = formatTime(secs);
   document.getElementById('statRocks').textContent   = stats.totalRocksSpawned.toLocaleString();
   document.getElementById('statVisits').textContent  = stats.timesVisited.toLocaleString();
-  document.getElementById('statSession').textContent = formatTime(sessionSecs);
+  document.getElementById('statZen').textContent     = stats.totalZenEarned.toLocaleString() + ' ✦';
+  document.getElementById('statSold').textContent    = stats.totalRocksSold.toLocaleString();
+  document.getElementById('statPacks').textContent   = stats.totalPacksSold.toLocaleString();
+  document.getElementById('statAir').textContent     = formatTime(stats.totalRocksInAirSec);
   document.getElementById('statsOverlay').classList.add('open');
 }
 function closeStats() {
+  sfxPlay('closePanel');
   document.getElementById('statsOverlay').classList.remove('open');
 }
 function resetStats() {
+  sfxPlay('click');
   document.getElementById('confirmOverlay').classList.add('open');
 }
 function confirmResetStats(yes) {
+  sfxPlay(yes ? 'reset' : 'click');
   document.getElementById('confirmOverlay').classList.remove('open');
   if (!yes) return;
-  stats.totalSecondsPlayed = 0;
-  stats.totalRocksSpawned  = 0;
-  stats.timesVisited       = 1;
+  const fresh = defaultStats();
+  fresh.timesVisited = 1;
+  Object.assign(stats, fresh);
   saveStats();
   openStats();
 }
 
-// ─── Matter.js ───────────────────────────────────────────────────────
-const { Engine, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events } = Matter;
+// ═══════════════════════════════════════════════════════
+//  SHOP — OLD MAN
+// ═══════════════════════════════════════════════════════
+const COOLDOWN_MS   = 2 * 60 * 1000; // 2 minutes
+const PACKS_BEFORE_COOLDOWN = 3;
 
+let typeTimer = null;
+let shopOpen = false;
+let cooldownInterval = null;
+
+const OLD_MAN_LINES = {
+  greet: [
+    "Ah… a visitor. I've been waiting here since the tide last turned.",
+    "Welcome, friend. These old hands know the weight of a good stone.",
+    "Sit, sit. The rocks — they speak to those who listen.",
+    "I smell the earth on you. You've been stacking, haven't you.",
+  ],
+  buy10: [
+    "Ten stones. A modest offering. The mountain approves.",
+    "Hmm. Small, but honest. Here — fifty zen for your trouble.",
+    "These will find their place. Fifty zen, as agreed.",
+  ],
+  buy100: [
+    "One hundred! You've been busy. The earth thanks you, friend.",
+    "A fine haul. Seven hundred and fifty zen — count them if you like.",
+    "The old man smiles warmly. 750 zen, placed gently in your palm.",
+  ],
+  buy1000: [
+    "…One thousand. I haven't seen a collection like this in many seasons.",
+    "You carry the patience of a monk. Ten thousand zen — hard earned.",
+    "The stall practically glows. 10,000 zen. A moment I shall remember.",
+  ],
+  notEnough: [
+    "Friend… you don't have that many rocks right now.",
+    "Come back when you've gathered more. The river is patient.",
+    "I see only a few stones. Stack more, then we'll talk.",
+  ],
+  cooldown: [
+    "These old legs need rest. Come back in a little while, yes?",
+    "My cart is full for now. Give me a moment to sort these.",
+    "Ha… you're eager. Wait just a bit — I'll be ready soon.",
+  ],
+  cooldownDone: [
+    "Ah, you're back! Rested and ready. What will you sell today?",
+    "Good timing. I've sorted the last batch — show me what you have.",
+    "The morning is fresh. Come, let's trade.",
+  ],
+};
+
+function randLine(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+let typingAbort = false;
+function typeText(text, onDone) {
+  typingAbort = true;
+  clearTimeout(typeTimer);
+  const el = document.getElementById('bubbleText');
+  const cursor = document.getElementById('typeCursor');
+  el.textContent = '';
+  cursor.style.display = 'inline-block';
+
+  setTimeout(() => {
+    typingAbort = false;
+    let i = 0;
+    function step() {
+      if (typingAbort) return;
+      if (i < text.length) {
+        el.textContent += text[i++];
+        typeTimer = setTimeout(step, 28 + Math.random() * 18);
+      } else {
+        cursor.style.display = 'none';
+        if (onDone) onDone();
+      }
+    }
+    step();
+  }, 60);
+}
+
+function openShop() {
+  sfxPlay('openPanel');
+  shopOpen = true;
+  document.getElementById('shopOverlay').classList.add('open');
+  updateZenDisplay();
+  const wasOnCooldown = Date.now() < stats.cooldownEndsAt;
+  refreshShopState();
+  if (wasOnCooldown) {
+    typeText(randLine(OLD_MAN_LINES.cooldown));
+  } else if (stats.packsSoldThisCooldown === 0 && stats.totalPacksSold > 0) {
+    typeText(randLine(OLD_MAN_LINES.cooldownDone));
+  } else {
+    typeText(randLine(OLD_MAN_LINES.greet));
+  }
+}
+
+function closeShop() {
+  sfxPlay('closePanel');
+  shopOpen = false;
+  document.getElementById('shopOverlay').classList.remove('open');
+  if (cooldownInterval) { clearInterval(cooldownInterval); cooldownInterval = null; }
+}
+
+function updateZenDisplay() {
+  document.getElementById('zenVal').textContent = stats.zen.toLocaleString();
+}
+
+function refreshShopState() {
+  const onCooldown = Date.now() < stats.cooldownEndsAt;
+  const cdWrap = document.getElementById('cooldownWrap');
+
+  ['deal10','deal100','deal1000'].forEach(id => {
+    const card = document.getElementById(id);
+    const btn  = card.querySelector('.deal-btn');
+    if (onCooldown) {
+      card.classList.add('disabled-card');
+      btn.disabled = true;
+    } else {
+      card.classList.remove('disabled-card');
+      btn.disabled = false;
+    }
+  });
+
+  if (onCooldown) {
+    cdWrap.style.display = 'flex';
+    startCooldownBar();
+  } else {
+    cdWrap.style.display = 'none';
+    if (cooldownInterval) { clearInterval(cooldownInterval); cooldownInterval = null; }
+  }
+}
+
+function startCooldownBar() {
+  if (cooldownInterval) clearInterval(cooldownInterval);
+  cooldownInterval = setInterval(() => {
+    const now = Date.now();
+    const remaining = Math.max(0, stats.cooldownEndsAt - now);
+    const total = COOLDOWN_MS;
+    const pct = ((total - remaining) / total) * 100;
+    document.getElementById('cooldownFill').style.width = pct + '%';
+    const sec = Math.ceil(remaining / 1000);
+    const m = Math.floor(sec / 60), s = sec % 60;
+    document.getElementById('cooldownTime').textContent =
+      `(${m}:${s.toString().padStart(2,'0')} remaining)`;
+
+    if (remaining <= 0) {
+      clearInterval(cooldownInterval);
+      cooldownInterval = null;
+      stats.packsSoldThisCooldown = 0;
+      saveStats();
+      refreshShopState();
+      typeText(randLine(OLD_MAN_LINES.cooldownDone));
+    }
+  }, 500);
+}
+
+function sellPack(rockCount, zenReward, dealId) {
+  ensureAudio();
+  // Not enough rocks?
+  if (rocks.length < rockCount) {
+    sfxPlay('click');
+    typeText(randLine(OLD_MAN_LINES.notEnough));
+    return;
+  }
+  // On cooldown?
+  if (Date.now() < stats.cooldownEndsAt) {
+    sfxPlay('click');
+    typeText(randLine(OLD_MAN_LINES.cooldown));
+    return;
+  }
+
+  // Remove rocks
+  for (let i = 0; i < rockCount; i++) {
+    const r = rocks.pop();
+    World.remove(world, r.body);
+  }
+  updateCount();
+
+  // Update stats
+  stats.zen              += zenReward;
+  stats.totalZenEarned   += zenReward;
+  stats.totalRocksSold   += rockCount;
+  stats.totalPacksSold   += 1;
+  stats.packsSoldThisCooldown += 1;
+  updateZenDisplay();
+
+  // SFX
+  sfxPlay('sellRocks');
+
+  // Line
+  const lines = rockCount === 10 ? OLD_MAN_LINES.buy10
+              : rockCount === 100 ? OLD_MAN_LINES.buy100
+              : OLD_MAN_LINES.buy1000;
+  typeText(randLine(lines));
+
+  // Cooldown after 3 packs
+  if (stats.packsSoldThisCooldown >= PACKS_BEFORE_COOLDOWN) {
+    stats.cooldownEndsAt = Date.now() + COOLDOWN_MS;
+    setTimeout(() => {
+      typeText(randLine(OLD_MAN_LINES.cooldown));
+      refreshShopState();
+    }, 2200);
+  }
+
+  saveStats();
+}
+
+// ═══════════════════════════════════════════════════════
+//  AUDIO ENGINE
+// ═══════════════════════════════════════════════════════
+let audioCtx = null;
+let masterGain = null;
+let musicGain  = null;
+let sfxGain    = null;
+let musicNodes = [];
+let currentVol = 0.35;
+
+function ensureAudio() {
+  if (audioCtx) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return;
+  }
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = currentVol;
+  masterGain.connect(audioCtx.destination);
+  musicGain = audioCtx.createGain();
+  musicGain.gain.value = 0.52;
+  musicGain.connect(masterGain);
+  sfxGain = audioCtx.createGain();
+  sfxGain.gain.value = 1.0;
+  sfxGain.connect(masterGain);
+}
+
+function setVolume(v) {
+  currentVol = parseFloat(v);
+  document.getElementById('volPct').textContent = Math.round(v * 100) + '%';
+  if (masterGain) masterGain.gain.setTargetAtTime(currentVol, audioCtx.currentTime, 0.05);
+}
+
+// Auto-start music on first user interaction
+let musicStarted = false;
+function tryStartMusic() {
+  if (musicStarted) return;
+  musicStarted = true;
+  ensureAudio();
+  startMusic();
+  document.removeEventListener('pointerdown', tryStartMusic);
+  document.removeEventListener('keydown', tryStartMusic);
+}
+document.addEventListener('pointerdown', tryStartMusic);
+document.addEventListener('keydown', tryStartMusic);
+
+// ── Cozy ambient music (pentatonic A, reverb, drone+pluck) ─
+const PENTA = [220, 261.63, 293.66, 329.63, 392, 440, 523.25, 587.33, 659.26, 784];
+
+function makeReverb(ctx, dur = 2.8, decay = 2.1) {
+  const len = ctx.sampleRate * dur;
+  const buf = ctx.createBuffer(2, len, ctx.sampleRate);
+  for (let c = 0; c < 2; c++) {
+    const d = buf.getChannelData(c);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+  }
+  const conv = ctx.createConvolver();
+  conv.buffer = buf;
+  return conv;
+}
+
+function startMusic() {
+  const reverb = makeReverb(audioCtx);
+  reverb.connect(musicGain);
+  const dryG = audioCtx.createGain(); dryG.gain.value = 0.38; dryG.connect(musicGain);
+  const wetG = audioCtx.createGain(); wetG.gain.value = 0.62; wetG.connect(reverb);
+
+  function drone(freq, vol = 0.032) {
+    const o1 = audioCtx.createOscillator(), o2 = audioCtx.createOscillator();
+    o1.type = 'sine'; o2.type = 'sine';
+    o1.frequency.value = freq; o2.frequency.value = freq * 1.004;
+    const g = audioCtx.createGain(); g.gain.value = vol;
+    o1.connect(g); o2.connect(g);
+    g.connect(wetG); g.connect(dryG);
+    o1.start(); o2.start();
+    musicNodes.push(o1, o2, g);
+  }
+  drone(110, 0.032); drone(165, 0.022); drone(220, 0.015);
+
+  const melody = [0,2,4,6,4,2,0,1,3,5,3,1,0,4,6,4,2,5,3,1];
+  let step = 0;
+  function pluck() {
+    const now = audioCtx.currentTime;
+    const freq = PENTA[melody[step % melody.length]]; step++;
+    const osc = audioCtx.createOscillator(); osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now);
+    osc.frequency.exponentialRampToValueAtTime(freq * 0.994, now + 0.35);
+    const env = audioCtx.createGain();
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.075, now + 0.04);
+    env.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+    osc.connect(env); env.connect(wetG); env.connect(dryG);
+    osc.start(now); osc.stop(now + 1.6);
+    const wait = 1300 + Math.random() * 1100;
+    const t = setTimeout(pluck, wait);
+    musicNodes.push({ stop: () => clearTimeout(t) });
+  }
+  function breathe() {
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator(); osc.type = 'triangle';
+    osc.frequency.value = 108 + Math.random() * 24;
+    const env = audioCtx.createGain();
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.028, now + 2.2);
+    env.gain.linearRampToValueAtTime(0, now + 5.5);
+    osc.connect(env); env.connect(wetG);
+    osc.start(); osc.stop(now + 6);
+    musicNodes.push(osc);
+    const t = setTimeout(breathe, 4500 + Math.random() * 2500);
+    musicNodes.push({ stop: () => clearTimeout(t) });
+  }
+  pluck(); breathe();
+  musicNodes.push(reverb, dryG, wetG);
+}
+
+// ── SFX ───────────────────────────────────────────────
+function sfxPlay(type) {
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const now = audioCtx.currentTime;
+
+  switch (type) {
+
+    // SPAWN → was old "despawn" reverse plonk (switched)
+    case 'spawn': {
+      const osc = audioCtx.createOscillator();
+      const env = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.exponentialRampToValueAtTime(440, now + 0.12);
+      env.gain.setValueAtTime(0, now);
+      env.gain.linearRampToValueAtTime(0.16, now + 0.03);
+      env.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.connect(env); env.connect(sfxGain);
+      osc.start(now); osc.stop(now + 0.25);
+      break;
+    }
+
+    // DESPAWN → was old "spawn" descending plonk (switched)
+    case 'despawn': {
+      const osc = audioCtx.createOscillator();
+      const env = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(280, now + 0.18);
+      env.gain.setValueAtTime(0.18, now);
+      env.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+      osc.connect(env); env.connect(sfxGain);
+      osc.start(now); osc.stop(now + 0.3);
+      break;
+    }
+
+    // GRAB — rough stone scrape with pitch character
+    case 'grab': {
+      // Short pitched scrape: two layers
+      // 1) gritty band-passed noise burst
+      const bufLen = Math.floor(audioCtx.sampleRate * 0.08);
+      const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < bufLen; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufLen, 1.2) * 0.6;
+      const src = audioCtx.createBufferSource(); src.buffer = buf;
+      const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass';
+      bp.frequency.value = 1800; bp.Q.value = 1.2;
+      const gEnv = audioCtx.createGain();
+      gEnv.gain.setValueAtTime(0.55, now);
+      gEnv.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+      src.connect(bp); bp.connect(gEnv); gEnv.connect(sfxGain);
+      src.start(now);
+      // 2) low thud under it
+      const osc2 = audioCtx.createOscillator(); osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(140, now);
+      osc2.frequency.exponentialRampToValueAtTime(90, now + 0.07);
+      const env2 = audioCtx.createGain();
+      env2.gain.setValueAtTime(0.18, now);
+      env2.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc2.connect(env2); env2.connect(sfxGain);
+      osc2.start(now); osc2.stop(now + 0.09);
+      break;
+    }
+
+    // RELEASE (drop/enddrag) — stone set down: dull clunk + dust
+    case 'drop': {
+      // Dull low clunk
+      const osc = audioCtx.createOscillator(); osc.type = 'sine';
+      osc.frequency.setValueAtTime(120, now);
+      osc.frequency.exponentialRampToValueAtTime(55, now + 0.18);
+      const env = audioCtx.createGain();
+      env.gain.setValueAtTime(0.28, now);
+      env.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.connect(env); env.connect(sfxGain);
+      osc.start(now); osc.stop(now + 0.24);
+      // Subtle hiss of settling dust
+      const bufLen = Math.floor(audioCtx.sampleRate * 0.14);
+      const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < bufLen; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.35)) * 0.22;
+      const src2 = audioCtx.createBufferSource(); src2.buffer = buf;
+      const hp = audioCtx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2200;
+      const gDust = audioCtx.createGain(); gDust.gain.value = 0.45;
+      src2.connect(hp); hp.connect(gDust); gDust.connect(sfxGain);
+      src2.start(now + 0.03);
+      break;
+    }
+
+    // HIT GROUND — heavy stone impact: two-stage thud
+    case 'collision': {
+      // Stage 1: deep impact thud
+      const osc = audioCtx.createOscillator(); osc.type = 'sine';
+      osc.frequency.setValueAtTime(180 + Math.random() * 60, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.22);
+      const env = audioCtx.createGain();
+      env.gain.setValueAtTime(0, now);
+      env.gain.linearRampToValueAtTime(0.32, now + 0.008);
+      env.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+      osc.connect(env); env.connect(sfxGain);
+      osc.start(now); osc.stop(now + 0.3);
+      // Stage 2: click transient (stone-on-stone attack)
+      const bufLen = Math.floor(audioCtx.sampleRate * 0.018);
+      const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < bufLen; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / bufLen) * 0.8;
+      const src = audioCtx.createBufferSource(); src.buffer = buf;
+      const bp = audioCtx.createBiquadFilter(); bp.type = 'peaking';
+      bp.frequency.value = 3500; bp.gain.value = 8; bp.Q.value = 0.6;
+      const gClick = audioCtx.createGain(); gClick.gain.value = 0.55;
+      src.connect(bp); bp.connect(gClick); gClick.connect(sfxGain);
+      src.start(now);
+      break;
+    }
+
+    // SELL ROCKS — coins + satisfaction chime
+    case 'sellRocks': {
+      // Coin-like cascade
+      [0, 0.06, 0.12, 0.18].forEach((delay, i) => {
+        const osc = audioCtx.createOscillator(); osc.type = 'triangle';
+        osc.frequency.value = [880, 1046, 1318, 1568][i];
+        const env = audioCtx.createGain();
+        env.gain.setValueAtTime(0, now + delay);
+        env.gain.linearRampToValueAtTime(0.09, now + delay + 0.01);
+        env.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.35);
+        osc.connect(env); env.connect(sfxGain);
+        osc.start(now + delay); osc.stop(now + delay + 0.38);
+      });
+      break;
+    }
+
+    case 'reset': {
+      const osc = audioCtx.createOscillator(); osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(380, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.42);
+      const env = audioCtx.createGain();
+      env.gain.setValueAtTime(0.09, now);
+      env.gain.exponentialRampToValueAtTime(0.001, now + 0.46);
+      const lp = audioCtx.createBiquadFilter(); lp.type = 'lowpass';
+      lp.frequency.setValueAtTime(1800, now);
+      lp.frequency.exponentialRampToValueAtTime(200, now + 0.42);
+      osc.connect(lp); lp.connect(env); env.connect(sfxGain);
+      osc.start(now); osc.stop(now + 0.5);
+      break;
+    }
+
+    case 'openPanel': {
+      [0, 0.08, 0.16].forEach((delay, i) => {
+        const osc = audioCtx.createOscillator(); osc.type = 'sine';
+        osc.frequency.value = [523.25, 659.26, 783.99][i];
+        const env = audioCtx.createGain();
+        env.gain.setValueAtTime(0, now + delay);
+        env.gain.linearRampToValueAtTime(0.09, now + delay + 0.03);
+        env.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.5);
+        osc.connect(env); env.connect(sfxGain);
+        osc.start(now + delay); osc.stop(now + delay + 0.55);
+      });
+      break;
+    }
+
+    case 'closePanel': {
+      [0, 0.07, 0.14].forEach((delay, i) => {
+        const osc = audioCtx.createOscillator(); osc.type = 'sine';
+        osc.frequency.value = [783.99, 659.26, 523.25][i];
+        const env = audioCtx.createGain();
+        env.gain.setValueAtTime(0, now + delay);
+        env.gain.linearRampToValueAtTime(0.07, now + delay + 0.03);
+        env.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.4);
+        osc.connect(env); env.connect(sfxGain);
+        osc.start(now + delay); osc.stop(now + delay + 0.45);
+      });
+      break;
+    }
+
+    case 'click': {
+      const osc = audioCtx.createOscillator(); osc.type = 'sine';
+      osc.frequency.value = 860;
+      const env = audioCtx.createGain();
+      env.gain.setValueAtTime(0.065, now);
+      env.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+      osc.connect(env); env.connect(sfxGain);
+      osc.start(now); osc.stop(now + 0.07);
+      break;
+    }
+
+    case 'hover': {
+      const osc = audioCtx.createOscillator(); osc.type = 'sine';
+      osc.frequency.value = 640;
+      const env = audioCtx.createGain();
+      env.gain.setValueAtTime(0.022, now);
+      env.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.connect(env); env.connect(sfxGain);
+      osc.start(now); osc.stop(now + 0.05);
+      break;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  MATTER.JS
+// ═══════════════════════════════════════════════════════
+const { Engine, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events } = Matter;
 const canvas = document.getElementById('gameCanvas');
 const W = window.innerWidth, H = window.innerHeight;
 canvas.width = W; canvas.height = H;
 const ctx = canvas.getContext('2d');
 
 const engine = Engine.create({ gravity: { y: 1.2 } });
-// More solver iterations = stable stacking, no jitter
-engine.positionIterations  = 20;
-engine.velocityIterations  = 16;
-engine.constraintIterations = 4;
+engine.positionIterations = 20; engine.velocityIterations = 16; engine.constraintIterations = 4;
 const world = engine.world;
 
-// ─── Boundaries ───────────────────────────────────────────────────────
 const groundY = H * 0.65;
-const T = 300; // very thick — nothing can tunnel through
+const T = 300;
+World.add(world, [
+  Bodies.rectangle(W/2,   groundY+T/2, W+T*2, T,   {isStatic:true,friction:0.99,frictionStatic:10,restitution:0,label:'ground'}),
+  Bodies.rectangle(-T/2,  H/2,         T,     H*3, {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
+  Bodies.rectangle(W+T/2, H/2,         T,     H*3, {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
+  Bodies.rectangle(W/2,   -T/2,        W+T*2, T,   {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
+]);
 
-const ground  = Bodies.rectangle(W/2,     groundY + T/2, W + T*2, T,   { isStatic:true, friction:0.99, frictionStatic:10, restitution:0 });
-const wallL   = Bodies.rectangle(-T/2,    H/2,           T,       H*3, { isStatic:true, friction:0.99, frictionStatic:10, restitution:0 });
-const wallR   = Bodies.rectangle(W + T/2, H/2,           T,       H*3, { isStatic:true, friction:0.99, frictionStatic:10, restitution:0 });
-const ceiling = Bodies.rectangle(W/2,     -T/2,          W + T*2, T,   { isStatic:true, friction:0.99, frictionStatic:10, restitution:0 });
-World.add(world, [ground, wallL, wallR, ceiling]);
-
-// ─── Mouse ────────────────────────────────────────────────────────────
 const mouse = Mouse.create(canvas);
 const mouseConstraint = MouseConstraint.create(engine, {
-  mouse,
-  constraint: { stiffness: 0.15, angularStiffness: 0.1, render: { visible: false } }
+  mouse, constraint: { stiffness: 0.15, angularStiffness: 0.1, render: { visible: false } }
 });
 World.add(world, mouseConstraint);
 
-// Clamp drag so rocks can never be pulled outside the canvas
 canvas.addEventListener('mousemove', () => {
-  mouse.position.x = Math.max(2, Math.min(W - 2, mouse.position.x));
-  mouse.position.y = Math.max(2, Math.min(groundY - 2, mouse.position.y));
+  mouse.position.x = Math.max(2, Math.min(W-2, mouse.position.x));
+  mouse.position.y = Math.max(2, Math.min(groundY-2, mouse.position.y));
 }, { capture: true });
 canvas.addEventListener('touchmove', () => {
-  mouse.position.x = Math.max(2, Math.min(W - 2, mouse.position.x));
-  mouse.position.y = Math.max(2, Math.min(groundY - 2, mouse.position.y));
+  mouse.position.x = Math.max(2, Math.min(W-2, mouse.position.x));
+  mouse.position.y = Math.max(2, Math.min(groundY-2, mouse.position.y));
 }, { capture: true, passive: true });
 
-// ─── Rocks ────────────────────────────────────────────────────────────
+// ── Rocks ──────────────────────────────────────────────
 const PALETTES = [
-  { base:'#6b5c50', hi:'#9a8070', shadow:'#3a2e28' },
-  { base:'#4a4a52', hi:'#7a7a88', shadow:'#28282e' },
-  { base:'#7a5540', hi:'#a07860', shadow:'#3d2a20' },
-  { base:'#5a5040', hi:'#8a7a62', shadow:'#2e2820' },
-  { base:'#524848', hi:'#7e6e6e', shadow:'#2c2424' },
-  { base:'#3c4840', hi:'#657a6e', shadow:'#1e2820' },
+  {base:'#6b5c50',hi:'#9a8070',shadow:'#3a2e28'},
+  {base:'#4a4a52',hi:'#7a7a88',shadow:'#28282e'},
+  {base:'#7a5540',hi:'#a07860',shadow:'#3d2a20'},
+  {base:'#5a5040',hi:'#8a7a62',shadow:'#2e2820'},
+  {base:'#524848',hi:'#7e6e6e',shadow:'#2c2424'},
+  {base:'#3c4840',hi:'#657a6e',shadow:'#1e2820'},
 ];
-
 const rocks = [];
 
 function spawnRock() {
+  ensureAudio();
+  sfxPlay('spawn');
   stats.totalRocksSpawned++;
   saveStats();
-
   const rx = 28 + Math.random() * 30;
   const ry = rx * (0.52 + Math.random() * 0.30);
   const palette = PALETTES[Math.floor(Math.random() * PALETTES.length)];
   const x = W * 0.2 + Math.random() * W * 0.6;
   const y = groundY - 220 - Math.random() * 100;
-
-  // Bodies.polygon creates a regular polygon — then we scale it to match
-  // the visual ellipse dimensions (rx wide, ry tall) so hitbox = visual
   const sides = 8 + Math.floor(Math.random() * 3);
   const body = Bodies.polygon(x, y, sides, rx, {
-    friction:       0.99,
-    frictionStatic: 10,
-    frictionAir:    0.01,
-    restitution:    0.0,
-    density:        0.006,
-    slop:           0.02
+    friction:0.99, frictionStatic:10, frictionAir:0.01, restitution:0.0, density:0.006, slop:0.02
   });
-  // Squash the body vertically so it matches the drawn ry/rx ratio
   Body.scale(body, 1, ry / rx);
   Body.setAngle(body, Math.random() * Math.PI * 2);
-
-  const seeds = Array.from({ length: 8 }, () => Math.random());
-  rocks.push({ body, palette, rx, ry, seeds });
+  const seeds = Array.from({length:8}, () => Math.random());
+  rocks.push({body, palette, rx, ry, seeds});
   World.add(world, body);
   updateCount();
 }
 
 function despawnRock() {
   if (!rocks.length) return;
+  ensureAudio();
+  sfxPlay('despawn');
   const r = rocks.pop();
   World.remove(world, r.body);
   updateCount();
 }
 
 function resetAll() {
+  ensureAudio();
+  if (rocks.length > 0) sfxPlay('reset');
   rocks.forEach(r => World.remove(world, r.body));
   rocks.length = 0;
   updateCount();
 }
 
 function updateCount() {
-  document.getElementById('rockCount').textContent = `${rocks.length} rock${rocks.length !== 1 ? 's' : ''} on screen`;
+  document.getElementById('rockCount').textContent =
+    `${rocks.length} rock${rocks.length !== 1 ? 's' : ''} on screen`;
   document.getElementById('despawnBtn').disabled = rocks.length === 0;
 }
 
-// ─── Draw ─────────────────────────────────────────────────────────────
-function drawRock(r) {
-  const { body: b, palette, rx, ry, seeds } = r;
+// ── Collision SFX — only rock-on-ground for the heavy thud ─
+let lastCollisionTime = 0;
+Events.on(engine, 'collisionStart', e => {
+  const now = Date.now();
+  if (now - lastCollisionTime < 90) return;
+  for (const pair of e.pairs) {
+    const hasGround = pair.bodyA.label === 'ground' || pair.bodyB.label === 'ground';
+    const vel = pair.bodyA.speed + pair.bodyB.speed;
+    if (vel > 1.5) {
+      lastCollisionTime = now;
+      sfxPlay('collision');
+      break;
+    }
+    if (!hasGround && vel > 2) {
+      lastCollisionTime = now;
+      sfxPlay('collision');
+      break;
+    }
+  }
+});
 
-  // Drop shadow on ground
-  const nearness = Math.max(0, Math.min(1, (b.position.y - (groundY - ry * 6)) / (ry * 6)));
+// ── Draw ───────────────────────────────────────────────
+function drawRock(r) {
+  const {body:b, palette, rx, ry, seeds} = r;
+  const nearness = Math.max(0, Math.min(1, (b.position.y - (groundY - ry*6)) / (ry*6)));
   if (nearness > 0) {
     const sw = rx * 2.0 * nearness;
     ctx.save();
@@ -387,44 +964,32 @@ function drawRock(r) {
     sg.addColorStop(1, 'rgba(8,4,0,0)');
     ctx.fillStyle = sg;
     ctx.beginPath();
-    ctx.ellipse(b.position.x, groundY, sw, sw * 0.2, 0, 0, Math.PI * 2);
+    ctx.ellipse(b.position.x, groundY, sw, sw*0.2, 0, 0, Math.PI*2);
     ctx.fill();
     ctx.restore();
   }
-
-  // Rock shape — traced from actual physics vertices so hitbox = visual exactly
   ctx.save();
-
-  // Draw shape by tracing the actual physics vertices — hitbox and visual are identical
   const verts = b.vertices;
   ctx.beginPath();
   ctx.moveTo(verts[0].x, verts[0].y);
   for (let i = 1; i < verts.length; i++) ctx.lineTo(verts[i].x, verts[i].y);
   ctx.closePath();
-
-  // Base fill
   ctx.fillStyle = palette.base;
   ctx.fill();
-
-  // Sunset highlight
   const grd = ctx.createRadialGradient(
-    b.position.x - rx * 0.15, b.position.y - ry * 0.3, rx * 0.04,
-    b.position.x,             b.position.y,             rx * 1.2
+    b.position.x-rx*0.15, b.position.y-ry*0.3, rx*0.04,
+    b.position.x, b.position.y, rx*1.2
   );
-  grd.addColorStop(0,    'rgba(255,210,130,0.34)');
+  grd.addColorStop(0, 'rgba(255,210,130,0.34)');
   grd.addColorStop(0.45, 'rgba(0,0,0,0)');
-  grd.addColorStop(1,    'rgba(0,0,0,0.44)');
+  grd.addColorStop(1, 'rgba(0,0,0,0.44)');
   ctx.fillStyle = grd;
   ctx.fill();
-
-  // Rim
   ctx.strokeStyle = palette.shadow;
   ctx.lineWidth = 1.5;
   ctx.globalAlpha = 0.5;
   ctx.stroke();
   ctx.globalAlpha = 1;
-
-  // Surface texture lines clipped inside shape
   ctx.save();
   ctx.clip();
   ctx.globalAlpha = 0.08;
@@ -433,51 +998,52 @@ function drawRock(r) {
   for (let i = 0; i < 3; i++) {
     const s = seeds[i];
     ctx.beginPath();
-    ctx.moveTo(b.position.x - rx * 0.55 + s * rx * 0.3, b.position.y - ry * (0.2 - s * 0.4));
+    ctx.moveTo(b.position.x-rx*0.55+s*rx*0.3, b.position.y-ry*(0.2-s*0.4));
     ctx.bezierCurveTo(
-      b.position.x - rx * 0.1 + s * 8,  b.position.y - ry * 0.05,
-      b.position.x + rx * 0.2 - s * 6,  b.position.y + ry * s * 0.3,
-      b.position.x + rx * 0.5 - s * 4,  b.position.y + ry * 0.15
+      b.position.x-rx*0.1+s*8, b.position.y-ry*0.05,
+      b.position.x+rx*0.2-s*6, b.position.y+ry*s*0.3,
+      b.position.x+rx*0.5-s*4, b.position.y+ry*0.15
     );
     ctx.stroke();
   }
   ctx.restore();
-
   ctx.restore();
 }
 
-// ─── Events ───────────────────────────────────────────────────────────
-Events.on(mouseConstraint, 'startdrag', () => document.body.classList.add('dragging'));
-Events.on(mouseConstraint, 'enddrag',   () => document.body.classList.remove('dragging'));
-
+// ── Drag events ────────────────────────────────────────
 let hinted = false;
 Events.on(mouseConstraint, 'startdrag', () => {
+  document.body.classList.add('dragging');
+  sfxPlay('grab');
+  startAirTracking();
   if (!hinted) { hinted = true; document.getElementById('hint').style.opacity = '0'; }
 });
+Events.on(mouseConstraint, 'enddrag', () => {
+  document.body.classList.remove('dragging');
+  sfxPlay('drop');
+  stopAirTracking();
+});
 
-// ─── Loop ─────────────────────────────────────────────────────────────
+// ── Loop ───────────────────────────────────────────────
 const runner = Runner.create();
 Runner.run(runner, engine);
 
 function gameLoop() {
   ctx.clearRect(0, 0, W, H);
-
-  // Safety net — delete any rock that escapes the canvas
   for (let i = rocks.length - 1; i >= 0; i--) {
     const p = rocks[i].body.position;
-    if (p.x < -400 || p.x > W + 400 || p.y < -400 || p.y > H + 400) {
+    if (p.x < -400 || p.x > W+400 || p.y < -400 || p.y > H+400) {
       World.remove(world, rocks[i].body);
       rocks.splice(i, 1);
       updateCount();
     }
   }
-
   rocks.forEach(drawRock);
   requestAnimationFrame(gameLoop);
 }
 gameLoop();
 
-// ─── Bokeh ────────────────────────────────────────────────────────────
+// ── Bokeh ──────────────────────────────────────────────
 for (let i = 0; i < 14; i++) {
   const el = document.createElement('div');
   el.className = 'bokeh';
@@ -485,21 +1051,24 @@ for (let i = 0; i < 14; i++) {
   const hue  = 30 + Math.random() * 40;
   const op   = 0.04 + Math.random() * 0.18;
   const dur  = 6 + Math.random() * 10;
-  el.style.cssText = `
-    width:${size}px;height:${size}px;
-    left:${20+Math.random()*80}%;top:${20+Math.random()*50}%;
-    background:radial-gradient(circle,hsl(${hue},80%,75%) 0%,transparent 70%);
-    --op:${op};--dx:${(Math.random()-.5)*30}px;--dy:${(Math.random()-.5)*20}px;
-    animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;
-  `;
+  el.style.cssText = `width:${size}px;height:${size}px;left:${20+Math.random()*80}%;top:${20+Math.random()*50}%;background:radial-gradient(circle,hsl(${hue},80%,75%) 0%,transparent 70%);--op:${op};--dx:${(Math.random()-.5)*30}px;--dy:${(Math.random()-.5)*20}px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;`;
   document.body.appendChild(el);
 }
 
+// Hover SFX on all buttons (only after audio context is alive)
+document.querySelectorAll('.btn, .deal-btn').forEach(b => {
+  b.addEventListener('mouseenter', () => { if (audioCtx) sfxPlay('hover'); });
+});
+
 window.addEventListener('resize', () => location.reload());
 
-// Spawn two starter rocks
 spawnRock();
 spawnRock();
+
+// Check if we were on cooldown on load — restore bar
+if (Date.now() < stats.cooldownEndsAt) {
+  // will be handled when shop opens
+}
 </script>
 </body>
 </html>
