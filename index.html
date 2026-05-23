@@ -39,22 +39,22 @@ body{font-family:'Noto Sans JP',sans-serif;background:#0d0a08;overflow:hidden;he
 #spawnBar{position:fixed;bottom:0;left:0;right:0;z-index:10;height:3px;background:rgba(0,0,0,.3)}
 #spawnFill{height:100%;background:linear-gradient(to right,rgba(180,130,50,.4),rgba(220,180,80,.8));transition:width .12s linear;width:0%}
 
-/* ── Volume — bottom right ── */
+/* Volume */
 #volCorner{position:fixed;bottom:22px;right:24px;z-index:10;display:flex;align-items:center;gap:9px;opacity:.45;transition:opacity .25s}
 #volCorner:hover{opacity:1}
 #volCorner label{font-family:'Noto Sans JP',sans-serif;font-size:.58rem;letter-spacing:.12em;color:#c8a860}
 #volSlider{-webkit-appearance:none;appearance:none;width:72px;height:2px;background:rgba(200,160,80,.3);border-radius:2px;outline:none;cursor:pointer}
 #volSlider::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:#c8a860;cursor:pointer}
 
-/* ── Hint ── */
+/* Hint */
 #hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:10;font-family:'Noto Sans JP',sans-serif;font-size:.68rem;letter-spacing:.18em;color:rgba(200,160,80,.4);pointer-events:none;transition:opacity .5s}
 body.dragging{cursor:grabbing}
 
-/* ── Overlays base ── */
+/* Overlays */
 .overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(5,3,1,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center}
 .overlay.open{display:flex}
 
-/* ── Stats box ── */
+/* Stats box */
 #statsBox{background:rgba(18,11,5,.97);border:1px solid rgba(200,160,80,.3);border-radius:4px;padding:28px 32px;min-width:360px;max-width:92vw;box-shadow:0 0 60px rgba(0,0,0,.8)}
 .stats-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
 .stats-title{font-family:'Noto Serif JP',serif;font-size:1rem;color:#e8c878;letter-spacing:.18em;text-shadow:0 0 16px rgba(220,160,50,.5)}
@@ -65,14 +65,14 @@ body.dragging{cursor:grabbing}
 .stat-label{font-family:'Noto Sans JP',sans-serif;font-size:.62rem;letter-spacing:.14em;color:rgba(200,160,80,.45);margin-bottom:6px}
 .stat-value{font-family:'Noto Serif JP',serif;font-size:1.05rem;color:#d4a85a;letter-spacing:.05em}
 
-/* ── Confirm box ── */
+/* Confirm box */
 #confirmBox{background:rgba(18,11,5,.97);border:1px solid rgba(180,80,40,.4);border-radius:4px;padding:30px 32px;max-width:380px;text-align:center;box-shadow:0 0 60px rgba(0,0,0,.9)}
 .confirm-icon{font-size:2rem;margin-bottom:12px;color:rgba(200,120,60,.8)}
 .confirm-title{font-family:'Noto Serif JP',serif;font-size:1rem;color:#e8c878;letter-spacing:.12em;margin-bottom:12px}
 .confirm-body{font-family:'Noto Sans JP',sans-serif;font-size:.78rem;color:rgba(200,160,80,.55);line-height:1.7;margin-bottom:22px}
 .confirm-buttons{display:flex;gap:10px;justify-content:center}
 
-/* ── Bundle Create box ── */
+/* Bundle box */
 #bundleBox{background:rgba(14,10,4,.97);border:1px solid rgba(140,200,120,.28);border-radius:4px;padding:28px 32px;max-width:420px;width:92vw;box-shadow:0 0 60px rgba(0,0,0,.9)}
 .bundle-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .bundle-title{font-family:'Noto Serif JP',serif;font-size:.95rem;color:#b0e890;letter-spacing:.18em}
@@ -87,7 +87,7 @@ body.dragging{cursor:grabbing}
 .bundle-select-btn:hover{background:rgba(100,180,80,.22);color:#c0e890}
 .bundle-select-btn:disabled{opacity:.3;cursor:not-allowed}
 
-/* ── Powers overlay ── */
+/* Powers overlay */
 #powersBox{background:rgba(12,8,18,.97);border:1px solid rgba(180,140,220,.28);border-radius:4px;width:480px;max-width:94vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 0 80px rgba(0,0,0,.95),0 0 30px rgba(160,100,220,.05);overflow:hidden}
 #powersHeader{padding:20px 26px 16px;border-bottom:1px solid rgba(180,140,220,.12);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 #powersTitle{font-family:'Noto Serif JP',serif;font-size:.95rem;color:#d8c0f8;letter-spacing:.2em;text-shadow:0 0 18px rgba(180,120,255,.3)}
@@ -106,14 +106,14 @@ body.dragging{cursor:grabbing}
 .power-progress-fill{height:100%;background:linear-gradient(to right,rgba(160,100,220,.5),rgba(200,160,255,.8));border-radius:2px;transition:width .4s ease}
 #powersFooter{padding:14px 26px;border-top:1px solid rgba(180,140,220,.08);flex-shrink:0;display:flex;justify-content:flex-end}
 
-/* ── Shop overlay ── */
+/* Shop overlay */
 #shopBox{background:rgba(14,10,4,.97);border:1px solid rgba(200,160,80,.28);border-radius:6px;width:500px;max-width:94vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 0 80px rgba(0,0,0,.95),0 0 30px rgba(200,140,40,.06);overflow:hidden}
 #shopHeader{padding:20px 26px 16px;border-bottom:1px solid rgba(200,160,80,.1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 #shopTitle{font-family:'Noto Serif JP',serif;font-size:.95rem;color:#e8c878;letter-spacing:.2em;text-shadow:0 0 18px rgba(220,160,50,.45)}
 #shopSub{font-family:'Noto Sans JP',sans-serif;font-size:.62rem;color:rgba(200,160,80,.38);letter-spacing:.12em;margin-top:3px}
 #shopBody{padding:20px 26px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:14px}
 
-/* ── Old man — Japanese style ── */
+/* Old man */
 #speechWrap{display:flex;align-items:flex-end;gap:14px;margin-bottom:4px}
 #oldManAvatar{flex-shrink:0;width:80px;height:90px;position:relative;display:flex;align-items:center;justify-content:center}
 #oldManSvg{width:80px;height:90px;transform-origin:bottom center;transition:transform .1s ease}
@@ -123,13 +123,12 @@ body.dragging{cursor:grabbing}
 @keyframes swayLeft{0%{transform:rotate(0deg)}50%{transform:rotate(-4deg)}100%{transform:rotate(-2deg)}}
 @keyframes swayRight{0%{transform:rotate(0deg)}50%{transform:rotate(4deg)}100%{transform:rotate(2deg)}}
 @keyframes talkSway{0%{transform:rotate(-2deg) translateY(0px)}100%{transform:rotate(2deg) translateY(-2px)}}
-
 #bubble{position:relative;background:rgba(255,245,220,.07);border:1px solid rgba(200,160,80,.22);border-radius:10px 10px 10px 2px;padding:12px 16px;flex:1;min-height:52px}
 #bubble::after{content:'';position:absolute;left:-8px;bottom:10px;width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:8px solid rgba(200,160,80,.22)}
 #bubbleText{font-family:'Noto Sans JP',sans-serif;font-size:.78rem;color:rgba(220,190,130,.88);line-height:1.65;min-height:1.2em}
 #zenDisplay{font-family:'Noto Serif JP',serif;font-size:.76rem;color:rgba(200,160,80,.55);letter-spacing:.1em;text-align:right;padding:2px 0 8px}
 
-/* Bundle inventory section */
+/* Bundle inventory */
 #bundleInventorySection{background:rgba(255,255,255,.02);border:1px solid rgba(200,160,80,.1);border-radius:3px;padding:14px 16px}
 #bundleInventoryTitle{font-family:'Noto Sans JP',sans-serif;font-size:.62rem;letter-spacing:.16em;color:rgba(200,160,80,.45);margin-bottom:10px}
 #bundleSlots{display:flex;flex-direction:column;gap:8px}
@@ -141,18 +140,22 @@ body.dragging{cursor:grabbing}
 .bundle-slot-sell:disabled{opacity:.3;cursor:not-allowed}
 .bundle-slot-empty{font-family:'Noto Sans JP',sans-serif;font-size:.7rem;color:rgba(200,160,80,.22);letter-spacing:.08em;font-style:italic;text-align:center;padding:6px 0}
 
-/* cooldown bar */
+/* Cooldown bar */
 #cooldownWrap{display:none;flex-direction:column;gap:6px;padding:10px 14px;background:rgba(180,80,40,.06);border:1px solid rgba(180,80,40,.2);border-radius:4px}
 #cooldownLabel{font-family:'Noto Sans JP',sans-serif;font-size:.68rem;color:rgba(200,120,80,.7);letter-spacing:.1em}
 #cooldownBar{height:3px;background:rgba(200,160,80,.15);border-radius:2px;overflow:hidden}
 #cooldownFill{height:100%;background:linear-gradient(to right,rgba(200,120,60,.7),rgba(220,160,80,.7));border-radius:2px;transition:width .5s}
 #shopFooter{padding:14px 26px;border-top:1px solid rgba(200,160,80,.08);flex-shrink:0;display:flex;justify-content:flex-end}
 
-/* Bonus offer indicator */
+/* Bonus indicator */
 #bonusIndicator{display:none;font-family:'Noto Serif JP',serif;font-size:.72rem;color:#f0d070;letter-spacing:.08em;padding:8px 14px;background:rgba(220,180,50,.08);border:1px solid rgba(220,180,50,.3);border-radius:3px;text-align:center;animation:bonusGlow 1.5s ease-in-out infinite alternate}
 @keyframes bonusGlow{0%{box-shadow:0 0 6px rgba(220,180,50,.2)}100%{box-shadow:0 0 18px rgba(220,180,50,.5)}}
 
-/* typing cursor */
+/* Double-spawn flash */
+#doubleFlash{position:fixed;inset:0;z-index:6;pointer-events:none;background:radial-gradient(ellipse at center,rgba(200,160,80,.18) 0%,transparent 70%);opacity:0;transition:opacity .15s}
+#doubleFlash.show{opacity:1}
+
+/* Typing cursor */
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .cursor{display:inline-block;width:2px;height:.85em;background:#c8a860;margin-left:2px;vertical-align:middle;animation:blink .7s step-end infinite}
 </style>
@@ -162,31 +165,30 @@ body.dragging{cursor:grabbing}
 <div id="ocean"></div>
 <div id="sand"></div>
 <div id="grain"></div>
+<div id="doubleFlash"></div>
 <canvas id="gameCanvas"></canvas>
 
 <!-- Top UI -->
 <div id="ui">
   <h1>石 · Old Rocks</h1>
-  <button class="btn bundle" id="bundleBtn" onclick="openBundleCreate()" disabled>⬡ Bundle</button>
-  <button class="btn" onclick="openStats()">Stats</button>
-  <button class="btn amber" onclick="openSell()">⛩ Sell</button>
-  <button class="btn powers" onclick="openPowers()">✦ Powers</button>
+  <button class="btn bundle" id="bundleBtn" onclick="openBundleCreate()" disabled>結 Bundle</button>
+  <button class="btn" onclick="openStats()">統 Stats</button>
+  <button class="btn amber" onclick="openSell()">商 Sell</button>
+  <button class="btn powers" onclick="openPowers()">力 Powers</button>
   <span id="rockCount">0 rocks</span>
 </div>
 
-<!-- Spawn progress bar -->
 <div id="spawnBar"><div id="spawnFill"></div></div>
 
-<!-- Volume bottom right -->
 <div id="volCorner">
-  <label>♪</label>
+  <label>音 Vol</label>
   <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.35" oninput="setVolume(this.value)">
   <label id="volPct">35%</label>
 </div>
 
 <div id="hint">drag rocks to stack them · rocks appear over time</div>
 
-<!-- ══ STATS OVERLAY ══ -->
+<!-- STATS -->
 <div id="statsOverlay" class="overlay" onclick="if(event.target===this)closeStats()">
   <div id="statsBox">
     <div class="stats-header">
@@ -201,16 +203,16 @@ body.dragging{cursor:grabbing}
       <div class="stat-card"><div class="stat-label">Total Zen Earned</div><div class="stat-value" id="statZen">—</div></div>
       <div class="stat-card"><div class="stat-label">Rocks Sold</div><div class="stat-value" id="statSold">—</div></div>
       <div class="stat-card"><div class="stat-label">Bundles Sold</div><div class="stat-value" id="statPacks">—</div></div>
-      <div class="stat-card"><div class="stat-label">Rocks Held in Air</div><div class="stat-value" id="statAir">—</div></div>
+      <div class="stat-card"><div class="stat-label">Time Held in Air</div><div class="stat-value" id="statAir">—</div></div>
     </div>
     <button class="btn danger" style="margin-top:18px;width:100%" onclick="resetStats()">Reset All Stats</button>
   </div>
 </div>
 
-<!-- ══ CONFIRM OVERLAY ══ -->
+<!-- CONFIRM -->
 <div id="confirmOverlay" class="overlay" onclick="if(event.target===this)confirmResetStats(false)">
   <div id="confirmBox">
-    <div class="confirm-icon">⚠</div>
+    <div class="confirm-icon">警</div>
     <div class="confirm-title">Reset All Stats?</div>
     <div class="confirm-body">This will permanently erase all progress, zen, upgrades and history. This cannot be undone.</div>
     <div class="confirm-buttons">
@@ -220,11 +222,11 @@ body.dragging{cursor:grabbing}
   </div>
 </div>
 
-<!-- ══ BUNDLE CREATE OVERLAY ══ -->
+<!-- BUNDLE CREATE -->
 <div id="bundleOverlay" class="overlay" onclick="if(event.target===this)closeBundleCreate()">
   <div id="bundleBox">
     <div class="bundle-header">
-      <span class="bundle-title">⬡ Create Bundle</span>
+      <span class="bundle-title">結 Create Bundle</span>
       <button class="x-btn" onclick="closeBundleCreate()">✕</button>
     </div>
     <div class="bundle-rocks-avail" id="bundleRocksAvail">0 rocks available on screen</div>
@@ -257,12 +259,12 @@ body.dragging{cursor:grabbing}
   </div>
 </div>
 
-<!-- ══ POWERS OVERLAY ══ -->
+<!-- POWERS -->
 <div id="powersOverlay" class="overlay" onclick="if(event.target===this)closePowers()">
   <div id="powersBox">
     <div id="powersHeader">
       <div>
-        <div id="powersTitle">✦ Powers</div>
+        <div id="powersTitle">力 · Powers</div>
         <div id="powersSub">spend zen to unlock earthly gifts</div>
       </div>
       <button class="x-btn" onclick="closePowers()">✕</button>
@@ -270,12 +272,12 @@ body.dragging{cursor:grabbing}
     <div id="powersBody">
       <div id="powersZen">Zen: <span id="powersZenVal">0</span> ✦</div>
 
-      <!-- Spawn Rate upgrade -->
+      <!-- Swift Earth -->
       <div class="power-card" id="powerCard_spawnRate">
         <div class="power-card-top">
           <div>
-            <div class="power-name">⏱ Swift Earth</div>
-            <div class="power-desc">The earth gives its stones more willingly. Each level reduces the time between new rocks by 0.1 second.</div>
+            <div class="power-name">迅 · Swift Earth</div>
+            <div class="power-desc">The earth gives its stones more willingly. Each level reduces the spawn interval by 0.5 seconds. Fastest: every 1 second.</div>
             <div class="power-level" id="powerLevel_spawnRate">Level 0 — one rock every 10s</div>
           </div>
           <button class="power-buy-btn" id="powerBtn_spawnRate" onclick="buyPower('spawnRate')">
@@ -285,12 +287,12 @@ body.dragging{cursor:grabbing}
         <div class="power-progress"><div class="power-progress-fill" id="powerFill_spawnRate" style="width:0%"></div></div>
       </div>
 
-      <!-- Bonus Offer upgrade -->
+      <!-- Bonus Offer -->
       <div class="power-card" id="powerCard_bonusOffer">
         <div class="power-card-top">
           <div>
-            <div class="power-name">🎁 Old Man's Favor</div>
-            <div class="power-desc">The old man grows fond of you. Each level adds a 5% chance he offers 10% extra zen for the next bundle you sell.</div>
+            <div class="power-name">縁 · Old Man's Favor</div>
+            <div class="power-desc">The old man grows fond of you. Each level adds a 5% chance he offers 200% extra zen for the next bundle you sell.</div>
             <div class="power-level" id="powerLevel_bonusOffer">Level 0 — 0% chance of bonus</div>
           </div>
           <button class="power-buy-btn" id="powerBtn_bonusOffer" onclick="buyPower('bonusOffer')">
@@ -300,6 +302,21 @@ body.dragging{cursor:grabbing}
         <div class="power-progress"><div class="power-progress-fill" id="powerFill_bonusOffer" style="width:0%"></div></div>
       </div>
 
+      <!-- Double Spawn -->
+      <div class="power-card" id="powerCard_doubleSpawn">
+        <div class="power-card-top">
+          <div>
+            <div class="power-name">双 · Twin Stones</div>
+            <div class="power-desc">The earth sometimes gives two stones at once. Each level adds a 5% chance that a spawn produces two rocks instead of one.</div>
+            <div class="power-level" id="powerLevel_doubleSpawn">Level 0 — 0% chance of twin spawn</div>
+          </div>
+          <button class="power-buy-btn" id="powerBtn_doubleSpawn" onclick="buyPower('doubleSpawn')">
+            <span id="powerCost_doubleSpawn">120 ✦</span>
+          </button>
+        </div>
+        <div class="power-progress"><div class="power-progress-fill" id="powerFill_doubleSpawn" style="width:0%"></div></div>
+      </div>
+
     </div>
     <div id="powersFooter">
       <button class="btn" onclick="closePowers()">Close</button>
@@ -307,106 +324,75 @@ body.dragging{cursor:grabbing}
   </div>
 </div>
 
-<!-- ══ SELL (SHOP) OVERLAY ══ -->
+<!-- SELL / SHOP -->
 <div id="shopOverlay" class="overlay" onclick="if(event.target===this)closeShop()">
   <div id="shopBox">
     <div id="shopHeader">
       <div>
-        <div id="shopTitle">⛩ The Stone Merchant</div>
+        <div id="shopTitle">商 · The Stone Merchant</div>
         <div id="shopSub">老人 · He has traded stones for sixty years</div>
       </div>
       <button class="x-btn" onclick="closeShop()">✕</button>
     </div>
     <div id="shopBody">
-
       <div id="speechWrap">
         <div id="oldManAvatar">
-          <!-- Japanese old man SVG — kimono, white beard, topknot -->
           <svg id="oldManSvg" viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg">
-            <!-- Kimono body — deep indigo -->
             <path d="M16 90 Q14 65 20 58 L40 62 L60 58 Q66 65 64 90Z" fill="#1e2a3a"/>
-            <!-- Kimono inner collar — cream -->
             <path d="M32 57 L40 62 L48 57 L46 70 L40 75 L34 70Z" fill="#e8ddc8"/>
-            <!-- Kimono lapels -->
             <path d="M20 58 L32 57 L34 70 L28 78 L20 72Z" fill="#253044"/>
             <path d="M60 58 L48 57 L46 70 L52 78 L60 72Z" fill="#253044"/>
-            <!-- Kimono pattern — subtle lines -->
             <line x1="25" y1="62" x2="22" y2="85" stroke="#2a3850" stroke-width=".8" opacity=".7"/>
             <line x1="55" y1="62" x2="58" y2="85" stroke="#2a3850" stroke-width=".8" opacity=".7"/>
-            <!-- Obi (sash) -->
             <rect x="22" y="68" width="36" height="7" rx="1" fill="#8b3a2a"/>
             <line x1="22" y1="71.5" x2="58" y2="71.5" stroke="#a04030" stroke-width=".6" opacity=".6"/>
-            <!-- Sleeves -->
             <path d="M20 58 Q8 62 6 72 Q10 74 16 70 L20 68Z" fill="#1e2a3a"/>
             <path d="M60 58 Q72 62 74 72 Q70 74 64 70 L60 68Z" fill="#1e2a3a"/>
-            <!-- Hands -->
             <ellipse cx="10" cy="72" rx="5" ry="3.5" fill="#d4a87a"/>
             <ellipse cx="70" cy="72" rx="5" ry="3.5" fill="#d4a87a"/>
-            <!-- Staff -->
             <line x1="73" y1="22" x2="76" y2="88" stroke="#4a3018" stroke-width="2.5" stroke-linecap="round"/>
             <ellipse cx="73.5" cy="21" rx="3.5" ry="3.5" fill="#6a4828"/>
-            <!-- Neck -->
             <rect x="33" y="46" width="14" height="13" rx="4" fill="#d4a87a"/>
-            <!-- Head — aged, weathered -->
             <ellipse cx="40" cy="38" rx="16" ry="17" fill="#d4a87a"/>
-            <!-- Age spots/texture -->
             <circle cx="30" cy="36" r="1.2" fill="#b88860" opacity=".35"/>
             <circle cx="50" cy="34" r=".9" fill="#b88860" opacity=".3"/>
             <circle cx="32" cy="42" r=".8" fill="#b88860" opacity=".25"/>
-            <!-- Deep forehead wrinkles -->
             <path d="M28 26 Q33 23 38 26" stroke="#b07848" stroke-width="1.1" fill="none" opacity=".65"/>
             <path d="M30 29 Q35 27 40 29" stroke="#b07848" stroke-width=".8" fill="none" opacity=".5"/>
             <path d="M42 26 Q47 23 52 26" stroke="#b07848" stroke-width="1.1" fill="none" opacity=".65"/>
-            <!-- Crow's feet -->
             <path d="M24 36 Q22 34 21 31" stroke="#b07848" stroke-width=".7" fill="none" opacity=".5"/>
             <path d="M24 38 Q21 37 20 35" stroke="#b07848" stroke-width=".7" fill="none" opacity=".4"/>
             <path d="M56 36 Q58 34 59 31" stroke="#b07848" stroke-width=".7" fill="none" opacity=".5"/>
             <path d="M56 38 Q59 37 60 35" stroke="#b07848" stroke-width=".7" fill="none" opacity=".4"/>
-            <!-- Heavy white eyebrows — angled downward for wise look -->
             <path d="M23 27 Q28 23 33 26" stroke="#e8e4d8" stroke-width="2.6" fill="none" stroke-linecap="round"/>
             <path d="M47 26 Q52 23 57 27" stroke="#e8e4d8" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-            <!-- Hooded eyes — half-closed, wise -->
             <ellipse cx="29" cy="33" rx="4" ry="2.8" fill="#f0dfc0"/>
             <ellipse cx="51" cy="33" rx="4" ry="2.8" fill="#f0dfc0"/>
-            <!-- Iris — dark brown -->
             <ellipse cx="29" cy="33.5" rx="2.4" ry="2.2" fill="#2a1a08"/>
             <ellipse cx="51" cy="33.5" rx="2.4" ry="2.2" fill="#2a1a08"/>
-            <!-- Eye shine -->
             <circle cx="30" cy="32.5" r=".8" fill="rgba(255,255,255,.5)"/>
             <circle cx="52" cy="32.5" r=".8" fill="rgba(255,255,255,.5)"/>
-            <!-- Upper eyelids — heavy, drooping -->
             <path d="M25 31 Q29 29 33 31" stroke="#5a3820" stroke-width="1.5" fill="none" opacity=".7"/>
             <path d="M47 31 Q51 29 55 31" stroke="#5a3820" stroke-width="1.5" fill="none" opacity=".7"/>
-            <!-- Nose — broad, aged -->
             <path d="M37 36 Q38 40 40 41 Q42 40 43 36" stroke="#b07848" stroke-width="1" fill="none" opacity=".6"/>
             <ellipse cx="37.5" cy="41" rx="2.5" ry="1.5" fill="#b87850" opacity=".5"/>
             <ellipse cx="42.5" cy="41" rx="2.5" ry="1.5" fill="#b87850" opacity=".5"/>
-            <!-- Mouth — thin, slight stern smile -->
             <path id="mouthPath" d="M33 46 Q40 48.5 47 46" stroke="#7a4828" stroke-width="1.3" fill="none" stroke-linecap="round"/>
-            <!-- Nasolabial folds -->
             <path d="M35 42 Q32 44 33 47" stroke="#a06838" stroke-width=".8" fill="none" opacity=".45"/>
             <path d="M45 42 Q48 44 47 47" stroke="#a06838" stroke-width=".8" fill="none" opacity=".45"/>
-            <!-- White mustache -->
             <path d="M33 44 Q37 46.5 40 45.5 Q43 46.5 47 44" stroke="#ddd8c8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/>
-            <!-- Long white beard -->
             <path d="M24 48 Q20 58 22 70 Q28 78 40 80 Q52 78 58 70 Q60 58 56 48 Q50 54 40 55 Q30 54 24 48Z" fill="#d8d2c0" opacity=".95"/>
-            <!-- Beard texture -->
             <path d="M30 52 Q32 62 33 72" stroke="#b0a888" stroke-width=".7" fill="none" opacity=".6"/>
             <path d="M36 54 Q37 66 38 74" stroke="#b0a888" stroke-width=".7" fill="none" opacity=".5"/>
             <path d="M44 54 Q43 66 42 74" stroke="#b0a888" stroke-width=".7" fill="none" opacity=".5"/>
             <path d="M50 52 Q48 62 47 72" stroke="#b0a888" stroke-width=".7" fill="none" opacity=".6"/>
-            <!-- Topknot hair — silver-white -->
             <ellipse cx="40" cy="22" rx="13" ry="8" fill="#c8c0a8"/>
-            <!-- Hair texture -->
             <path d="M28 22 Q34 18 40 20 Q46 18 52 22" stroke="#a09888" stroke-width=".7" fill="none" opacity=".5"/>
-            <!-- Topknot bun on top -->
             <ellipse cx="40" cy="15" rx="7" ry="4.5" fill="#c8c0a8"/>
             <ellipse cx="40" cy="13.5" rx="5" ry="3" fill="#d8d0b8"/>
-            <!-- Kanzashi pin through topknot -->
             <line x1="33" y1="14" x2="47" y2="14" stroke="#8a6840" stroke-width="1.5" stroke-linecap="round"/>
             <circle cx="33" cy="14" r="1.5" fill="#c8a050"/>
             <circle cx="47" cy="14" r="1.5" fill="#c8a050"/>
-            <!-- Side hair wisp -->
             <path d="M27 24 Q23 28 24 34" stroke="#b8b0a0" stroke-width="1.2" fill="none" opacity=".55"/>
             <path d="M53 24 Q57 28 56 34" stroke="#b8b0a0" stroke-width="1.2" fill="none" opacity=".55"/>
           </svg>
@@ -415,9 +401,8 @@ body.dragging{cursor:grabbing}
       </div>
 
       <div id="zenDisplay">Zen: <span id="zenVal">0</span> ✦</div>
-      <div id="bonusIndicator">✦ The old man smiles warmly — he offers 10% more for this bundle</div>
+      <div id="bonusIndicator">縁 · The old man smiles warmly — he offers 200% more for this bundle</div>
 
-      <!-- Bundle inventory section -->
       <div id="bundleInventorySection">
         <div id="bundleInventoryTitle">Your Bundles — ready to sell</div>
         <div id="bundleSlots"></div>
@@ -427,7 +412,6 @@ body.dragging{cursor:grabbing}
         <div id="cooldownLabel">He needs a rest… <span id="cooldownTime"></span></div>
         <div id="cooldownBar"><div id="cooldownFill" style="width:0%"></div></div>
       </div>
-
     </div>
     <div id="shopFooter">
       <button class="btn" onclick="closeShop()">Leave</button>
@@ -436,43 +420,38 @@ body.dragging{cursor:grabbing}
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  STATS & PERSISTENCE
-// ═══════════════════════════════════════════════════════
-const STATS_KEY = 'oldRocks_stats_v1';
+// ═══════════════════════════════════════════════════
+const STATS_KEY = 'oldRocks_stats_v2';
 const sessionStart = Date.now();
 
+function defaultStats() {
+  return {
+    totalSecondsPlayed:0, totalRocksSpawned:0, timesVisited:0,
+    zen:0, totalZenEarned:0, totalRocksSold:0, totalPacksSold:0,
+    totalRocksInAirSec:0, packsSoldThisCooldown:0, cooldownEndsAt:0,
+    bundles:{tiny:0,average:0,large:0},
+    powers:{spawnRate:0, bonusOffer:0, doubleSpawn:0},
+    bonusActive:false
+  };
+}
 function loadStats() {
   try {
     const r = localStorage.getItem(STATS_KEY);
-    return r ? JSON.parse(r) : defaultStats();
+    if (!r) return defaultStats();
+    const s = JSON.parse(r);
+    // Migrate — ensure doubleSpawn exists
+    if (!s.powers) s.powers = {spawnRate:0,bonusOffer:0,doubleSpawn:0};
+    if (s.powers.doubleSpawn === undefined) s.powers.doubleSpawn = 0;
+    if (!s.bundles) s.bundles = {tiny:0,average:0,large:0};
+    if (s.bonusActive === undefined) s.bonusActive = false;
+    return s;
   } catch { return defaultStats(); }
 }
-function defaultStats() {
-  return {
-    totalSecondsPlayed: 0,
-    totalRocksSpawned: 0,
-    timesVisited: 0,
-    zen: 0,
-    totalZenEarned: 0,
-    totalRocksSold: 0,
-    totalPacksSold: 0,
-    totalRocksInAirSec: 0,
-    packsSoldThisCooldown: 0,
-    cooldownEndsAt: 0,
-    bundles: { tiny: 0, average: 0, large: 0 },
-    powers: { spawnRate: 0, bonusOffer: 0 },
-    bonusActive: false
-  };
-}
-function saveStats() {
-  try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch {}
-}
+function saveStats() { try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch {} }
 
 const stats = loadStats();
-if (!stats.bundles) stats.bundles = { tiny: 0, average: 0, large: 0 };
-if (!stats.powers) stats.powers = { spawnRate: 0, bonusOffer: 0 };
-if (stats.bonusActive === undefined) stats.bonusActive = false;
 stats.timesVisited++;
 saveStats();
 
@@ -485,847 +464,425 @@ window.addEventListener('beforeunload', () => {
 
 function formatTime(s) {
   s = Math.floor(s);
-  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
-  if (h > 0) return `${h}h ${m}m ${sec}s`;
-  if (m > 0) return `${m}m ${sec}s`;
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  if (h>0) return `${h}h ${m}m ${sec}s`;
+  if (m>0) return `${m}m ${sec}s`;
   return `${sec}s`;
 }
 
-// ── Rocks-in-air tracker ────────────────────────────────
-let airTrackInterval = null;
-let currentlyDragging = false;
+let airTrackInterval=null, currentlyDragging=false;
 function startAirTracking() {
-  currentlyDragging = true;
+  currentlyDragging=true;
   if (airTrackInterval) return;
-  airTrackInterval = setInterval(() => {
-    if (currentlyDragging) {
-      stats.totalRocksInAirSec++;
-      if (stats.totalRocksInAirSec % 5 === 0) saveStats();
-    }
-  }, 1000);
+  airTrackInterval = setInterval(()=>{ if(currentlyDragging){stats.totalRocksInAirSec++; if(stats.totalRocksInAirSec%5===0)saveStats();} },1000);
 }
-function stopAirTracking() { currentlyDragging = false; }
+function stopAirTracking(){ currentlyDragging=false; }
 
-// ── Stats UI ────────────────────────────────────────────
 function openStats() {
   sfxPlay('openPanel');
-  const secs = Math.floor((Date.now() - sessionStart) / 1000);
-  document.getElementById('statTime').textContent    = formatTime(stats.totalSecondsPlayed + secs);
+  const secs = Math.floor((Date.now()-sessionStart)/1000);
+  document.getElementById('statTime').textContent    = formatTime(stats.totalSecondsPlayed+secs);
   document.getElementById('statSession').textContent = formatTime(secs);
   document.getElementById('statRocks').textContent   = stats.totalRocksSpawned.toLocaleString();
   document.getElementById('statVisits').textContent  = stats.timesVisited.toLocaleString();
-  document.getElementById('statZen').textContent     = stats.totalZenEarned.toLocaleString() + ' ✦';
+  document.getElementById('statZen').textContent     = stats.totalZenEarned.toLocaleString()+' ✦';
   document.getElementById('statSold').textContent    = stats.totalRocksSold.toLocaleString();
   document.getElementById('statPacks').textContent   = stats.totalPacksSold.toLocaleString();
   document.getElementById('statAir').textContent     = formatTime(stats.totalRocksInAirSec);
   document.getElementById('statsOverlay').classList.add('open');
 }
-function closeStats() {
-  sfxPlay('closePanel');
-  document.getElementById('statsOverlay').classList.remove('open');
-}
-function resetStats() {
-  sfxPlay('click');
-  document.getElementById('confirmOverlay').classList.add('open');
-}
-function confirmResetStats(yes) {
-  sfxPlay(yes ? 'reset' : 'click');
+function closeStats(){ sfxPlay('closePanel'); document.getElementById('statsOverlay').classList.remove('open'); }
+function resetStats(){ sfxPlay('click'); document.getElementById('confirmOverlay').classList.add('open'); }
+function confirmResetStats(yes){
+  sfxPlay(yes?'reset':'click');
   document.getElementById('confirmOverlay').classList.remove('open');
   if (!yes) return;
-  const fresh = defaultStats();
-  fresh.timesVisited = 1;
-  Object.assign(stats, fresh);
-  saveStats();
-  openStats();
+  const fresh=defaultStats(); fresh.timesVisited=1;
+  Object.assign(stats,fresh); saveStats(); openStats();
 }
 
-// ═══════════════════════════════════════════════════════
-//  POWERS SYSTEM
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  POWERS
+// ═══════════════════════════════════════════════════
 const POWER_DEFS = {
   spawnRate: {
-    maxLevel: 80, // 10s - 80*0.1 = 2s minimum
-    baseCost: 50,
-    costScale: 1.35,
+    maxLevel: 18, // 10 - 18*0.5 = 1s minimum
+    getCost: (lvl) => Math.round(50 * Math.pow(1.35, lvl)),
     getDesc: (lvl) => {
-      const interval = Math.max(2, 10 - lvl * 0.1);
-      return `Level ${lvl} — one rock every ${interval.toFixed(1)}s`;
-    },
-    getCost: (lvl) => Math.round(50 * Math.pow(1.35, lvl))
+      const secs = Math.max(1, 10 - lvl * 0.5);
+      return `Level ${lvl} — one rock every ${secs.toFixed(1)}s`;
+    }
   },
   bonusOffer: {
+    maxLevel: 19,
+    getCost: (lvl) => Math.round(80 * Math.pow(1.4, lvl)),
+    getDesc: (lvl) => `Level ${lvl} — ${lvl*5}% chance of bonus`
+  },
+  doubleSpawn: {
     maxLevel: 19, // 5% * 19 = 95% max
-    baseCost: 80,
-    costScale: 1.4,
-    getDesc: (lvl) => `Level ${lvl} — ${lvl * 5}% chance of 10% bonus`,
-    getCost: (lvl) => Math.round(80 * Math.pow(1.4, lvl))
+    getCost: (lvl) => Math.round(120 * Math.pow(1.45, lvl)),
+    getDesc: (lvl) => `Level ${lvl} — ${lvl*5}% chance of twin spawn`
   }
 };
 
-function openPowers() {
+function openPowers(){
   sfxPlay('openPanel');
   document.getElementById('powersZenVal').textContent = stats.zen.toLocaleString();
   refreshPowersUI();
   document.getElementById('powersOverlay').classList.add('open');
 }
-function closePowers() {
-  sfxPlay('closePanel');
-  document.getElementById('powersOverlay').classList.remove('open');
-}
+function closePowers(){ sfxPlay('closePanel'); document.getElementById('powersOverlay').classList.remove('open'); }
 
-function refreshPowersUI() {
+function refreshPowersUI(){
   document.getElementById('powersZenVal').textContent = stats.zen.toLocaleString();
-  ['spawnRate','bonusOffer'].forEach(key => {
-    const def = POWER_DEFS[key];
-    const lvl = stats.powers[key];
-    const cost = def.getCost(lvl);
-    const atMax = lvl >= def.maxLevel;
+  Object.keys(POWER_DEFS).forEach(key=>{
+    const def=POWER_DEFS[key], lvl=stats.powers[key], cost=def.getCost(lvl), atMax=lvl>=def.maxLevel;
     document.getElementById(`powerLevel_${key}`).textContent = def.getDesc(lvl);
-    document.getElementById(`powerCost_${key}`).textContent = atMax ? 'MAX' : `${cost.toLocaleString()} ✦`;
-    document.getElementById(`powerBtn_${key}`).disabled = atMax || stats.zen < cost;
-    const pct = Math.min(100, (lvl / def.maxLevel) * 100);
-    document.getElementById(`powerFill_${key}`).style.width = pct + '%';
+    document.getElementById(`powerCost_${key}`).textContent  = atMax ? 'MAX' : `${cost.toLocaleString()} 禅`;
+    document.getElementById(`powerBtn_${key}`).disabled      = atMax || stats.zen < cost;
+    document.getElementById(`powerFill_${key}`).style.width  = Math.min(100,(lvl/def.maxLevel)*100)+'%';
   });
 }
 
-function buyPower(key) {
+function buyPower(key){
   ensureAudio();
-  const def = POWER_DEFS[key];
-  const lvl = stats.powers[key];
-  if (lvl >= def.maxLevel) return;
-  const cost = def.getCost(lvl);
-  if (stats.zen < cost) return;
-  stats.zen -= cost;
-  stats.powers[key]++;
-  saveStats();
-  sfxPlay('sellRocks');
-  refreshPowersUI();
-  // Update spawn timer if needed
-  if (key === 'spawnRate') restartSpawnTimer();
+  const def=POWER_DEFS[key], lvl=stats.powers[key];
+  if (lvl>=def.maxLevel) return;
+  const cost=def.getCost(lvl);
+  if (stats.zen<cost) return;
+  stats.zen-=cost; stats.powers[key]++; saveStats();
+  sfxPlay('sellRocks'); refreshPowersUI();
+  if (key==='spawnRate') restartSpawnTimer();
 }
 
-function getSpawnInterval() {
-  return Math.max(2000, (10 - stats.powers.spawnRate * 0.1) * 1000);
-}
+function getSpawnInterval(){ return Math.max(1000,(10-stats.powers.spawnRate*0.5)*1000); }
 
-// ═══════════════════════════════════════════════════════
-//  BUNDLE SYSTEM
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  BUNDLES
+// ═══════════════════════════════════════════════════
 const BUNDLE_DEFS = {
-  tiny:    { label: 'Tiny Bundle',    rocks: 10,  zen: 50 },
-  average: { label: 'Average Bundle', rocks: 25,  zen: 150 },
-  large:   { label: 'Large Bundle',   rocks: 100, zen: 750 },
+  tiny:    {label:'小さな束', rocks:10,  zen:50},
+  average: {label:'普通の束', rocks:25,  zen:150},
+  large:   {label:'大きな束', rocks:100, zen:750},
 };
 
-function openBundleCreate() {
+function openBundleCreate(){
   sfxPlay('openPanel');
-  document.getElementById('bundleRocksAvail').textContent =
-    `${rocks.length} rock${rocks.length !== 1 ? 's' : ''} available on screen`;
-  ['tiny','average','large'].forEach(type => {
-    const def = BUNDLE_DEFS[type];
-    const id = type === 'tiny' ? 'bundleBtn10' : type === 'average' ? 'bundleBtn25' : 'bundleBtn100';
-    const optId = type === 'tiny' ? 'bundleOpt10' : type === 'average' ? 'bundleOpt25' : 'bundleOpt100';
-    const enough = rocks.length >= def.rocks;
-    document.getElementById(id).disabled = !enough;
-    const opt = document.getElementById(optId);
-    opt.classList.toggle('bundle-option-disabled', !enough);
+  document.getElementById('bundleRocksAvail').textContent = `${rocks.length} rock${rocks.length!==1?'s':''} available on screen`;
+  ['tiny','average','large'].forEach(type=>{
+    const def=BUNDLE_DEFS[type];
+    const btnId = type==='tiny'?'bundleBtn10':type==='average'?'bundleBtn25':'bundleBtn100';
+    const optId = type==='tiny'?'bundleOpt10':type==='average'?'bundleOpt25':'bundleOpt100';
+    const enough = rocks.length>=def.rocks;
+    document.getElementById(btnId).disabled=!enough;
+    document.getElementById(optId).classList.toggle('bundle-option-disabled',!enough);
   });
   document.getElementById('bundleOverlay').classList.add('open');
 }
-function closeBundleCreate() {
-  sfxPlay('closePanel');
-  document.getElementById('bundleOverlay').classList.remove('open');
-}
-function createBundle(type) {
-  const def = BUNDLE_DEFS[type];
-  if (rocks.length < def.rocks) return;
-  ensureAudio();
-  sfxPlay('bundleCreate');
-  for (let i = 0; i < def.rocks; i++) {
-    const r = rocks.pop();
-    World.remove(world, r.body);
-  }
-  stats.bundles[type]++;
-  updateCount();
-  saveStats();
-  openBundleCreate();
+function closeBundleCreate(){ sfxPlay('closePanel'); document.getElementById('bundleOverlay').classList.remove('open'); }
+function createBundle(type){
+  const def=BUNDLE_DEFS[type];
+  if (rocks.length<def.rocks) return;
+  ensureAudio(); sfxPlay('bundleCreate');
+  for(let i=0;i<def.rocks;i++){ const r=rocks.pop(); World.remove(world,r.body); }
+  stats.bundles[type]++; updateCount(); saveStats(); openBundleCreate();
 }
 
-function renderBundleSlots() {
-  const el = document.getElementById('bundleSlots');
-  el.innerHTML = '';
-  let anyBundles = false;
-  ['tiny','average','large'].forEach(type => {
-    const def = BUNDLE_DEFS[type];
-    const count = stats.bundles[type] || 0;
-    if (count > 0) anyBundles = true;
-    const onCooldown = Date.now() < stats.cooldownEndsAt;
-    const slot = document.createElement('div');
-    slot.className = 'bundle-slot';
-    slot.innerHTML = `
-      <div>
-        <div class="bundle-slot-name">${def.label}</div>
-        <div class="bundle-slot-count">${count} bundle${count !== 1 ? 's' : ''} · ${def.zen} ✦ each</div>
-      </div>
-      <button class="bundle-slot-sell" onclick="sellBundle('${type}')" ${(count === 0 || onCooldown) ? 'disabled' : ''}>
-        Sell 1
-      </button>
-    `;
+function renderBundleSlots(){
+  const el=document.getElementById('bundleSlots'); el.innerHTML=''; let any=false;
+  ['tiny','average','large'].forEach(type=>{
+    const def=BUNDLE_DEFS[type], count=stats.bundles[type]||0;
+    if(count>0) any=true;
+    const onCooldown=Date.now()<stats.cooldownEndsAt;
+    const slot=document.createElement('div'); slot.className='bundle-slot';
+    slot.innerHTML=`<div><div class="bundle-slot-name">${def.label}</div><div class="bundle-slot-count">${count} 束 · ${def.zen} 禅 / 個</div></div><button class="bundle-slot-sell" onclick="sellBundle('${type}')" ${(count===0||onCooldown)?'disabled':''}>Sell 1</button>`;
     el.appendChild(slot);
   });
-  if (!anyBundles) {
-    const empty = document.createElement('div');
-    empty.className = 'bundle-slot-empty';
-    empty.textContent = 'No bundles yet — bundle your rocks first';
-    el.appendChild(empty);
-  }
+  if(!any){ const e=document.createElement('div'); e.className='bundle-slot-empty'; e.textContent='No bundles yet — create one first'; el.appendChild(e); }
 }
 
-function sellBundle(type) {
+function sellBundle(type){
   ensureAudio();
-  if (Date.now() < stats.cooldownEndsAt) {
-    sfxPlay('click');
-    typeText(randLine(OLD_MAN_LINES.cooldown));
-    return;
-  }
-  if (!stats.bundles[type] || stats.bundles[type] < 1) return;
-
-  const def = BUNDLE_DEFS[type];
-  stats.bundles[type]--;
-
-  // Check bonus offer
-  const bonusChance = stats.powers.bonusOffer * 0.05;
-  const bonusActive = stats.bonusActive || Math.random() < bonusChance;
-  const zenEarned = bonusActive ? Math.round(def.zen * 1.1) : def.zen;
-
-  stats.zen += zenEarned;
-  stats.totalZenEarned += zenEarned;
-  stats.totalRocksSold += def.rocks;
-  stats.totalPacksSold += 1;
-  stats.packsSoldThisCooldown += 1;
-
-  // Reset bonus, then possibly set next one
-  stats.bonusActive = Math.random() < (stats.powers.bonusOffer * 0.05);
-
-  updateZenDisplay();
-  saveStats();
-  sfxPlay('sellRocks');
-
-  // Update bonus indicator
-  document.getElementById('bonusIndicator').style.display = stats.bonusActive ? 'block' : 'none';
-
-  const lines = type === 'tiny' ? OLD_MAN_LINES.buyTiny
-              : type === 'average' ? OLD_MAN_LINES.buyAverage
-              : OLD_MAN_LINES.buyLarge;
-  let line = randLine(lines);
-  if (bonusActive) line = line.replace(/(\d+) ✦/, (m, n) => `${Math.round(n * 1.1)} ✦`);
+  if(Date.now()<stats.cooldownEndsAt){ sfxPlay('click'); typeText(randLine(OLD_MAN_LINES.cooldown)); return; }
+  if(!stats.bundles[type]||stats.bundles[type]<1) return;
+  const def=BUNDLE_DEFS[type]; stats.bundles[type]--;
+  const bonusChance=stats.powers.bonusOffer*0.05;
+  const bonusActive=stats.bonusActive||Math.random()<bonusChance;
+  const zenEarned=bonusActive?Math.round(def.zen*2):def.zen;
+  stats.zen+=zenEarned; stats.totalZenEarned+=zenEarned;
+  stats.totalRocksSold+=def.rocks; stats.totalPacksSold+=1;
+  stats.packsSoldThisCooldown+=1;
+  stats.bonusActive=Math.random()<(stats.powers.bonusOffer*0.05);
+  updateZenDisplay(); saveStats(); sfxPlay('sellRocks');
+  document.getElementById('bonusIndicator').style.display=stats.bonusActive?'block':'none';
+  const lines=type==='tiny'?OLD_MAN_LINES.buyTiny:type==='average'?OLD_MAN_LINES.buyAverage:OLD_MAN_LINES.buyLarge;
+  let line=randLine(lines);
+  if(bonusActive) line=line.replace(/(\d+) 禅/,(m,n)=>`${Math.round(n*2)} 禅`);
   typeText(line);
-
-  if (stats.packsSoldThisCooldown >= PACKS_BEFORE_COOLDOWN) {
-    stats.cooldownEndsAt = Date.now() + COOLDOWN_MS;
-    setTimeout(() => {
-      typeText(randLine(OLD_MAN_LINES.cooldown));
-      refreshShopState();
-    }, 2400);
+  if(stats.packsSoldThisCooldown>=PACKS_BEFORE_COOLDOWN){
+    stats.cooldownEndsAt=Date.now()+COOLDOWN_MS;
+    setTimeout(()=>{ typeText(randLine(OLD_MAN_LINES.cooldown)); refreshShopState(); },2400);
   }
-  saveStats();
-  renderBundleSlots();
-  if (document.getElementById('powersOverlay').classList.contains('open')) refreshPowersUI();
+  saveStats(); renderBundleSlots();
+  if(document.getElementById('powersOverlay').classList.contains('open')) refreshPowersUI();
 }
 
-// ═══════════════════════════════════════════════════════
-//  SHOP — OLD MAN LINES
-// ═══════════════════════════════════════════════════════
-const COOLDOWN_MS = 2 * 60 * 1000;
+// ═══════════════════════════════════════════════════
+//  OLD MAN DIALOGUE
+// ═══════════════════════════════════════════════════
+const COOLDOWN_MS = 2*60*1000;
 const PACKS_BEFORE_COOLDOWN = 3;
-
-let typeTimer = null;
-let shopOpen = false;
-let cooldownInterval = null;
+let typeTimer=null, shopOpen=false, cooldownInterval=null;
 
 const OLD_MAN_LINES = {
-  greet: [
+  greet:[
     "はい、いらっしゃい… Ah, you have come. I have been watching the stones fall.",
     "Sixty years I have traded at this stall. The stones bring me the same peace every time.",
     "The earth gives slowly, does it not? But it gives honestly.",
     "You carry the smell of the mountain on you. Sit. Let us speak of stones.",
     "My father taught me: a good stone asks nothing of you. It only waits.",
     "I see you have been collecting. This pleases the old man greatly.",
-    "The mist was heavy this morning. Good days for stones — the damp brings them out.",
+    "The mist was heavy this morning. Good days for stones.",
     "In my village we said: the patient man outlasts the mountain. Have you been patient?",
     "These hands have held ten thousand stones. Each one different. Each one honest.",
     "Welcome back, friend. The stall is open, the tea is cold, and the stones are plenty.",
-    "Ah — another collector. The rarest kind of person.",
-    "I do not hurry. The stones teach you that.",
-    "Some come to buy. Most come to sell. A few come simply to talk about stones. You, I think, understand all three.",
-    "The young men walk past without looking down. They miss so much.",
-    "Every morning I bow to the stones before I open the stall. Old habit. Good habit.",
-    "Today the wind carries something interesting from the north. Sit.",
-    "You remind me of a young merchant I knew, fifty years ago. Sharp eyes. Good instincts. He became very wise.",
+    "Ah — また来たか。石を集める人は、珍しい人だ。",
+    "石は急がない。あなたも急がなくていい。",
+    "今日の風は北から何かを運んでくる。座りなさい。",
   ],
-  buyTiny: [
-    "Ten stones. A small offering, but the earth does not measure in quantity. 50 ✦.",
-    "Hmm. Modest, but honest. Here — 50 ✦ for your trouble.",
-    "These will find their place in good hands. 50 ✦, as agreed.",
-    "A fine ten. I see river clay on a few of these. 50 ✦.",
-    "Not every stone needs to be enormous. The small ones have character. 50 ✦.",
-    "Smallest bundle, but a bundle still. That is what matters. 50 ✦.",
-    "These remind me of stones from the northern cliffs. 50 ✦, friend.",
-    "Ten stones lighter, 50 ✦ heavier. A fair trade.",
-    "Good. Come back soon. 50 ✦.",
-    "I'll keep one of these for myself, I think. 50 ✦.",
+  buyTiny:[
+    "十個の石。小さな供物だが、大地は量で計らない。50 禅。",
+    "Hmm. Modest, but honest. Here — 50 禅 for your trouble.",
+    "These will find their place in good hands. 50 禅, as agreed.",
+    "A fine ten. I see river clay on a few of these. 50 禅。",
+    "小さくても、束は束だ。それが大事。50 禅。",
+    "Ten stones lighter, 50 禅 heavier. A fair trade.",
+    "良い取引だ。また来てください。50 禅。",
   ],
-  buyAverage: [
-    "二十五. Twenty-five! You have been patient. The earth rewards patience. 150 ✦.",
-    "A proper bundle. I can feel the variety in these. 150 ✦.",
-    "This is the kind of trade I remember fondly. 150 ✦, friend.",
-    "Twenty-five — a number I respect. Not greedy, not shy. 150 ✦.",
-    "Hmm, yes. Good weight, good variety. My favorite kind. 150 ✦.",
-    "These will sell well at the eastern market. 150 ✦ — and thank you.",
-    "My cart will sit lower on the path home tonight. 150 ✦.",
-    "The old man nods slowly. A fine average bundle. 150 ✦.",
-    "Stacked carefully, I would wager. I can tell. 150 ✦, as promised.",
-    "I have been hoping someone would bring a bundle like this. 150 ✦.",
+  buyAverage:[
+    "二十五。You have been patient. The earth rewards patience. 150 禅。",
+    "A proper bundle. I can feel the variety in these. 150 禅。",
+    "Twenty-five — a number I respect. Not greedy, not shy. 150 禅。",
+    "この束は好きだ。重さが均等で、種類も豊か。150 禅。",
+    "My cart will sit lower on the path home tonight. 150 禅。",
+    "Stacked carefully, I would wager. I can tell. 150 禅、約束通り。",
   ],
-  buyLarge: [
-    "…百. One hundred. I have not seen a collection like this in many seasons.",
-    "You carry the patience of a monk. 750 ✦ — hard earned, truly.",
-    "The stall practically glows with these. 750 ✦. A moment I shall remember.",
-    "One hundred stones. The mountain bows to you. 750 ✦.",
-    "This… I will need to reorganize the whole cart. 750 ✦.",
-    "I will be speaking of this bundle for weeks. 750 ✦, my friend.",
-    "There are stones here I have never seen this far south. Extraordinary. 750 ✦.",
-    "My hands shake a little — not from age. From admiration. 750 ✦.",
-    "The old man goes quiet for a long moment, then bows deeply. 750 ✦.",
-    "You understand what most never do — collecting is a discipline. 750 ✦.",
-    "In sixty years of trading, few bundles have moved me as this does. 750 ✦.",
+  buyLarge:[
+    "…百。一百個。I have not seen a collection like this in many seasons.",
+    "You carry the patience of a monk. 750 禅 — hard earned, truly.",
+    "The stall practically glows with these. 750 禅. A moment I shall remember.",
+    "百個の石。山があなたに頭を下げる。750 禅。",
+    "In sixty years of trading, few bundles have moved me as this does. 750 禅。",
+    "老人は長い沈黙の後、深くお辞儀をする。750 禅。",
   ],
-  cooldown: [
-    "These old legs need rest. Come back in a little while, yes?",
+  cooldown:[
+    "この老いた足は休みが必要だ。少し待ってください。",
     "My cart is full for now. Give me a moment to sort these.",
     "Ha… you are eager. Wait just a bit — I will be ready soon.",
-    "Even stones need time to settle. So do old traders.",
-    "My back speaks louder than my wallet right now. Just a moment.",
+    "石でさえ、落ち着くのに時間がかかる。老いた商人も同じだ。",
     "Rest is part of the work, friend. I will be with you shortly.",
-    "These old fingers need a moment. Pour yourself some tea.",
-    "Even the river pauses before the sea. Wait just a little.",
-    "Give me time to breathe. The trade will keep.",
-    "Not gone — just resting. There is a difference.",
+    "この老いた指に少し時間を。お茶でも飲んでください。",
+    "川も海の前で一度止まる。少し待ちなさい。",
   ],
-  cooldownDone: [
+  cooldownDone:[
     "Ah, you are back! Rested and ready. What will you sell today?",
     "Good timing. I have sorted the last batch — show me what you have.",
-    "The morning is fresh. Come, let us trade.",
-    "I feel like a new man. Well — an old new man. What have you got?",
-    "The cart is emptied and my hands are ready. Welcome back.",
-    "Ready! Had a little tea. Sorted some stones. All good now.",
+    "気分がいい。新しい束を見せてください。",
     "Back in business, friend. What did you bring me this time?",
-    "Rested, refreshed, ready. The old man is back. Let us see those bundles.",
-    "The break did me good. Eyes sharper, back straighter. Relatively. What do you have?",
+    "休憩が良かった。目が鋭く、背筋が伸びた。相対的に。何を持ってきたのですか？",
   ],
 };
 
-function randLine(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randLine(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
-let typingAbort = false;
-function typeText(text, onDone) {
-  typingAbort = true;
-  clearTimeout(typeTimer);
-  const el = document.getElementById('bubbleText');
-  const cursor = document.getElementById('typeCursor');
-  const svgEl = document.getElementById('oldManSvg');
-  el.textContent = '';
-  cursor.style.display = 'inline-block';
-  svgEl.classList.remove('sway-left','sway-right');
-  svgEl.classList.add('talking');
-
-  setTimeout(() => {
-    typingAbort = false;
-    let i = 0;
-    function step() {
-      if (typingAbort) return;
-      if (i < text.length) {
-        el.textContent += text[i++];
-        if (i % 3 === 0 && audioCtx) sfxPlay('typeClick');
-        typeTimer = setTimeout(step, 22 + Math.random() * 14);
-      } else {
-        cursor.style.display = 'none';
-        svgEl.classList.remove('talking');
-        svgEl.classList.add(Math.random() > 0.5 ? 'sway-left' : 'sway-right');
-        setTimeout(() => svgEl.classList.remove('sway-left','sway-right'), 700);
-        if (onDone) onDone();
-      }
+let typingAbort=false;
+function typeText(text,onDone){
+  typingAbort=true; clearTimeout(typeTimer);
+  const el=document.getElementById('bubbleText'), cursor=document.getElementById('typeCursor'), svgEl=document.getElementById('oldManSvg');
+  el.textContent=''; cursor.style.display='inline-block';
+  svgEl.classList.remove('sway-left','sway-right'); svgEl.classList.add('talking');
+  setTimeout(()=>{
+    typingAbort=false; let i=0;
+    function step(){
+      if(typingAbort) return;
+      if(i<text.length){ el.textContent+=text[i++]; if(i%3===0&&audioCtx)sfxPlay('typeClick'); typeTimer=setTimeout(step,22+Math.random()*14); }
+      else{ cursor.style.display='none'; svgEl.classList.remove('talking'); svgEl.classList.add(Math.random()>.5?'sway-left':'sway-right'); setTimeout(()=>svgEl.classList.remove('sway-left','sway-right'),700); if(onDone)onDone(); }
     }
     step();
-  }, 60);
+  },60);
 }
 
-function openSell() {
-  sfxPlay('openPanel');
-  shopOpen = true;
+function openSell(){
+  sfxPlay('openPanel'); shopOpen=true;
   document.getElementById('shopOverlay').classList.add('open');
-  updateZenDisplay();
-  renderBundleSlots();
-  // Show bonus indicator if active
-  document.getElementById('bonusIndicator').style.display = stats.bonusActive ? 'block' : 'none';
-  const wasOnCooldown = Date.now() < stats.cooldownEndsAt;
+  updateZenDisplay(); renderBundleSlots();
+  document.getElementById('bonusIndicator').style.display=stats.bonusActive?'block':'none';
+  const wasOnCooldown=Date.now()<stats.cooldownEndsAt;
   refreshShopState();
-  if (wasOnCooldown) {
-    typeText(randLine(OLD_MAN_LINES.cooldown));
-  } else if (stats.packsSoldThisCooldown === 0 && stats.totalPacksSold > 0) {
-    typeText(randLine(OLD_MAN_LINES.cooldownDone));
-  } else {
-    typeText(randLine(OLD_MAN_LINES.greet));
-  }
+  if(wasOnCooldown) typeText(randLine(OLD_MAN_LINES.cooldown));
+  else if(stats.packsSoldThisCooldown===0&&stats.totalPacksSold>0) typeText(randLine(OLD_MAN_LINES.cooldownDone));
+  else typeText(randLine(OLD_MAN_LINES.greet));
 }
-
-function closeShop() {
-  sfxPlay('closePanel');
-  shopOpen = false;
+function closeShop(){
+  sfxPlay('closePanel'); shopOpen=false;
   document.getElementById('shopOverlay').classList.remove('open');
-  if (cooldownInterval) { clearInterval(cooldownInterval); cooldownInterval = null; }
-  const svgEl = document.getElementById('oldManSvg');
+  if(cooldownInterval){ clearInterval(cooldownInterval); cooldownInterval=null; }
+  const svgEl=document.getElementById('oldManSvg');
   svgEl.classList.remove('talking','sway-left','sway-right');
 }
-
-function updateZenDisplay() {
-  document.getElementById('zenVal').textContent = stats.zen.toLocaleString();
-}
-
-function refreshShopState() {
-  const onCooldown = Date.now() < stats.cooldownEndsAt;
-  const cdWrap = document.getElementById('cooldownWrap');
-  if (onCooldown) {
-    cdWrap.style.display = 'flex';
-    startCooldownBar();
-  } else {
-    cdWrap.style.display = 'none';
-    if (cooldownInterval) { clearInterval(cooldownInterval); cooldownInterval = null; }
-  }
+function updateZenDisplay(){ document.getElementById('zenVal').textContent=stats.zen.toLocaleString(); }
+function refreshShopState(){
+  const onCooldown=Date.now()<stats.cooldownEndsAt;
+  const cdWrap=document.getElementById('cooldownWrap');
+  if(onCooldown){ cdWrap.style.display='flex'; startCooldownBar(); }
+  else{ cdWrap.style.display='none'; if(cooldownInterval){clearInterval(cooldownInterval);cooldownInterval=null;} }
   renderBundleSlots();
 }
-
-function startCooldownBar() {
-  if (cooldownInterval) clearInterval(cooldownInterval);
-  cooldownInterval = setInterval(() => {
-    const now = Date.now();
-    const remaining = Math.max(0, stats.cooldownEndsAt - now);
-    const pct = ((COOLDOWN_MS - remaining) / COOLDOWN_MS) * 100;
-    document.getElementById('cooldownFill').style.width = pct + '%';
-    const sec = Math.ceil(remaining / 1000);
-    const m = Math.floor(sec / 60), s = sec % 60;
-    document.getElementById('cooldownTime').textContent =
-      `(${m}:${s.toString().padStart(2,'0')} remaining)`;
-    if (remaining <= 0) {
-      clearInterval(cooldownInterval);
-      cooldownInterval = null;
-      stats.packsSoldThisCooldown = 0;
-      saveStats();
-      refreshShopState();
-      typeText(randLine(OLD_MAN_LINES.cooldownDone));
+function startCooldownBar(){
+  if(cooldownInterval) clearInterval(cooldownInterval);
+  cooldownInterval=setInterval(()=>{
+    const now=Date.now(), remaining=Math.max(0,stats.cooldownEndsAt-now);
+    const pct=((COOLDOWN_MS-remaining)/COOLDOWN_MS)*100;
+    document.getElementById('cooldownFill').style.width=pct+'%';
+    const sec=Math.ceil(remaining/1000), m=Math.floor(sec/60), s=sec%60;
+    document.getElementById('cooldownTime').textContent=`(${m}:${s.toString().padStart(2,'0')} remaining)`;
+    if(remaining<=0){
+      clearInterval(cooldownInterval); cooldownInterval=null;
+      stats.packsSoldThisCooldown=0; saveStats();
+      refreshShopState(); typeText(randLine(OLD_MAN_LINES.cooldownDone));
     }
-  }, 500);
+  },500);
 }
 
-// ═══════════════════════════════════════════════════════
-//  AUTO-SPAWN SYSTEM
-// ═══════════════════════════════════════════════════════
-const MAX_ROCKS = 100;
-let spawnTimer = null;
-let spawnLastTime = Date.now();
-let spawnProgressInterval = null;
+// ═══════════════════════════════════════════════════
+//  AUTO-SPAWN
+// ═══════════════════════════════════════════════════
+const MAX_ROCKS=100;
+let spawnTimer=null, spawnLastTime=Date.now(), spawnProgressInterval=null;
 
-function restartSpawnTimer() {
-  if (spawnTimer) clearTimeout(spawnTimer);
-  if (spawnProgressInterval) clearInterval(spawnProgressInterval);
-  spawnLastTime = Date.now();
-  const interval = getSpawnInterval();
-  scheduleNextSpawn(interval);
-  startSpawnProgress(interval);
+function restartSpawnTimer(){
+  if(spawnTimer) clearTimeout(spawnTimer);
+  if(spawnProgressInterval) clearInterval(spawnProgressInterval);
+  spawnLastTime=Date.now();
+  const interval=getSpawnInterval();
+  scheduleNextSpawn(interval); startSpawnProgress(interval);
+}
+function scheduleNextSpawn(interval){
+  spawnTimer=setTimeout(()=>{
+    if(rocks.length<MAX_ROCKS) spawnRockAuto();
+    const next=getSpawnInterval(); spawnLastTime=Date.now();
+    scheduleNextSpawn(next); startSpawnProgress(next);
+  },interval);
+}
+function startSpawnProgress(interval){
+  if(spawnProgressInterval) clearInterval(spawnProgressInterval);
+  const fill=document.getElementById('spawnFill');
+  spawnProgressInterval=setInterval(()=>{
+    const elapsed=Date.now()-spawnLastTime, pct=Math.min(100,(elapsed/interval)*100);
+    fill.style.width=pct+'%';
+    if(pct>=100){ clearInterval(spawnProgressInterval); spawnProgressInterval=null; }
+  },80);
 }
 
-function scheduleNextSpawn(interval) {
-  spawnTimer = setTimeout(() => {
-    if (rocks.length < MAX_ROCKS) {
-      spawnRockAuto();
-    }
-    const nextInterval = getSpawnInterval();
-    spawnLastTime = Date.now();
-    scheduleNextSpawn(nextInterval);
-    startSpawnProgress(nextInterval);
-  }, interval);
+// ═══════════════════════════════════════════════════
+//  AUDIO
+// ═══════════════════════════════════════════════════
+let audioCtx=null,masterGain=null,musicGain=null,sfxGain=null,musicNodes=[],currentVol=0.35;
+
+function ensureAudio(){
+  if(audioCtx){ if(audioCtx.state==='suspended')audioCtx.resume(); return; }
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  masterGain=audioCtx.createGain(); masterGain.gain.value=currentVol; masterGain.connect(audioCtx.destination);
+  musicGain=audioCtx.createGain(); musicGain.gain.value=0.52; musicGain.connect(masterGain);
+  sfxGain=audioCtx.createGain(); sfxGain.gain.value=1.0; sfxGain.connect(masterGain);
 }
-
-function startSpawnProgress(interval) {
-  if (spawnProgressInterval) clearInterval(spawnProgressInterval);
-  const fill = document.getElementById('spawnFill');
-  spawnProgressInterval = setInterval(() => {
-    const elapsed = Date.now() - spawnLastTime;
-    const pct = Math.min(100, (elapsed / interval) * 100);
-    fill.style.width = pct + '%';
-    if (pct >= 100) {
-      clearInterval(spawnProgressInterval);
-      spawnProgressInterval = null;
-    }
-  }, 80);
+function setVolume(v){
+  currentVol=parseFloat(v);
+  document.getElementById('volPct').textContent=Math.round(v*100)+'%';
+  if(masterGain) masterGain.gain.setTargetAtTime(currentVol,audioCtx.currentTime,0.05);
 }
-
-// ═══════════════════════════════════════════════════════
-//  AUDIO ENGINE
-// ═══════════════════════════════════════════════════════
-let audioCtx = null;
-let masterGain = null;
-let musicGain  = null;
-let sfxGain    = null;
-let musicNodes = [];
-let currentVol = 0.35;
-
-function ensureAudio() {
-  if (audioCtx) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    return;
-  }
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = currentVol;
-  masterGain.connect(audioCtx.destination);
-  musicGain = audioCtx.createGain();
-  musicGain.gain.value = 0.52;
-  musicGain.connect(masterGain);
-  sfxGain = audioCtx.createGain();
-  sfxGain.gain.value = 1.0;
-  sfxGain.connect(masterGain);
+let musicStarted=false;
+function tryStartMusic(){
+  if(musicStarted)return; musicStarted=true; ensureAudio(); startMusic();
+  document.removeEventListener('pointerdown',tryStartMusic); document.removeEventListener('keydown',tryStartMusic);
 }
+document.addEventListener('pointerdown',tryStartMusic); document.addEventListener('keydown',tryStartMusic);
+const PENTA=[220,261.63,293.66,329.63,392,440,523.25,587.33,659.26,784];
 
-function setVolume(v) {
-  currentVol = parseFloat(v);
-  document.getElementById('volPct').textContent = Math.round(v * 100) + '%';
-  if (masterGain) masterGain.gain.setTargetAtTime(currentVol, audioCtx.currentTime, 0.05);
+function makeReverb(ctx,dur=2.8,decay=2.1){
+  const len=ctx.sampleRate*dur,buf=ctx.createBuffer(2,len,ctx.sampleRate);
+  for(let c=0;c<2;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}
+  const conv=ctx.createConvolver(); conv.buffer=buf; return conv;
 }
-
-let musicStarted = false;
-function tryStartMusic() {
-  if (musicStarted) return;
-  musicStarted = true;
-  ensureAudio();
-  startMusic();
-  document.removeEventListener('pointerdown', tryStartMusic);
-  document.removeEventListener('keydown', tryStartMusic);
+function startMusic(){
+  const reverb=makeReverb(audioCtx); reverb.connect(musicGain);
+  const dryG=audioCtx.createGain(); dryG.gain.value=0.38; dryG.connect(musicGain);
+  const wetG=audioCtx.createGain(); wetG.gain.value=0.62; wetG.connect(reverb);
+  function drone(freq,vol=0.032){const o1=audioCtx.createOscillator(),o2=audioCtx.createOscillator();o1.type='sine';o2.type='sine';o1.frequency.value=freq;o2.frequency.value=freq*1.004;const g=audioCtx.createGain();g.gain.value=vol;o1.connect(g);o2.connect(g);g.connect(wetG);g.connect(dryG);o1.start();o2.start();musicNodes.push(o1,o2,g);}
+  drone(110,0.032);drone(165,0.022);drone(220,0.015);
+  const melody=[0,2,4,6,4,2,0,1,3,5,3,1,0,4,6,4,2,5,3,1];let step=0;
+  function pluck(){const now=audioCtx.currentTime,freq=PENTA[melody[step%melody.length]];step++;const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.setValueAtTime(freq,now);osc.frequency.exponentialRampToValueAtTime(freq*0.994,now+0.35);const env=audioCtx.createGain();env.gain.setValueAtTime(0,now);env.gain.linearRampToValueAtTime(0.075,now+0.04);env.gain.exponentialRampToValueAtTime(0.001,now+1.5);osc.connect(env);env.connect(wetG);env.connect(dryG);osc.start(now);osc.stop(now+1.6);const t=setTimeout(pluck,1300+Math.random()*1100);musicNodes.push({stop:()=>clearTimeout(t)});}
+  function breathe(){const now=audioCtx.currentTime,osc=audioCtx.createOscillator();osc.type='triangle';osc.frequency.value=108+Math.random()*24;const env=audioCtx.createGain();env.gain.setValueAtTime(0,now);env.gain.linearRampToValueAtTime(0.028,now+2.2);env.gain.linearRampToValueAtTime(0,now+5.5);osc.connect(env);env.connect(wetG);osc.start();osc.stop(now+6);musicNodes.push(osc);const t=setTimeout(breathe,4500+Math.random()*2500);musicNodes.push({stop:()=>clearTimeout(t)});}
+  pluck();breathe();musicNodes.push(reverb,dryG,wetG);
 }
-document.addEventListener('pointerdown', tryStartMusic);
-document.addEventListener('keydown', tryStartMusic);
+function makeNoiseBuffer(ctx,dur){const len=Math.floor(ctx.sampleRate*dur),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;return buf;}
 
-const PENTA = [220, 261.63, 293.66, 329.63, 392, 440, 523.25, 587.33, 659.26, 784];
-
-function makeReverb(ctx, dur = 2.8, decay = 2.1) {
-  const len = ctx.sampleRate * dur;
-  const buf = ctx.createBuffer(2, len, ctx.sampleRate);
-  for (let c = 0; c < 2; c++) {
-    const d = buf.getChannelData(c);
-    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
-  }
-  const conv = ctx.createConvolver();
-  conv.buffer = buf;
-  return conv;
-}
-
-function startMusic() {
-  const reverb = makeReverb(audioCtx);
-  reverb.connect(musicGain);
-  const dryG = audioCtx.createGain(); dryG.gain.value = 0.38; dryG.connect(musicGain);
-  const wetG = audioCtx.createGain(); wetG.gain.value = 0.62; wetG.connect(reverb);
-
-  function drone(freq, vol = 0.032) {
-    const o1 = audioCtx.createOscillator(), o2 = audioCtx.createOscillator();
-    o1.type = 'sine'; o2.type = 'sine';
-    o1.frequency.value = freq; o2.frequency.value = freq * 1.004;
-    const g = audioCtx.createGain(); g.gain.value = vol;
-    o1.connect(g); o2.connect(g);
-    g.connect(wetG); g.connect(dryG);
-    o1.start(); o2.start();
-    musicNodes.push(o1, o2, g);
-  }
-  drone(110, 0.032); drone(165, 0.022); drone(220, 0.015);
-
-  const melody = [0,2,4,6,4,2,0,1,3,5,3,1,0,4,6,4,2,5,3,1];
-  let step = 0;
-  function pluck() {
-    const now = audioCtx.currentTime;
-    const freq = PENTA[melody[step % melody.length]]; step++;
-    const osc = audioCtx.createOscillator(); osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, now);
-    osc.frequency.exponentialRampToValueAtTime(freq * 0.994, now + 0.35);
-    const env = audioCtx.createGain();
-    env.gain.setValueAtTime(0, now);
-    env.gain.linearRampToValueAtTime(0.075, now + 0.04);
-    env.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
-    osc.connect(env); env.connect(wetG); env.connect(dryG);
-    osc.start(now); osc.stop(now + 1.6);
-    const wait = 1300 + Math.random() * 1100;
-    const t = setTimeout(pluck, wait);
-    musicNodes.push({ stop: () => clearTimeout(t) });
-  }
-  function breathe() {
-    const now = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator(); osc.type = 'triangle';
-    osc.frequency.value = 108 + Math.random() * 24;
-    const env = audioCtx.createGain();
-    env.gain.setValueAtTime(0, now);
-    env.gain.linearRampToValueAtTime(0.028, now + 2.2);
-    env.gain.linearRampToValueAtTime(0, now + 5.5);
-    osc.connect(env); env.connect(wetG);
-    osc.start(); osc.stop(now + 6);
-    musicNodes.push(osc);
-    const t = setTimeout(breathe, 4500 + Math.random() * 2500);
-    musicNodes.push({ stop: () => clearTimeout(t) });
-  }
-  pluck(); breathe();
-  musicNodes.push(reverb, dryG, wetG);
-}
-
-function makeNoiseBuffer(ctx, durationSec) {
-  const len = Math.floor(ctx.sampleRate * durationSec);
-  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-  return buf;
-}
-
-function sfxPlay(type) {
-  if (!audioCtx) return;
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  const now = audioCtx.currentTime;
-
-  switch (type) {
-    case 'spawn': {
-      const nb = makeNoiseBuffer(audioCtx, 0.04);
-      const src = audioCtx.createBufferSource(); src.buffer = nb;
-      const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass';
-      bp.frequency.value = 4200; bp.Q.value = 2;
-      const lp = audioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 6000;
-      const gE = audioCtx.createGain();
-      gE.gain.setValueAtTime(0.38, now);
-      gE.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-      src.connect(bp); bp.connect(lp); lp.connect(gE); gE.connect(sfxGain);
-      src.start(now);
-      const osc = audioCtx.createOscillator(); osc.type = 'sine';
-      osc.frequency.setValueAtTime(160, now);
-      osc.frequency.exponentialRampToValueAtTime(80, now + 0.06);
-      const env2 = audioCtx.createGain();
-      env2.gain.setValueAtTime(0.12, now);
-      env2.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
-      osc.connect(env2); env2.connect(sfxGain);
-      osc.start(now); osc.stop(now + 0.08);
-      break;
-    }
-    case 'grab': {
-      [2200, 4500].forEach((freq, idx) => {
-        const dur = 0.06 + idx * 0.02;
-        const nb = makeNoiseBuffer(audioCtx, dur);
-        const src = audioCtx.createBufferSource(); src.buffer = nb;
-        const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass';
-        bp.frequency.value = freq; bp.Q.value = 1.8;
-        const gE = audioCtx.createGain();
-        gE.gain.setValueAtTime(0.3 - idx * 0.08, now + idx * 0.01);
-        gE.gain.exponentialRampToValueAtTime(0.001, now + dur + idx * 0.01);
-        src.connect(bp); bp.connect(gE); gE.connect(sfxGain);
-        src.start(now + idx * 0.01);
-      });
-      const osc = audioCtx.createOscillator(); osc.type = 'sine';
-      osc.frequency.setValueAtTime(130, now);
-      osc.frequency.exponentialRampToValueAtTime(75, now + 0.06);
-      const env2 = audioCtx.createGain();
-      env2.gain.setValueAtTime(0.15, now);
-      env2.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
-      osc.connect(env2); env2.connect(sfxGain);
-      osc.start(now); osc.stop(now + 0.08);
-      break;
-    }
-    case 'drop': {
-      const osc = audioCtx.createOscillator(); osc.type = 'sine';
-      osc.frequency.setValueAtTime(95, now);
-      osc.frequency.exponentialRampToValueAtTime(42, now + 0.25);
-      const env = audioCtx.createGain();
-      env.gain.setValueAtTime(0.32, now);
-      env.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-      osc.connect(env); env.connect(sfxGain);
-      osc.start(now); osc.stop(now + 0.3);
-      const nb = makeNoiseBuffer(audioCtx, 0.025);
-      const src = audioCtx.createBufferSource(); src.buffer = nb;
-      const hp = audioCtx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3000;
-      const gT = audioCtx.createGain();
-      gT.gain.setValueAtTime(0.42, now);
-      gT.gain.exponentialRampToValueAtTime(0.001, now + 0.028);
-      src.connect(hp); hp.connect(gT); gT.connect(sfxGain);
-      src.start(now);
-      break;
-    }
-    case 'collision': {
-      const pitch = 55 + Math.random() * 45;
-      const osc = audioCtx.createOscillator(); osc.type = 'sine';
-      osc.frequency.setValueAtTime(pitch * 3, now);
-      osc.frequency.exponentialRampToValueAtTime(pitch, now + 0.04);
-      osc.frequency.exponentialRampToValueAtTime(pitch * 0.6, now + 0.22);
-      const env = audioCtx.createGain();
-      env.gain.setValueAtTime(0, now);
-      env.gain.linearRampToValueAtTime(0.35, now + 0.006);
-      env.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-      osc.connect(env); env.connect(sfxGain);
-      osc.start(now); osc.stop(now + 0.32);
-      const nb = makeNoiseBuffer(audioCtx, 0.022);
-      const src = audioCtx.createBufferSource(); src.buffer = nb;
-      const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass';
-      bp.frequency.value = 3800 + Math.random() * 1200; bp.Q.value = 0.8;
-      const gC = audioCtx.createGain();
-      gC.gain.setValueAtTime(0.6, now);
-      gC.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
-      src.connect(bp); bp.connect(gC); gC.connect(sfxGain);
-      src.start(now);
-      break;
-    }
-    case 'bundleCreate': {
-      for (let i = 0; i < 6; i++) {
-        const t = now + i * 0.045;
-        const nb = makeNoiseBuffer(audioCtx, 0.06);
-        const src = audioCtx.createBufferSource(); src.buffer = nb;
-        const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass';
-        bp.frequency.value = 1500 + i * 300 + Math.random() * 400; bp.Q.value = 1.5;
-        const gE = audioCtx.createGain();
-        gE.gain.setValueAtTime(0.22 - i * 0.02, t);
-        gE.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
-        src.connect(bp); bp.connect(gE); gE.connect(sfxGain);
-        src.start(t);
-      }
-      break;
-    }
-    case 'sellRocks': {
-      [0, 0.06, 0.12, 0.18].forEach((delay, i) => {
-        const osc = audioCtx.createOscillator(); osc.type = 'triangle';
-        osc.frequency.value = [880, 1046, 1318, 1568][i];
-        const env = audioCtx.createGain();
-        env.gain.setValueAtTime(0, now + delay);
-        env.gain.linearRampToValueAtTime(0.09, now + delay + 0.01);
-        env.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.35);
-        osc.connect(env); env.connect(sfxGain);
-        osc.start(now + delay); osc.stop(now + delay + 0.38);
-      });
-      break;
-    }
-    case 'typeClick': {
-      const nb = makeNoiseBuffer(audioCtx, 0.012);
-      const src = audioCtx.createBufferSource(); src.buffer = nb;
-      const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass';
-      bp.frequency.value = 3500 + Math.random() * 800; bp.Q.value = 3;
-      const gE = audioCtx.createGain();
-      gE.gain.setValueAtTime(0.04, now);
-      gE.gain.exponentialRampToValueAtTime(0.001, now + 0.014);
-      src.connect(bp); bp.connect(gE); gE.connect(sfxGain);
-      src.start(now);
-      break;
-    }
-    case 'reset': {
-      for (let i = 0; i < 4; i++) {
-        const t = now + i * 0.06;
-        const nb = makeNoiseBuffer(audioCtx, 0.1);
-        const src = audioCtx.createBufferSource(); src.buffer = nb;
-        const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass';
-        bp.frequency.value = 800 - i * 150; bp.Q.value = 1;
-        const gE = audioCtx.createGain();
-        gE.gain.setValueAtTime(0.18, t);
-        gE.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
-        src.connect(bp); bp.connect(gE); gE.connect(sfxGain);
-        src.start(t);
-      }
-      break;
-    }
-    case 'openPanel': {
-      [0, 0.08, 0.16].forEach((delay, i) => {
-        const osc = audioCtx.createOscillator(); osc.type = 'sine';
-        osc.frequency.value = [523.25, 659.26, 783.99][i];
-        const env = audioCtx.createGain();
-        env.gain.setValueAtTime(0, now + delay);
-        env.gain.linearRampToValueAtTime(0.09, now + delay + 0.03);
-        env.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.5);
-        osc.connect(env); env.connect(sfxGain);
-        osc.start(now + delay); osc.stop(now + delay + 0.55);
-      });
-      break;
-    }
-    case 'closePanel': {
-      [0, 0.07, 0.14].forEach((delay, i) => {
-        const osc = audioCtx.createOscillator(); osc.type = 'sine';
-        osc.frequency.value = [783.99, 659.26, 523.25][i];
-        const env = audioCtx.createGain();
-        env.gain.setValueAtTime(0, now + delay);
-        env.gain.linearRampToValueAtTime(0.07, now + delay + 0.03);
-        env.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.4);
-        osc.connect(env); env.connect(sfxGain);
-        osc.start(now + delay); osc.stop(now + delay + 0.45);
-      });
-      break;
-    }
-    case 'click': {
-      const osc = audioCtx.createOscillator(); osc.type = 'sine';
-      osc.frequency.value = 860;
-      const env = audioCtx.createGain();
-      env.gain.setValueAtTime(0.065, now);
-      env.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-      osc.connect(env); env.connect(sfxGain);
-      osc.start(now); osc.stop(now + 0.07);
-      break;
-    }
-    case 'hover': {
-      const osc = audioCtx.createOscillator(); osc.type = 'sine';
-      osc.frequency.value = 640;
-      const env = audioCtx.createGain();
-      env.gain.setValueAtTime(0.022, now);
-      env.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-      osc.connect(env); env.connect(sfxGain);
-      osc.start(now); osc.stop(now + 0.05);
-      break;
-    }
+function sfxPlay(type){
+  if(!audioCtx)return; if(audioCtx.state==='suspended')audioCtx.resume();
+  const now=audioCtx.currentTime;
+  switch(type){
+    case 'spawn':{const nb=makeNoiseBuffer(audioCtx,0.04),src=audioCtx.createBufferSource();src.buffer=nb;const bp=audioCtx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=4200;bp.Q.value=2;const lp=audioCtx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=6000;const gE=audioCtx.createGain();gE.gain.setValueAtTime(0.38,now);gE.gain.exponentialRampToValueAtTime(0.001,now+0.05);src.connect(bp);bp.connect(lp);lp.connect(gE);gE.connect(sfxGain);src.start(now);const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.setValueAtTime(160,now);osc.frequency.exponentialRampToValueAtTime(80,now+0.06);const env2=audioCtx.createGain();env2.gain.setValueAtTime(0.12,now);env2.gain.exponentialRampToValueAtTime(0.001,now+0.07);osc.connect(env2);env2.connect(sfxGain);osc.start(now);osc.stop(now+0.08);break;}
+    case 'grab':{[2200,4500].forEach((freq,idx)=>{const dur=0.06+idx*0.02,nb=makeNoiseBuffer(audioCtx,dur),src=audioCtx.createBufferSource();src.buffer=nb;const bp=audioCtx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq;bp.Q.value=1.8;const gE=audioCtx.createGain();gE.gain.setValueAtTime(0.3-idx*0.08,now+idx*0.01);gE.gain.exponentialRampToValueAtTime(0.001,now+dur+idx*0.01);src.connect(bp);bp.connect(gE);gE.connect(sfxGain);src.start(now+idx*0.01);});const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.setValueAtTime(130,now);osc.frequency.exponentialRampToValueAtTime(75,now+0.06);const env2=audioCtx.createGain();env2.gain.setValueAtTime(0.15,now);env2.gain.exponentialRampToValueAtTime(0.001,now+0.07);osc.connect(env2);env2.connect(sfxGain);osc.start(now);osc.stop(now+0.08);break;}
+    case 'drop':{const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.setValueAtTime(95,now);osc.frequency.exponentialRampToValueAtTime(42,now+0.25);const env=audioCtx.createGain();env.gain.setValueAtTime(0.32,now);env.gain.exponentialRampToValueAtTime(0.001,now+0.28);osc.connect(env);env.connect(sfxGain);osc.start(now);osc.stop(now+0.3);const nb=makeNoiseBuffer(audioCtx,0.025),src=audioCtx.createBufferSource();src.buffer=nb;const hp=audioCtx.createBiquadFilter();hp.type='highpass';hp.frequency.value=3000;const gT=audioCtx.createGain();gT.gain.setValueAtTime(0.42,now);gT.gain.exponentialRampToValueAtTime(0.001,now+0.028);src.connect(hp);hp.connect(gT);gT.connect(sfxGain);src.start(now);break;}
+    case 'collision':{const pitch=55+Math.random()*45,osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.setValueAtTime(pitch*3,now);osc.frequency.exponentialRampToValueAtTime(pitch,now+0.04);osc.frequency.exponentialRampToValueAtTime(pitch*0.6,now+0.22);const env=audioCtx.createGain();env.gain.setValueAtTime(0,now);env.gain.linearRampToValueAtTime(0.35,now+0.006);env.gain.exponentialRampToValueAtTime(0.001,now+0.3);osc.connect(env);env.connect(sfxGain);osc.start(now);osc.stop(now+0.32);const nb=makeNoiseBuffer(audioCtx,0.022),src=audioCtx.createBufferSource();src.buffer=nb;const bp=audioCtx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=3800+Math.random()*1200;bp.Q.value=0.8;const gC=audioCtx.createGain();gC.gain.setValueAtTime(0.6,now);gC.gain.exponentialRampToValueAtTime(0.001,now+0.025);src.connect(bp);bp.connect(gC);gC.connect(sfxGain);src.start(now);break;}
+    case 'doubleSpawn':{// Two quick ascending chimes
+      [0,0.08].forEach((delay,i)=>{const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.value=[1046,1318][i];const env=audioCtx.createGain();env.gain.setValueAtTime(0,now+delay);env.gain.linearRampToValueAtTime(0.12,now+delay+0.02);env.gain.exponentialRampToValueAtTime(0.001,now+delay+0.4);osc.connect(env);env.connect(sfxGain);osc.start(now+delay);osc.stop(now+delay+0.45);});break;}
+    case 'bundleCreate':{for(let i=0;i<6;i++){const t=now+i*0.045,nb=makeNoiseBuffer(audioCtx,0.06),src=audioCtx.createBufferSource();src.buffer=nb;const bp=audioCtx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1500+i*300+Math.random()*400;bp.Q.value=1.5;const gE=audioCtx.createGain();gE.gain.setValueAtTime(0.22-i*0.02,t);gE.gain.exponentialRampToValueAtTime(0.001,t+0.07);src.connect(bp);bp.connect(gE);gE.connect(sfxGain);src.start(t);}break;}
+    case 'sellRocks':{[0,0.06,0.12,0.18].forEach((delay,i)=>{const osc=audioCtx.createOscillator();osc.type='triangle';osc.frequency.value=[880,1046,1318,1568][i];const env=audioCtx.createGain();env.gain.setValueAtTime(0,now+delay);env.gain.linearRampToValueAtTime(0.09,now+delay+0.01);env.gain.exponentialRampToValueAtTime(0.001,now+delay+0.35);osc.connect(env);env.connect(sfxGain);osc.start(now+delay);osc.stop(now+delay+0.38);});break;}
+    case 'typeClick':{const nb=makeNoiseBuffer(audioCtx,0.012),src=audioCtx.createBufferSource();src.buffer=nb;const bp=audioCtx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=3500+Math.random()*800;bp.Q.value=3;const gE=audioCtx.createGain();gE.gain.setValueAtTime(0.04,now);gE.gain.exponentialRampToValueAtTime(0.001,now+0.014);src.connect(bp);bp.connect(gE);gE.connect(sfxGain);src.start(now);break;}
+    case 'reset':{for(let i=0;i<4;i++){const t=now+i*0.06,nb=makeNoiseBuffer(audioCtx,0.1),src=audioCtx.createBufferSource();src.buffer=nb;const bp=audioCtx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=800-i*150;bp.Q.value=1;const gE=audioCtx.createGain();gE.gain.setValueAtTime(0.18,t);gE.gain.exponentialRampToValueAtTime(0.001,t+0.14);src.connect(bp);bp.connect(gE);gE.connect(sfxGain);src.start(t);}break;}
+    case 'openPanel':{[0,0.08,0.16].forEach((delay,i)=>{const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.value=[523.25,659.26,783.99][i];const env=audioCtx.createGain();env.gain.setValueAtTime(0,now+delay);env.gain.linearRampToValueAtTime(0.09,now+delay+0.03);env.gain.exponentialRampToValueAtTime(0.001,now+delay+0.5);osc.connect(env);env.connect(sfxGain);osc.start(now+delay);osc.stop(now+delay+0.55);});break;}
+    case 'closePanel':{[0,0.07,0.14].forEach((delay,i)=>{const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.value=[783.99,659.26,523.25][i];const env=audioCtx.createGain();env.gain.setValueAtTime(0,now+delay);env.gain.linearRampToValueAtTime(0.07,now+delay+0.03);env.gain.exponentialRampToValueAtTime(0.001,now+delay+0.4);osc.connect(env);env.connect(sfxGain);osc.start(now+delay);osc.stop(now+delay+0.45);});break;}
+    case 'click':{const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.value=860;const env=audioCtx.createGain();env.gain.setValueAtTime(0.065,now);env.gain.exponentialRampToValueAtTime(0.001,now+0.06);osc.connect(env);env.connect(sfxGain);osc.start(now);osc.stop(now+0.07);break;}
+    case 'hover':{const osc=audioCtx.createOscillator();osc.type='sine';osc.frequency.value=640;const env=audioCtx.createGain();env.gain.setValueAtTime(0.022,now);env.gain.exponentialRampToValueAtTime(0.001,now+0.04);osc.connect(env);env.connect(sfxGain);osc.start(now);osc.stop(now+0.05);break;}
   }
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  MATTER.JS
-// ═══════════════════════════════════════════════════════
-const { Engine, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events } = Matter;
-const canvas = document.getElementById('gameCanvas');
-const W = window.innerWidth, H = window.innerHeight;
-canvas.width = W; canvas.height = H;
-const ctx = canvas.getContext('2d');
+// ═══════════════════════════════════════════════════
+const {Engine,Runner,Bodies,Body,World,Mouse,MouseConstraint,Events}=Matter;
+const canvas=document.getElementById('gameCanvas');
+const W=window.innerWidth,H=window.innerHeight;
+canvas.width=W;canvas.height=H;
+const ctx=canvas.getContext('2d');
 
-const engine = Engine.create({ gravity: { y: 1.2 } });
-engine.positionIterations = 20; engine.velocityIterations = 16; engine.constraintIterations = 4;
-const world = engine.world;
+const engine=Engine.create({gravity:{y:1.2}});
+engine.positionIterations=20;engine.velocityIterations=16;engine.constraintIterations=4;
+const world=engine.world;
 
-const groundY = H * 0.65;
-const T = 300;
-World.add(world, [
-  Bodies.rectangle(W/2,   groundY+T/2, W+T*2, T,   {isStatic:true,friction:0.99,frictionStatic:10,restitution:0,label:'ground'}),
-  Bodies.rectangle(-T/2,  H/2,         T,     H*3, {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
-  Bodies.rectangle(W+T/2, H/2,         T,     H*3, {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
-  Bodies.rectangle(W/2,   -T/2,        W+T*2, T,   {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
+const groundY=H*0.65, T=300;
+World.add(world,[
+  Bodies.rectangle(W/2,  groundY+T/2,W+T*2,T,  {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
+  Bodies.rectangle(-T/2, H/2,        T,    H*3, {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
+  Bodies.rectangle(W+T/2,H/2,        T,    H*3, {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
+  Bodies.rectangle(W/2,  -T/2,       W+T*2,T,   {isStatic:true,friction:0.99,frictionStatic:10,restitution:0}),
 ]);
 
-const mouse = Mouse.create(canvas);
-const mouseConstraint = MouseConstraint.create(engine, {
-  mouse, constraint: { stiffness: 0.15, angularStiffness: 0.1, render: { visible: false } }
-});
-World.add(world, mouseConstraint);
+const mouse=Mouse.create(canvas);
+const mouseConstraint=MouseConstraint.create(engine,{mouse,constraint:{stiffness:0.15,angularStiffness:0.1,render:{visible:false}}});
+World.add(world,mouseConstraint);
+canvas.addEventListener('mousemove',()=>{
+  mouse.position.x=Math.max(2,Math.min(W-2,mouse.position.x));
+  mouse.position.y=Math.max(2,Math.min(groundY-2,mouse.position.y));
+},{capture:true});
+canvas.addEventListener('touchmove',()=>{
+  mouse.position.x=Math.max(2,Math.min(W-2,mouse.position.x));
+  mouse.position.y=Math.max(2,Math.min(groundY-2,mouse.position.y));
+},{capture:true,passive:true});
 
-canvas.addEventListener('mousemove', () => {
-  mouse.position.x = Math.max(2, Math.min(W-2, mouse.position.x));
-  mouse.position.y = Math.max(2, Math.min(groundY-2, mouse.position.y));
-}, { capture: true });
-canvas.addEventListener('touchmove', () => {
-  mouse.position.x = Math.max(2, Math.min(W-2, mouse.position.x));
-  mouse.position.y = Math.max(2, Math.min(groundY-2, mouse.position.y));
-}, { capture: true, passive: true });
-
-// ── Rocks ──────────────────────────────────────────────
-const PALETTES = [
+// ── Rocks ──────────────────────────────────────────
+const PALETTES=[
   {base:'#6b5c50',hi:'#9a8070',shadow:'#3a2e28'},
   {base:'#4a4a52',hi:'#7a7a88',shadow:'#28282e'},
   {base:'#7a5540',hi:'#a07860',shadow:'#3d2a20'},
@@ -1333,167 +890,126 @@ const PALETTES = [
   {base:'#524848',hi:'#7e6e6e',shadow:'#2c2424'},
   {base:'#3c4840',hi:'#657a6e',shadow:'#1e2820'},
 ];
-const rocks = [];
+const rocks=[];
 
-function spawnRockAuto() {
+function spawnRockAuto(){
   ensureAudio();
-  sfxPlay('spawn');
-  stats.totalRocksSpawned++;
-  saveStats();
-  const rx = 28 + Math.random() * 30;
-  const ry = rx * (0.52 + Math.random() * 0.30);
-  const palette = PALETTES[Math.floor(Math.random() * PALETTES.length)];
-  const x = W * 0.2 + Math.random() * W * 0.6;
-  const y = groundY - 220 - Math.random() * 100;
-  const sides = 8 + Math.floor(Math.random() * 3);
-  const body = Bodies.polygon(x, y, sides, rx, {
-    friction:0.99, frictionStatic:10, frictionAir:0.01, restitution:0.0, density:0.006, slop:0.02
-  });
-  Body.scale(body, 1, ry / rx);
-  Body.setAngle(body, Math.random() * Math.PI * 2);
-  const seeds = Array.from({length:8}, () => Math.random());
-  rocks.push({body, palette, rx, ry, seeds});
-  World.add(world, body);
+
+  // Double spawn power check
+  const doubleChance = stats.powers.doubleSpawn * 0.05;
+  const isDouble = Math.random() < doubleChance;
+
+  doSpawnOne();
+  if (isDouble) {
+    sfxPlay('doubleSpawn');
+    // Flash effect
+    const flash = document.getElementById('doubleFlash');
+    flash.classList.add('show');
+    setTimeout(()=>flash.classList.remove('show'), 300);
+    // Spawn the second rock slightly offset in time so they don't overlap exactly
+    setTimeout(()=>doSpawnOne(), 120);
+  } else {
+    sfxPlay('spawn');
+  }
+}
+
+function doSpawnOne(){
+  stats.totalRocksSpawned++; saveStats();
+  const rx=28+Math.random()*30;
+  const ry=rx*(0.52+Math.random()*0.30);
+  const palette=PALETTES[Math.floor(Math.random()*PALETTES.length)];
+  const x=W*0.2+Math.random()*W*0.6;
+  const y=groundY-220-Math.random()*100;
+  const sides=8+Math.floor(Math.random()*3);
+  const body=Bodies.polygon(x,y,sides,rx,{friction:0.99,frictionStatic:10,frictionAir:0.01,restitution:0.0,density:0.006,slop:0.02});
+  Body.scale(body,1,ry/rx);
+  Body.setAngle(body,Math.random()*Math.PI*2);
+  const seeds=Array.from({length:8},()=>Math.random());
+  rocks.push({body,palette,rx,ry,seeds});
+  World.add(world,body);
   updateCount();
 }
 
-function updateCount() {
-  const n = rocks.length;
-  document.getElementById('rockCount').textContent = `${n} / ${MAX_ROCKS} rocks`;
-  document.getElementById('bundleBtn').disabled = n < 10;
+function updateCount(){
+  const n=rocks.length;
+  document.getElementById('rockCount').textContent=`${n} rock${n!==1?'s':''} on screen`;
+  document.getElementById('bundleBtn').disabled=n<10;
 }
 
-// ── Collision SFX ──────────────────────────────────────
-let lastCollisionTime = 0;
-Events.on(engine, 'collisionStart', e => {
-  const now = Date.now();
-  if (now - lastCollisionTime < 90) return;
-  for (const pair of e.pairs) {
-    const vel = pair.bodyA.speed + pair.bodyB.speed;
-    if (vel > 1.5) {
-      lastCollisionTime = now;
-      sfxPlay('collision');
-      break;
-    }
-  }
+// ── Collision SFX ──────────────────────────────────
+let lastCollisionTime=0;
+Events.on(engine,'collisionStart',e=>{
+  const now=Date.now(); if(now-lastCollisionTime<90)return;
+  for(const pair of e.pairs){const vel=pair.bodyA.speed+pair.bodyB.speed;if(vel>1.5){lastCollisionTime=now;sfxPlay('collision');break;}}
 });
 
-// ── Draw ───────────────────────────────────────────────
-function drawRock(r) {
-  const {body:b, palette, rx, ry, seeds} = r;
-  const nearness = Math.max(0, Math.min(1, (b.position.y - (groundY - ry*6)) / (ry*6)));
-  if (nearness > 0) {
-    const sw = rx * 2.0 * nearness;
-    ctx.save();
-    ctx.globalAlpha = nearness * 0.25;
-    const sg = ctx.createRadialGradient(b.position.x, groundY, 0, b.position.x, groundY, sw);
-    sg.addColorStop(0, 'rgba(8,4,0,0.9)');
-    sg.addColorStop(1, 'rgba(8,4,0,0)');
-    ctx.fillStyle = sg;
-    ctx.beginPath();
-    ctx.ellipse(b.position.x, groundY, sw, sw*0.2, 0, 0, Math.PI*2);
-    ctx.fill();
-    ctx.restore();
+// ── Draw ───────────────────────────────────────────
+function drawRock(r){
+  const {body:b,palette,rx,ry,seeds}=r;
+  const nearness=Math.max(0,Math.min(1,(b.position.y-(groundY-ry*6))/(ry*6)));
+  if(nearness>0){
+    const sw=rx*2.0*nearness;
+    ctx.save();ctx.globalAlpha=nearness*0.25;
+    const sg=ctx.createRadialGradient(b.position.x,groundY,0,b.position.x,groundY,sw);
+    sg.addColorStop(0,'rgba(8,4,0,0.9)');sg.addColorStop(1,'rgba(8,4,0,0)');
+    ctx.fillStyle=sg;ctx.beginPath();ctx.ellipse(b.position.x,groundY,sw,sw*0.2,0,0,Math.PI*2);ctx.fill();ctx.restore();
   }
   ctx.save();
-  const verts = b.vertices;
-  ctx.beginPath();
-  ctx.moveTo(verts[0].x, verts[0].y);
-  for (let i = 1; i < verts.length; i++) ctx.lineTo(verts[i].x, verts[i].y);
+  const verts=b.vertices;
+  ctx.beginPath();ctx.moveTo(verts[0].x,verts[0].y);
+  for(let i=1;i<verts.length;i++)ctx.lineTo(verts[i].x,verts[i].y);
   ctx.closePath();
-  ctx.fillStyle = palette.base;
-  ctx.fill();
-  const grd = ctx.createRadialGradient(
-    b.position.x-rx*0.15, b.position.y-ry*0.3, rx*0.04,
-    b.position.x, b.position.y, rx*1.2
-  );
-  grd.addColorStop(0, 'rgba(255,210,130,0.34)');
-  grd.addColorStop(0.45, 'rgba(0,0,0,0)');
-  grd.addColorStop(1, 'rgba(0,0,0,0.44)');
-  ctx.fillStyle = grd;
-  ctx.fill();
-  ctx.strokeStyle = palette.shadow;
-  ctx.lineWidth = 1.5;
-  ctx.globalAlpha = 0.5;
-  ctx.stroke();
-  ctx.globalAlpha = 1;
-  ctx.save();
-  ctx.clip();
-  ctx.globalAlpha = 0.08;
-  ctx.strokeStyle = palette.hi;
-  ctx.lineWidth = 1;
-  for (let i = 0; i < 3; i++) {
-    const s = seeds[i];
-    ctx.beginPath();
-    ctx.moveTo(b.position.x-rx*0.55+s*rx*0.3, b.position.y-ry*(0.2-s*0.4));
-    ctx.bezierCurveTo(
-      b.position.x-rx*0.1+s*8, b.position.y-ry*0.05,
-      b.position.x+rx*0.2-s*6, b.position.y+ry*s*0.3,
-      b.position.x+rx*0.5-s*4, b.position.y+ry*0.15
-    );
-    ctx.stroke();
-  }
-  ctx.restore();
-  ctx.restore();
+  ctx.fillStyle=palette.base;ctx.fill();
+  const grd=ctx.createRadialGradient(b.position.x-rx*0.15,b.position.y-ry*0.3,rx*0.04,b.position.x,b.position.y,rx*1.2);
+  grd.addColorStop(0,'rgba(255,210,130,0.34)');grd.addColorStop(0.45,'rgba(0,0,0,0)');grd.addColorStop(1,'rgba(0,0,0,0.44)');
+  ctx.fillStyle=grd;ctx.fill();
+  ctx.strokeStyle=palette.shadow;ctx.lineWidth=1.5;ctx.globalAlpha=0.5;ctx.stroke();ctx.globalAlpha=1;
+  ctx.save();ctx.clip();ctx.globalAlpha=0.08;ctx.strokeStyle=palette.hi;ctx.lineWidth=1;
+  for(let i=0;i<3;i++){const s=seeds[i];ctx.beginPath();ctx.moveTo(b.position.x-rx*0.55+s*rx*0.3,b.position.y-ry*(0.2-s*0.4));ctx.bezierCurveTo(b.position.x-rx*0.1+s*8,b.position.y-ry*0.05,b.position.x+rx*0.2-s*6,b.position.y+ry*s*0.3,b.position.x+rx*0.5-s*4,b.position.y+ry*0.15);ctx.stroke();}
+  ctx.restore();ctx.restore();
 }
 
-// ── Drag events ────────────────────────────────────────
-let hinted = false;
-Events.on(mouseConstraint, 'startdrag', () => {
-  document.body.classList.add('dragging');
-  sfxPlay('grab');
-  startAirTracking();
-  if (!hinted) { hinted = true; document.getElementById('hint').style.opacity = '0'; }
+// ── Drag events ────────────────────────────────────
+let hinted=false;
+Events.on(mouseConstraint,'startdrag',()=>{
+  document.body.classList.add('dragging'); sfxPlay('grab'); startAirTracking();
+  if(!hinted){hinted=true;document.getElementById('hint').style.opacity='0';}
 });
-Events.on(mouseConstraint, 'enddrag', () => {
-  document.body.classList.remove('dragging');
-  sfxPlay('drop');
-  stopAirTracking();
-});
+Events.on(mouseConstraint,'enddrag',()=>{ document.body.classList.remove('dragging'); sfxPlay('drop'); stopAirTracking(); });
 
-// ── Loop ───────────────────────────────────────────────
-const runner = Runner.create();
-Runner.run(runner, engine);
+// ── Game loop ──────────────────────────────────────
+const runner=Runner.create();
+Runner.run(runner,engine);
 
-function gameLoop() {
-  ctx.clearRect(0, 0, W, H);
-  for (let i = rocks.length - 1; i >= 0; i--) {
-    const p = rocks[i].body.position;
-    if (p.x < -400 || p.x > W+400 || p.y < -400 || p.y > H+400) {
-      World.remove(world, rocks[i].body);
-      rocks.splice(i, 1);
-      updateCount();
-    }
+function gameLoop(){
+  ctx.clearRect(0,0,W,H);
+  for(let i=rocks.length-1;i>=0;i--){
+    const p=rocks[i].body.position;
+    if(p.x<-400||p.x>W+400||p.y<-400||p.y>H+400){ World.remove(world,rocks[i].body); rocks.splice(i,1); updateCount(); }
   }
   rocks.forEach(drawRock);
   requestAnimationFrame(gameLoop);
 }
 gameLoop();
 
-// ── Bokeh ──────────────────────────────────────────────
-for (let i = 0; i < 14; i++) {
-  const el = document.createElement('div');
-  el.className = 'bokeh';
-  const size = 6 + Math.random() * 28;
-  const hue  = 30 + Math.random() * 40;
-  const op   = 0.04 + Math.random() * 0.18;
-  const dur  = 6 + Math.random() * 10;
-  el.style.cssText = `width:${size}px;height:${size}px;left:${20+Math.random()*80}%;top:${20+Math.random()*50}%;background:radial-gradient(circle,hsl(${hue},80%,75%) 0%,transparent 70%);--op:${op};--dx:${(Math.random()-.5)*30}px;--dy:${(Math.random()-.5)*20}px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;`;
+// ── Bokeh ──────────────────────────────────────────
+for(let i=0;i<14;i++){
+  const el=document.createElement('div');el.className='bokeh';
+  const size=6+Math.random()*28,hue=30+Math.random()*40,op=0.04+Math.random()*0.18,dur=6+Math.random()*10;
+  el.style.cssText=`width:${size}px;height:${size}px;left:${20+Math.random()*80}%;top:${20+Math.random()*50}%;background:radial-gradient(circle,hsl(${hue},80%,75%) 0%,transparent 70%);--op:${op};--dx:${(Math.random()-.5)*30}px;--dy:${(Math.random()-.5)*20}px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;`;
   document.body.appendChild(el);
 }
 
-document.querySelectorAll('.btn, .bundle-select-btn, .bundle-slot-sell, .power-buy-btn').forEach(b => {
-  b.addEventListener('mouseenter', () => { if (audioCtx) sfxPlay('hover'); });
+document.querySelectorAll('.btn,.bundle-select-btn,.bundle-slot-sell,.power-buy-btn').forEach(b=>{
+  b.addEventListener('mouseenter',()=>{if(audioCtx)sfxPlay('hover');});
 });
+window.addEventListener('resize',()=>location.reload());
 
-window.addEventListener('resize', () => location.reload());
-
-// ── Init ───────────────────────────────────────────────
+// ── Init ───────────────────────────────────────────
 updateCount();
 restartSpawnTimer();
-// Spawn 2 rocks immediately on load
-setTimeout(() => { spawnRockAuto(); }, 300);
-setTimeout(() => { spawnRockAuto(); }, 900);
+setTimeout(()=>spawnRockAuto(),300);
+setTimeout(()=>spawnRockAuto(),900);
 </script>
 </body>
 </html>
