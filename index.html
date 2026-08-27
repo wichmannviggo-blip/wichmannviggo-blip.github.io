@@ -2,402 +2,800 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GeoBoard — Draft &amp; Construct</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoBoard — Draft & Construct</title>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
-  :root{
-    --bg: #1A1A1D;
-    --bg-deep: #141416;
-    --grid: #232326;
-    --grid-major: #303035;
-    --paper: #E8E8EA;
-    --amber: #5B9BFF;
-    --amber-dim: #3A6BB0;
-    --cyan: #7FD9C4;
-    --red: #E2685A;
-    --panel: #1E1E21;
-    --panel-border: #2C2C30;
-    --text-dim: #8A8A90;
-  }
+:root{
+  --bg:#171719;
+  --bg2:#1c1c1f;
+  --panel:#202023;
+  --panel-hover:#29292d;
+  --border:#303035;
+  --border-light:#3a3a40;
+  --grid:#29292d;
+  --grid-strong:#34343a;
+  --axis:#45454d;
+  --text:#eeeeF0;
+  --text-dim:#888890;
+  --blue:#5b9bff;
+  --blue-dim:#315f9f;
+  --cyan:#7fd9c4;
+  --red:#e2685a;
+  --shadow:rgba(0,0,0,.4);
+}
 
-  *{
-    box-sizing:border-box;
-  }
+*{
+  box-sizing:border-box;
+}
 
-  html,body{
-    margin:0;
-    height:100%;
-    width:100%;
-    background:var(--bg-deep);
-    font-family:'Inter',sans-serif;
-    color:var(--paper);
-    overflow:hidden;
-    user-select:none;
-  }
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  user-select:none;
+}
 
-  #app{
-    display:flex;
-    height:100vh;
-    width:100vw;
-  }
+button,
+input,
+select{
+  font:inherit;
+}
 
-  /* ---------- Toolbar ---------- */
+#app{
+  width:100vw;
+  height:100vh;
+  display:flex;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+#toolbar{
+  width:78px;
+  height:100%;
+  flex-shrink:0;
+  background:rgba(31,31,34,.96);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:14px 0;
+  gap:5px;
+  z-index:100;
+}
+
+.brand{
+  width:100%;
+  text-align:center;
+  margin-bottom:12px;
+  color:var(--text-dim);
+  font-size:8px;
+  letter-spacing:.14em;
+  line-height:1.35;
+}
+
+.brand b{
+  display:block;
+  color:var(--text);
+  font-size:13px;
+  letter-spacing:.01em;
+  margin-bottom:2px;
+}
+
+.tool{
+  width:58px;
+  height:52px;
+  border:1px solid transparent;
+  border-radius:9px;
+  background:transparent;
+  color:var(--text-dim);
+  cursor:pointer;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+
+  transition:
+    background .16s ease,
+    color .16s ease,
+    border-color .16s ease,
+    transform .12s ease;
+}
+
+.tool svg{
+  width:20px;
+  height:20px;
+  transition:transform .16s ease;
+}
+
+.tool span{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px;
+  letter-spacing:.03em;
+}
+
+.tool:hover{
+  background:var(--panel-hover);
+  color:var(--text);
+  transform:translateY(-1px);
+}
+
+.tool:hover svg{
+  transform:scale(1.08);
+}
+
+.tool:active{
+  transform:scale(.96);
+}
+
+.tool.active{
+  background:rgba(91,155,255,.13);
+  border-color:var(--blue-dim);
+  color:var(--blue);
+}
+
+.tool-divider{
+  width:42px;
+  height:1px;
+  background:var(--border);
+  margin:7px 0;
+}
+
+/* bottom controls */
+
+#bottom-tools{
+  margin-top:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+}
+
+/* =========================================================
+   GRID CONTROL
+========================================================= */
+
+#grid-control{
+  width:60px;
+  margin-top:2px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+}
+
+#grid-control label{
+  color:var(--text-dim);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px;
+}
+
+#grid-size{
+  width:58px;
+  height:28px;
+  border:1px solid var(--border);
+  border-radius:7px;
+  background:#171719;
+  color:var(--text);
+  outline:none;
+  text-align:center;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+
+  transition:
+    border-color .15s ease,
+    box-shadow .15s ease;
+}
+
+#grid-size:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 2px rgba(91,155,255,.12);
+}
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+#canvas-wrap{
+  position:relative;
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  background:var(--bg);
+}
+
+#board{
+  display:block;
+  width:100%;
+  height:100%;
+  cursor:crosshair;
+}
+
+#board.panning{
+  cursor:grabbing;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.grid-cell{
+  fill:var(--grid);
+}
+
+.grid-border{
+  stroke:var(--grid-strong);
+  stroke-width:1;
+  vector-effect:non-scaling-stroke;
+  fill:none;
+}
+
+.axis-line{
+  stroke:var(--axis);
+  stroke-width:1.5;
+  vector-effect:non-scaling-stroke;
+}
+
+.axis-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  fill:var(--text-dim);
+  pointer-events:none;
+}
+
+/* =========================================================
+   OBJECTS
+========================================================= */
+
+.pt{
+  fill:var(--text);
+  stroke:var(--bg);
+  stroke-width:1.5;
+  cursor:grab;
+  transition:
+    r .12s ease,
+    fill .12s ease;
+}
+
+.pt.hover{
+  fill:var(--blue);
+}
+
+.pt.dragging{
+  fill:var(--blue);
+  cursor:grabbing;
+}
+
+.pt-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  fill:var(--cyan);
+  pointer-events:none;
+}
+
+.seg{
+  stroke:var(--text);
+  stroke-width:2;
+  vector-effect:non-scaling-stroke;
+}
+
+.circ{
+  fill:none;
+  stroke:var(--cyan);
+  stroke-width:2;
+  vector-effect:non-scaling-stroke;
+}
+
+.poly{
+  stroke:var(--text);
+  stroke-width:2;
+  vector-effect:non-scaling-stroke;
+  cursor:pointer;
+
+  transition:
+    stroke .16s ease,
+    stroke-width .16s ease,
+    fill-opacity .16s ease;
+}
+
+.poly:hover{
+  stroke:var(--blue);
+}
+
+.poly.selected{
+  stroke:var(--blue);
+  stroke-width:3;
+}
+
+.angle-arc{
+  fill:none;
+  stroke:var(--blue);
+  stroke-width:2;
+  vector-effect:non-scaling-stroke;
+}
+
+.angle-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  fill:var(--blue);
+  font-weight:600;
+  pointer-events:none;
+}
+
+.ghost{
+  stroke:var(--text-dim);
+  stroke-dasharray:4 4;
+  stroke-width:1.5;
+  fill:none;
+  vector-effect:non-scaling-stroke;
+}
+
+.measure-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  fill:var(--text-dim);
+  pointer-events:none;
+}
+
+.snap-ring{
+  fill:none;
+  stroke:var(--blue);
+  stroke-width:1.6;
+  pointer-events:none;
+}
+
+.snap-ring.point-snap{
+  stroke:var(--cyan);
+}
+
+/* =========================================================
+   HUD
+========================================================= */
+
+#hud{
+  position:absolute;
+  top:15px;
+  left:15px;
+
+  padding:8px 12px;
+
+  background:rgba(25,25,28,.88);
+  border:1px solid var(--border);
+  border-radius:8px;
+
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  color:var(--text-dim);
+
+  pointer-events:none;
+
+  backdrop-filter:blur(10px);
+}
+
+#hud b{
+  color:var(--text);
+}
+
+#coord{
+  position:absolute;
+  right:15px;
+  bottom:15px;
+
+  padding:7px 12px;
+
+  background:rgba(25,25,28,.88);
+  border:1px solid var(--border);
+  border-radius:8px;
+
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  color:var(--cyan);
+
+  pointer-events:none;
+
+  backdrop-filter:blur(10px);
+}
+
+#hint{
+  position:absolute;
+  left:15px;
+  bottom:15px;
+
+  max-width:430px;
+
+  padding:8px 13px;
+
+  background:rgba(25,25,28,.88);
+  border:1px solid var(--border);
+  border-radius:8px;
+
+  font-size:11px;
+  color:var(--text-dim);
+
+  pointer-events:none;
+
+  backdrop-filter:blur(10px);
+
+  transition:
+    opacity .25s ease,
+    transform .25s ease;
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+#settings-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.38);
+  backdrop-filter:blur(3px);
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:opacity .2s ease;
+
+  z-index:200;
+}
+
+#settings-backdrop.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+#settings{
+  position:absolute;
+  top:50%;
+  left:50%;
+
+  width:360px;
+
+  transform:
+    translate(-50%,-50%)
+    scale(.94);
+
+  background:var(--panel);
+  border:1px solid var(--border-light);
+  border-radius:14px;
+
+  box-shadow:
+    0 25px 70px var(--shadow),
+    0 5px 20px rgba(0,0,0,.25);
+
+  opacity:0;
+
+  transition:
+    opacity .2s ease,
+    transform .22s cubic-bezier(.2,.8,.2,1);
+
+  pointer-events:none;
+
+  overflow:hidden;
+}
+
+#settings-backdrop.open #settings{
+  opacity:1;
+  transform:
+    translate(-50%,-50%)
+    scale(1);
+
+  pointer-events:auto;
+}
+
+.settings-header{
+  height:58px;
+  padding:0 18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  border-bottom:1px solid var(--border);
+}
+
+.settings-header-title{
+  font-weight:600;
+  font-size:14px;
+}
+
+#close-settings{
+  width:30px;
+  height:30px;
+
+  border:0;
+  border-radius:7px;
+
+  background:transparent;
+  color:var(--text-dim);
+
+  cursor:pointer;
+
+  font-size:20px;
+  line-height:1;
+
+  transition:
+    background .15s ease,
+    color .15s ease;
+}
+
+#close-settings:hover{
+  background:var(--panel-hover);
+  color:var(--text);
+}
+
+.settings-body{
+  padding:16px 18px 18px;
+}
+
+.setting{
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.setting:last-child{
+  border-bottom:0;
+}
+
+.setting-info{
+  min-width:0;
+}
+
+.setting-title{
+  font-size:12px;
+  font-weight:500;
+  margin-bottom:3px;
+}
+
+.setting-description{
+  font-size:9px;
+  color:var(--text-dim);
+  line-height:1.4;
+}
+
+.setting-control{
+  flex-shrink:0;
+}
+
+/* toggle */
+
+.toggle{
+  position:relative;
+  width:42px;
+  height:23px;
+  border-radius:20px;
+  border:1px solid var(--border-light);
+  background:#303035;
+  cursor:pointer;
+
+  transition:
+    background .18s ease,
+    border-color .18s ease;
+}
+
+.toggle::after{
+  content:'';
+  position:absolute;
+  width:17px;
+  height:17px;
+  top:2px;
+  left:2px;
+
+  background:#aaa;
+  border-radius:50%;
+
+  transition:
+    transform .18s cubic-bezier(.2,.8,.2,1),
+    background .18s ease;
+}
+
+.toggle.on{
+  background:var(--blue-dim);
+  border-color:var(--blue);
+}
+
+.toggle.on::after{
+  transform:translateX(19px);
+  background:var(--blue);
+}
+
+/* slider */
+
+.slider-wrap{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.slider{
+  width:105px;
+  accent-color:var(--blue);
+  cursor:pointer;
+}
+
+.slider-value{
+  width:35px;
+  text-align:right;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  color:var(--text-dim);
+}
+
+/* =========================================================
+   POLYGON EDITOR
+========================================================= */
+
+#polygon-editor{
+  position:absolute;
+  top:15px;
+  right:15px;
+
+  width:205px;
+
+  background:rgba(31,31,34,.96);
+  border:1px solid var(--border-light);
+  border-radius:11px;
+
+  padding:13px;
+
+  box-shadow:
+    0 15px 40px rgba(0,0,0,.3);
+
+  backdrop-filter:blur(12px);
+
+  opacity:0;
+  transform:translateY(-7px) scale(.97);
+
+  pointer-events:none;
+
+  transition:
+    opacity .18s ease,
+    transform .2s cubic-bezier(.2,.8,.2,1);
+
+  z-index:50;
+}
+
+#polygon-editor.visible{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+
+.editor-title{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  color:var(--text-dim);
+  margin-bottom:9px;
+}
+
+#polygon-color{
+  width:100%;
+  height:35px;
+  padding:2px;
+
+  border:1px solid var(--border);
+  border-radius:7px;
+
+  background:#171719;
+  cursor:pointer;
+}
+
+.opacity-label{
+  margin-top:10px;
+  display:flex;
+  justify-content:space-between;
+
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  color:var(--text-dim);
+}
+
+#polygon-opacity{
+  width:100%;
+  margin-top:5px;
+  accent-color:var(--blue);
+}
+
+.editor-close{
+  margin-top:10px;
+  width:100%;
+  height:28px;
+
+  border:1px solid var(--border);
+  border-radius:6px;
+
+  background:transparent;
+  color:var(--text-dim);
+
+  font-size:10px;
+  cursor:pointer;
+
+  transition:
+    background .15s ease,
+    color .15s ease;
+}
+
+.editor-close:hover{
+  background:var(--panel-hover);
+  color:var(--text);
+}
+
+/* =========================================================
+   LIGHT MODE
+========================================================= */
+
+body.light{
+  --bg:#f3f3f5;
+  --bg2:#ededf0;
+  --panel:#ffffff;
+  --panel-hover:#f0f0f3;
+  --border:#ddddE2;
+  --border-light:#ccccd2;
+  --grid:#e7e7eb;
+  --grid-strong:#dcdce2;
+  --axis:#b8b8c0;
+  --text:#202024;
+  --text-dim:#77777f;
+  --blue:#3478e5;
+  --blue-dim:#8fb4ef;
+  --cyan:#309d84;
+  --shadow:rgba(0,0,0,.18);
+}
+
+body.light #grid-size{
+  background:#f7f7f9;
+}
+
+body.light #settings-backdrop{
+  background:rgba(0,0,0,.18);
+}
+
+body.light .pt{
+  stroke:#fff;
+}
+
+body.light #board{
+  background:var(--bg);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:600px){
 
   #toolbar{
-    width:76px;
-    background:var(--panel);
-    border-right:1px solid var(--panel-border);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:14px 0;
-    gap:6px;
-    z-index:10;
-  }
-
-  .brand{
-    font-family:'Inter',sans-serif;
-    font-size:9px;
-    letter-spacing:0.14em;
-    color:var(--text-dim);
-    margin-bottom:14px;
-    text-align:center;
-    line-height:1.3;
-  }
-
-  .brand b{
-    display:block;
-    font-size:13px;
-    color:var(--paper);
-    font-weight:600;
-    letter-spacing:0.01em;
-    margin-bottom:2px;
+    width:68px;
   }
 
   .tool{
-    width:56px;
-    height:52px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:3px;
-    background:transparent;
-    border:1px solid transparent;
-    border-radius:8px;
-    cursor:pointer;
-    color:var(--text-dim);
-    transition:background .12s, color .12s, border-color .12s;
+    width:52px;
   }
 
-  .tool svg{
-    width:20px;
-    height:20px;
-  }
-
-  .tool span{
-    font-size:9px;
-    font-family:'IBM Plex Mono',monospace;
-    letter-spacing:.02em;
-  }
-
-  .tool:hover{
-    background:rgba(111,207,235,0.08);
-    color:var(--paper);
-  }
-
-  .tool.active{
-    background:rgba(232,163,61,0.14);
-    border-color:var(--amber-dim);
-    color:var(--amber);
-  }
-
-  .tool-divider{
-    width:40px;
-    height:1px;
-    background:var(--panel-border);
-    margin:6px 0;
-  }
-
-  #undo-btn{
-    margin-top:auto;
-  }
-
-  /* ---------- Controls ---------- */
-
-  #controls{
-    width:100%;
-    padding:8px 8px 2px;
-    display:flex;
-    flex-direction:column;
-    gap:5px;
-  }
-
-  #controls label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:8px;
-    color:var(--text-dim);
-    text-align:center;
-  }
-
-  #grid-size{
-    width:60px;
-    height:28px;
-    background:#17171A;
-    color:var(--paper);
-    border:1px solid var(--panel-border);
-    border-radius:6px;
-    padding:2px 4px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
-    outline:none;
-  }
-
-  #grid-size:focus{
-    border-color:var(--amber-dim);
-  }
-
-  /* ---------- Canvas ---------- */
-
-  #canvas-wrap{
-    flex:1;
-    position:relative;
-    background-color:var(--bg);
-    overflow:hidden;
-  }
-
-  svg#board{
-    width:100%;
-    height:100%;
-    cursor:crosshair;
-    display:block;
-  }
-
-  svg#board.panning{
-    cursor:grabbing;
-  }
-
-  .grid-line{
-    stroke:var(--grid);
-    stroke-width:1;
-    vector-effect:non-scaling-stroke;
-  }
-
-  .grid-major{
-    stroke:var(--grid-major);
-    stroke-width:1.2;
-    vector-effect:non-scaling-stroke;
-  }
-
-  .axis-line{
-    stroke:var(--panel-border);
-    stroke-width:1.4;
-    vector-effect:non-scaling-stroke;
-  }
-
-  .axis-label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
-    fill:var(--text-dim);
-    pointer-events:none;
-  }
-
-  .axis-label.origin{
-    fill:var(--text-dim);
-  }
-
-  .snap-ring{
-    fill:none;
-    stroke:var(--amber);
-    stroke-width:1.6;
-    opacity:0.95;
-    pointer-events:none;
-  }
-
-  .snap-ring.point-snap{
-    stroke:var(--cyan);
-  }
-
-  .pt{
-    fill:var(--paper);
-    stroke:var(--bg-deep);
-    stroke-width:1.5;
-    cursor:grab;
-  }
-
-  .pt.hover{
-    fill:var(--amber);
-  }
-
-  .pt.dragging{
-    fill:var(--amber);
-    cursor:grabbing;
-  }
-
-  .pt-label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    fill:var(--cyan);
-    pointer-events:none;
-  }
-
-  .seg{
-    stroke:var(--paper);
-    stroke-width:2;
-    vector-effect:non-scaling-stroke;
-  }
-
-  .circ{
-    fill:none;
-    stroke:var(--cyan);
-    stroke-width:2;
-    vector-effect:non-scaling-stroke;
-  }
-
-  .poly{
-    stroke:var(--paper);
-    stroke-width:2;
-    vector-effect:non-scaling-stroke;
-    cursor:pointer;
-  }
-
-  .poly.selected{
-    stroke:var(--amber);
-    stroke-width:3;
-  }
-
-  .angle-arc{
-    fill:none;
-    stroke:var(--amber);
-    stroke-width:2;
-    vector-effect:non-scaling-stroke;
-  }
-
-  .angle-label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:13px;
-    fill:var(--amber);
-    font-weight:600;
-    pointer-events:none;
-  }
-
-  .ghost{
-    stroke:var(--text-dim);
-    stroke-dasharray:4 4;
-    stroke-width:1.5;
-    fill:none;
-    vector-effect:non-scaling-stroke;
-  }
-
-  .measure-label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    fill:var(--text-dim);
-    pointer-events:none;
-  }
-
-  /* ---------- HUD ---------- */
-
-  #hud{
-    position:absolute;
-    top:14px;
-    left:14px;
-    background:rgba(14,44,81,0.85);
-    border:1px solid var(--panel-border);
-    border-radius:8px;
-    padding:8px 12px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    color:var(--text-dim);
-    pointer-events:none;
-    line-height:1.6;
-  }
-
-  #hud b{
-    color:var(--paper);
-  }
-
-  #coord{
-    position:absolute;
-    bottom:14px;
-    right:14px;
-    background:rgba(14,44,81,0.85);
-    border:1px solid var(--panel-border);
-    border-radius:8px;
-    padding:6px 12px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    color:var(--cyan);
-    pointer-events:none;
+  #settings{
+    width:
+      min(360px, calc(100vw - 30px));
   }
 
   #hint{
-    position:absolute;
-    bottom:14px;
-    left:14px;
-    background:rgba(14,44,81,0.85);
-    border:1px solid var(--panel-border);
-    border-radius:8px;
-    padding:8px 14px;
-    font-family:'Inter',sans-serif;
-    font-size:12px;
-    color:var(--text-dim);
-    max-width:380px;
-    pointer-events:none;
+    max-width:270px;
   }
-
-  /* ---------- Polygon editor ---------- */
-
-  #polygon-editor{
-    position:absolute;
-    top:14px;
-    right:14px;
-    width:190px;
-    background:rgba(30,30,33,0.96);
-    border:1px solid var(--panel-border);
-    border-radius:9px;
-    padding:12px;
-    display:none;
-    z-index:20;
-    box-shadow:0 8px 30px rgba(0,0,0,.35);
-  }
-
-  #polygon-editor.visible{
-    display:block;
-  }
-
-  #polygon-editor-title{
-    font-size:11px;
-    font-family:'IBM Plex Mono',monospace;
-    color:var(--paper);
-    margin-bottom:9px;
-  }
-
-  #polygon-color{
-    width:100%;
-    height:34px;
-    padding:2px;
-    background:#151517;
-    border:1px solid var(--panel-border);
-    border-radius:6px;
-    cursor:pointer;
-  }
-
-  #polygon-opacity{
-    width:100%;
-    margin-top:8px;
-    accent-color:var(--amber);
-  }
-
-  #polygon-editor small{
-    display:block;
-    margin-top:4px;
-    color:var(--text-dim);
-    font-size:9px;
-    font-family:'IBM Plex Mono',monospace;
-  }
+}
 </style>
 </head>
 
@@ -405,7 +803,11 @@
 
 <div id="app">
 
-  <div id="toolbar">
+  <!-- =====================================================
+       TOOLBAR
+  ====================================================== -->
+
+  <aside id="toolbar">
 
     <div class="brand">
       <b>GeoBoard</b>
@@ -462,33 +864,54 @@
 
     <div class="tool-divider"></div>
 
-    <div id="controls">
+    <div id="grid-control">
       <label>GRID</label>
-      <input id="grid-size" type="number" min="0.01" step="0.01" value="1">
+      <input
+        id="grid-size"
+        type="number"
+        min="0.01"
+        step="0.01"
+        value="1"
+      >
     </div>
 
-    <div class="tool-divider"></div>
+    <div id="bottom-tools">
 
-    <button class="tool" id="undo-btn" title="Undo last shape">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M9 14l-5-5 5-5"/>
-        <path d="M4 9h10a6 6 0 0 1 0 12h-2"/>
-      </svg>
-      <span>UNDO</span>
-    </button>
+      <button class="tool" id="settings-btn" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.8 1.8-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20h-2.55v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-1.8-1.8.06-.06A1.7 1.7 0 0 0 8.1 15a1.7 1.7 0 0 0-1.55-1.03H6.46v-2.55h.09A1.7 1.7 0 0 0 8.1 10.4a1.7 1.7 0 0 0-.34-1.88L7.7 8.46l1.8-1.8.06.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1.03-1.55V5.4h2.55v.11a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.8 1.8-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1.03H21v2.55h-.11A1.7 1.7 0 0 0 19.4 15z"/>
+        </svg>
+        <span>SETTINGS</span>
+      </button>
 
-    <button class="tool" id="clear-btn" title="Clear board">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M3 6h18"/>
-        <path d="M8 6V4h8v2"/>
-        <path d="M6 6l1 14h10l1-14"/>
-      </svg>
-      <span>CLEAR</span>
-    </button>
+      <button class="tool" id="undo-btn" title="Undo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9 14l-5-5 5-5"/>
+          <path d="M4 9h10a6 6 0 0 1 0 12h-2"/>
+        </svg>
+        <span>UNDO</span>
+      </button>
 
-  </div>
+      <button class="tool" id="clear-btn" title="Clear">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M3 6h18"/>
+          <path d="M8 6V4h8v2"/>
+          <path d="M6 6l1 14h10l1-14"/>
+        </svg>
+        <span>CLEAR</span>
+      </button>
 
-  <div id="canvas-wrap">
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       CANVAS
+  ====================================================== -->
+
+  <main id="canvas-wrap">
 
     <svg id="board"></svg>
 
@@ -497,17 +920,22 @@
     </div>
 
     <div id="hint">
-      Double-click empty space and drag to move around. Drag points to move them.
+      Double-click empty space and drag to move around the infinite grid.
     </div>
 
     <div id="coord">
-      x: 0 &nbsp; y: 0
+      x: 0.00&nbsp;&nbsp;&nbsp;y: 0.00
     </div>
+
+
+    <!-- ===================================================
+         POLYGON EDITOR
+    ==================================================== -->
 
     <div id="polygon-editor">
 
-      <div id="polygon-editor-title">
-        POLYGON COLOR
+      <div class="editor-title">
+        POLYGON APPEARANCE
       </div>
 
       <input
@@ -515,6 +943,11 @@
         type="color"
         value="#5B9BFF"
       >
+
+      <div class="opacity-label">
+        <span>OPACITY</span>
+        <span id="opacity-value">25%</span>
+      </div>
 
       <input
         id="polygon-opacity"
@@ -524,678 +957,939 @@
         value="25"
       >
 
-      <small>Fill opacity</small>
+      <button
+        class="editor-close"
+        id="close-editor"
+      >
+        CLOSE
+      </button>
 
     </div>
 
-  </div>
+
+    <!-- ===================================================
+         SETTINGS
+    ==================================================== -->
+
+    <div id="settings-backdrop">
+
+      <div id="settings">
+
+        <div class="settings-header">
+
+          <div class="settings-header-title">
+            Settings
+          </div>
+
+          <button id="close-settings">
+            ×
+          </button>
+
+        </div>
+
+        <div class="settings-body">
+
+          <!-- THEME -->
+
+          <div class="setting">
+
+            <div class="setting-info">
+
+              <div class="setting-title">
+                Light mode
+              </div>
+
+              <div class="setting-description">
+                Use a bright workspace instead of dark mode
+              </div>
+
+            </div>
+
+            <div class="setting-control">
+
+              <button
+                class="toggle"
+                id="theme-toggle"
+              ></button>
+
+            </div>
+
+          </div>
+
+
+          <!-- ZOOM SPEED -->
+
+          <div class="setting">
+
+            <div class="setting-info">
+
+              <div class="setting-title">
+                Camera zoom speed
+              </div>
+
+              <div class="setting-description">
+                Controls how quickly the camera zooms
+              </div>
+
+            </div>
+
+            <div class="setting-control slider-wrap">
+
+              <input
+                class="slider"
+                id="zoom-speed"
+                type="range"
+                min="1"
+                max="30"
+                value="12"
+              >
+
+              <span
+                class="slider-value"
+                id="zoom-speed-value"
+              >
+                12
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- SHOW POINTS -->
+
+          <div class="setting">
+
+            <div class="setting-info">
+
+              <div class="setting-title">
+                Show points
+              </div>
+
+              <div class="setting-description">
+                Display point markers on the canvas
+              </div>
+
+            </div>
+
+            <div class="setting-control">
+
+              <button
+                class="toggle on"
+                id="show-points-toggle"
+              ></button>
+
+            </div>
+
+          </div>
+
+
+          <!-- SHOW NUMBERS -->
+
+          <div class="setting">
+
+            <div class="setting-info">
+
+              <div class="setting-title">
+                Show point numbers
+              </div>
+
+              <div class="setting-description">
+                Display A, B, C and other point labels
+              </div>
+
+            </div>
+
+            <div class="setting-control">
+
+              <button
+                class="toggle on"
+                id="show-labels-toggle"
+              ></button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
 </div>
 
 
 <script>
 (function(){
 
-  const svg = document.getElementById('board');
-  const canvasWrap = document.getElementById('canvas-wrap');
-  const NS = 'http://www.w3.org/2000/svg';
-
-  const hudMode = document.getElementById('hud-mode');
-  const hintBox = document.getElementById('hint-box');
-  const coordEl = document.getElementById('coord');
-
-  const gridSizeInput = document.getElementById('grid-size');
-
-  const polygonEditor = document.getElementById('polygon-editor');
-  const polygonColor = document.getElementById('polygon-color');
-  const polygonOpacity = document.getElementById('polygon-opacity');
-
-  const UNIT_BASE = 40;
-
-  const POINT_SNAP_PX = 14;
-
-  /*
-   * Camera
-   *
-   * cameraX / cameraY = world coordinates at the center of screen
-   * zoom = pixels per world unit / UNIT_BASE
-   */
-
-  let cameraX = 0;
-  let cameraY = 0;
-  let zoom = 1;
-
-  let origin = null;
-
-  let points = [];
-
-  let shapes = [];
-
-  let nextId = 1;
-
-  let tool = 'select';
-
-  let pending = [];
-
-  let dragId = null;
-
-  let hoverId = null;
-
-  let selectedShape = null;
-
-  let currentSnap = null;
-
-  let mouseInside = false;
-
-  let isPanning = false;
-
-  let panStart = null;
-
-  let didPan = false;
-
-  let doubleClickPending = false;
+'use strict';
 
 
-  const hints = {
+/* =========================================================
+   DOM
+========================================================= */
 
-    select:
-      'Drag any point to move it. Double-click empty space and drag to pan around the infinite grid. Click a polygon to edit its color.',
+const svg =
+  document.getElementById('board');
 
-    point:
-      'Click anywhere to place a point — snaps to the grid automatically.',
+const canvasWrap =
+  document.getElementById('canvas-wrap');
 
-    line:
-      'Click two points (or empty space) to draw a segment. Clicks snap to grid & existing points.',
+const hudMode =
+  document.getElementById('hud-mode');
 
-    circle:
-      'Click a center point, then a second point to set the radius.',
+const hintBox =
+  document.getElementById('hint');
 
-    polygon:
-      'Click each vertex in order. Click the first vertex again to close the shape.',
+const coordEl =
+  document.getElementById('coord');
 
-    angle:
-      'Click three points in order — the second click is the angle vertex.'
-  };
+const gridSizeInput =
+  document.getElementById('grid-size');
+
+const settingsBtn =
+  document.getElementById('settings-btn');
+
+const settingsBackdrop =
+  document.getElementById('settings-backdrop');
+
+const closeSettings =
+  document.getElementById('close-settings');
+
+const themeToggle =
+  document.getElementById('theme-toggle');
+
+const zoomSpeed =
+  document.getElementById('zoom-speed');
+
+const zoomSpeedValue =
+  document.getElementById('zoom-speed-value');
+
+const showPointsToggle =
+  document.getElementById('show-points-toggle');
+
+const showLabelsToggle =
+  document.getElementById('show-labels-toggle');
+
+const polygonEditor =
+  document.getElementById('polygon-editor');
+
+const polygonColor =
+  document.getElementById('polygon-color');
+
+const polygonOpacity =
+  document.getElementById('polygon-opacity');
+
+const opacityValue =
+  document.getElementById('opacity-value');
+
+const closeEditor =
+  document.getElementById('close-editor');
+
+const NS =
+  'http://www.w3.org/2000/svg';
 
 
-  function setTool(t){
+/* =========================================================
+   SETTINGS STATE
+========================================================= */
 
-    tool = t;
+let isLightMode = false;
 
-    pending = [];
+let showPoints = true;
 
-    selectedShape = null;
+let showLabels = true;
 
-    hidePolygonEditor();
+let zoomSpeedValueInternal = 12;
 
-    document
-      .querySelectorAll('.tool[data-tool]')
-      .forEach(b =>
-        b.classList.toggle(
-          'active',
-          b.dataset.tool === t
-        )
-      );
 
-    hudMode.textContent = t.toUpperCase();
+/* =========================================================
+   CAMERA
+========================================================= */
 
-    hintBox.textContent = hints[t];
+let cameraX = 0;
 
-    render();
-  }
+let cameraY = 0;
 
+let zoom = 1;
+
+const BASE_UNIT = 40;
+
+
+/* =========================================================
+   OBJECTS
+========================================================= */
+
+let points = [];
+
+let shapes = [];
+
+let nextId = 1;
+
+
+/* =========================================================
+   TOOL STATE
+========================================================= */
+
+let tool = 'select';
+
+let pending = [];
+
+let dragId = null;
+
+let hoverId = null;
+
+let currentSnap = null;
+
+let selectedShape = null;
+
+
+/* =========================================================
+   PAN STATE
+========================================================= */
+
+let isPanning = false;
+
+let panStart = null;
+
+let panArmed = false;
+
+let mouseInside = false;
+
+
+/* =========================================================
+   HINTS
+========================================================= */
+
+const hints = {
+
+  select:
+    'Drag points to move them. Double-click empty space and drag to pan. Click a polygon to edit it.',
+
+  point:
+    'Click anywhere to place a point. Points automatically snap to the grid.',
+
+  line:
+    'Click two points to create a segment.',
+
+  circle:
+    'Click the center, then click a second point to set the radius.',
+
+  polygon:
+    'Click vertices in order. Click the first point again to close the polygon.',
+
+  angle:
+    'Click three points. The second point is the angle vertex.'
+
+};
+
+
+/* =========================================================
+   TOOL SELECTION
+========================================================= */
+
+document
+  .querySelectorAll('.tool[data-tool]')
+  .forEach(button => {
+
+    button.addEventListener('click', () => {
+
+      setTool(button.dataset.tool);
+
+    });
+
+  });
+
+
+function setTool(newTool){
+
+  tool = newTool;
+
+  pending = [];
+
+  selectedShape = null;
+
+  hidePolygonEditor();
 
   document
     .querySelectorAll('.tool[data-tool]')
-    .forEach(b => {
+    .forEach(button => {
 
-      b.addEventListener('click', () => {
-
-        setTool(b.dataset.tool);
-
-      });
+      button.classList.toggle(
+        'active',
+        button.dataset.tool === newTool
+      );
 
     });
 
+  hudMode.textContent =
+    newTool.toUpperCase();
 
-  /*
-   * GRID SIZE
-   */
+  hintBox.textContent =
+    hints[newTool];
 
-  gridSizeInput.addEventListener('change', () => {
+  render();
 
-    let value = parseFloat(gridSizeInput.value);
+}
 
-    if(!Number.isFinite(value) || value <= 0){
 
-      value = 1;
+/* =========================================================
+   SETTINGS
+========================================================= */
 
-      gridSizeInput.value = value;
+settingsBtn.addEventListener(
+  'click',
+  openSettings
+);
+
+
+closeSettings.addEventListener(
+  'click',
+  closeSettingsWindow
+);
+
+
+settingsBackdrop.addEventListener(
+  'mousedown',
+  e => {
+
+    if(e.target === settingsBackdrop){
+
+      closeSettingsWindow();
+
     }
 
-    render();
-
-  });
-
-
-  gridSizeInput.addEventListener('keydown', e => {
-
-    if(e.key === 'Enter'){
-
-      gridSizeInput.blur();
-
-    }
-
-  });
+  }
+);
 
 
-  /*
-   * CLEAR
-   */
+document.addEventListener(
+  'keydown',
+  e => {
 
-  document
-    .getElementById('clear-btn')
-    .addEventListener('click', () => {
+    if(e.key === 'Escape'){
 
-      points = [];
-
-      shapes = [];
-
-      pending = [];
-
-      selectedShape = null;
+      closeSettingsWindow();
 
       hidePolygonEditor();
 
-      render();
-
-    });
-
-
-  /*
-   * UNDO
-   */
-
-  document
-    .getElementById('undo-btn')
-    .addEventListener('click', () => {
-
-      if(shapes.length){
-
-        const removed = shapes.pop();
-
-        if(selectedShape === removed){
-
-          selectedShape = null;
-
-          hidePolygonEditor();
-
-        }
-
-      }
-      else if(points.length){
-
-        points.pop();
-
-      }
-
-      render();
-
-    });
-
-
-  /*
-   * CAMERA
-   */
-
-  function getUnit(){
-
-    return UNIT_BASE * zoom;
+    }
 
   }
+);
 
 
-  function worldToScreen(wx, wy){
+function openSettings(){
 
-    const rect = svg.getBoundingClientRect();
+  settingsBackdrop.classList.add('open');
 
-    return {
-
-      x: rect.width / 2 + (wx - cameraX) * getUnit(),
-
-      y: rect.height / 2 - (wy - cameraY) * getUnit()
-
-    };
-
-  }
+}
 
 
-  function screenToWorld(sx, sy){
+function closeSettingsWindow(){
 
-    const rect = svg.getBoundingClientRect();
+  settingsBackdrop.classList.remove('open');
 
-    return {
-
-      x: cameraX + (sx - rect.width / 2) / getUnit(),
-
-      y: cameraY - (sy - rect.height / 2) / getUnit()
-
-    };
-
-  }
+}
 
 
-  function svgPoint(evt){
+/* =========================================================
+   THEME
+========================================================= */
 
-    const rect = svg.getBoundingClientRect();
+themeToggle.addEventListener(
+  'click',
+  () => {
 
-    return {
+    isLightMode =
+      !isLightMode;
 
-      x: evt.clientX - rect.left,
+    document.body.classList.toggle(
+      'light',
+      isLightMode
+    );
 
-      y: evt.clientY - rect.top
-
-    };
+    themeToggle.classList.toggle(
+      'on',
+      isLightMode
+    );
 
   }
+);
 
 
-  /*
-   * SNAP
-   */
+/* =========================================================
+   ZOOM SPEED
+========================================================= */
 
-  function findNearPoint(x,y,thresh,excludeId){
+zoomSpeed.addEventListener(
+  'input',
+  () => {
 
-    let best = null;
+    zoomSpeedValueInternal =
+      Number(zoomSpeed.value);
 
-    let bd = thresh;
+    zoomSpeedValue.textContent =
+      zoomSpeed.value;
 
-    for(const p of points){
+  }
+);
 
-      if(p.id === excludeId)
-        continue;
 
-      const s = worldToScreen(p.x,p.y);
+/* =========================================================
+   VISIBILITY
+========================================================= */
 
-      const d = Math.hypot(
-        s.x-x,
-        s.y-y
+showPointsToggle.addEventListener(
+  'click',
+  () => {
+
+    showPoints =
+      !showPoints;
+
+    showPointsToggle.classList.toggle(
+      'on',
+      showPoints
+    );
+
+    render();
+
+  }
+);
+
+
+showLabelsToggle.addEventListener(
+  'click',
+  () => {
+
+    showLabels =
+      !showLabels;
+
+    showLabelsToggle.classList.toggle(
+      'on',
+      showLabels
+    );
+
+    render();
+
+  }
+);
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+gridSizeInput.addEventListener(
+  'change',
+  () => {
+
+    let value =
+      parseFloat(
+        gridSizeInput.value
       );
 
-      if(d < bd){
+    if(
+      !Number.isFinite(value)
+      ||
+      value <= 0
+    ){
 
-        bd = d;
-
-        best = p;
-
-      }
+      value = 1;
 
     }
 
-    return best;
+    gridSizeInput.value =
+      cleanNumber(value);
+
+    render();
+
+  }
+);
+
+
+function getGridSize(){
+
+  let value =
+    parseFloat(
+      gridSizeInput.value
+    );
+
+  if(
+    !Number.isFinite(value)
+    ||
+    value <= 0
+  ){
+
+    return 1;
 
   }
 
+  return value;
 
-  function resolveSnap(sx, sy, excludeId){
+}
 
-    const near =
-      findNearPoint(
-        sx,
-        sy,
-        POINT_SNAP_PX,
-        excludeId
+
+/* =========================================================
+   COORDINATE CONVERSION
+========================================================= */
+
+function getUnit(){
+
+  return BASE_UNIT * zoom;
+
+}
+
+
+function worldToScreen(wx,wy){
+
+  const rect =
+    svg.getBoundingClientRect();
+
+  return {
+
+    x:
+      rect.width/2
+      +
+      (wx-cameraX)*getUnit(),
+
+    y:
+      rect.height/2
+      -
+      (wy-cameraY)*getUnit()
+
+  };
+
+}
+
+
+function screenToWorld(sx,sy){
+
+  const rect =
+    svg.getBoundingClientRect();
+
+  return {
+
+    x:
+      cameraX
+      +
+      (sx-rect.width/2)/getUnit(),
+
+    y:
+      cameraY
+      -
+      (sy-rect.height/2)/getUnit()
+
+  };
+
+}
+
+
+function svgPoint(e){
+
+  const rect =
+    svg.getBoundingClientRect();
+
+  return {
+
+    x:
+      e.clientX-rect.left,
+
+    y:
+      e.clientY-rect.top
+
+  };
+
+}
+
+
+/* =========================================================
+   POINTS
+========================================================= */
+
+function addPoint(x,y){
+
+  const point = {
+
+    id:nextId++,
+
+    x,
+
+    y
+
+  };
+
+  points.push(point);
+
+  return point;
+
+}
+
+
+function byId(id){
+
+  return points.find(
+    p => p.id === id
+  );
+
+}
+
+
+function pointName(id){
+
+  const index =
+    points.findIndex(
+      p => p.id === id
+    );
+
+  let n = index;
+
+  let name = '';
+
+  do{
+
+    name =
+      String.fromCharCode(
+        65+(n%26)
+      )
+      +
+      name;
+
+    n =
+      Math.floor(n/26)-1;
+
+  }
+  while(n>=0);
+
+  return name;
+
+}
+
+
+/* =========================================================
+   SNAP
+========================================================= */
+
+function findNearPoint(
+  sx,
+  sy,
+  threshold,
+  excludeId
+){
+
+  let best = null;
+
+  let bestDistance =
+    threshold;
+
+  for(const point of points){
+
+    if(point.id === excludeId)
+      continue;
+
+    const screen =
+      worldToScreen(
+        point.x,
+        point.y
       );
 
-    if(near){
+    const distance =
+      Math.hypot(
+        screen.x-sx,
+        screen.y-sy
+      );
 
-      const s = worldToScreen(
+    if(distance < bestDistance){
+
+      bestDistance =
+        distance;
+
+      best =
+        point;
+
+    }
+
+  }
+
+  return best;
+
+}
+
+
+function resolveSnap(
+  sx,
+  sy,
+  excludeId
+){
+
+  const near =
+    findNearPoint(
+      sx,
+      sy,
+      14,
+      excludeId
+    );
+
+  if(near){
+
+    const screen =
+      worldToScreen(
         near.x,
         near.y
       );
 
-      return {
-
-        x:s.x,
-        y:s.y,
-
-        worldX:near.x,
-        worldY:near.y,
-
-        snappedTo:near.id,
-
-        kind:'point'
-
-      };
-
-    }
-
-
-    const w =
-      screenToWorld(sx,sy);
-
-
-    const grid =
-      getGridSize();
-
-
-    const gx =
-      Math.round(w.x/grid)*grid;
-
-
-    const gy =
-      Math.round(w.y/grid)*grid;
-
-
-    const g =
-      worldToScreen(gx,gy);
-
-
     return {
 
-      x:g.x,
-      y:g.y,
+      x:screen.x,
 
-      worldX:gx,
-      worldY:gy,
+      y:screen.y,
 
-      snappedTo:null,
+      worldX:near.x,
 
-      kind:'grid'
+      worldY:near.y,
 
-    };
+      snappedTo:near.id,
 
-  }
-
-
-  function getGridSize(){
-
-    let value =
-      parseFloat(gridSizeInput.value);
-
-    if(!Number.isFinite(value) || value <= 0)
-      value = 1;
-
-    return value;
-
-  }
-
-
-  function addPoint(x,y){
-
-    const p = {
-
-      id:nextId++,
-
-      x,
-      y
+      kind:'point'
 
     };
 
-    points.push(p);
-
-    return p;
-
   }
 
 
-  function getOrCreatePoint(snap){
+  const world =
+    screenToWorld(
+      sx,
+      sy
+    );
 
-    if(snap.snappedTo != null){
+  const grid =
+    getGridSize();
 
-      return points.find(
-        p => p.id === snap.snappedTo
-      );
+  const gx =
+    Math.round(
+      world.x/grid
+    )*grid;
 
-    }
+  const gy =
+    Math.round(
+      world.y/grid
+    )*grid;
 
-    return addPoint(
-      snap.worldX,
-      snap.worldY
+  const screen =
+    worldToScreen(
+      gx,
+      gy
+    );
+
+  return {
+
+    x:screen.x,
+
+    y:screen.y,
+
+    worldX:gx,
+
+    worldY:gy,
+
+    snappedTo:null,
+
+    kind:'grid'
+
+  };
+
+}
+
+
+function getOrCreatePoint(snap){
+
+  if(
+    snap.snappedTo !== null
+  ){
+
+    return byId(
+      snap.snappedTo
     );
 
   }
 
+  return addPoint(
+    snap.worldX,
+    snap.worldY
+  );
 
-  function dist(a,b){
+}
 
-    return Math.hypot(
-      a.x-b.x,
-      a.y-b.y
-    );
 
-  }
+/* =========================================================
+   DISTANCE / ANGLES
+========================================================= */
 
+function distance(a,b){
 
-  function angleBetween(a,vertex,c){
+  return Math.hypot(
+    a.x-b.x,
+    a.y-b.y
+  );
 
-    const v1 = {
+}
 
-      x:a.x-vertex.x,
-      y:a.y-vertex.y
 
-    };
+function angleBetween(a,v,c){
 
-    const v2 = {
+  const v1 = {
 
-      x:c.x-vertex.x,
-      y:c.y-vertex.y
+    x:a.x-v.x,
 
-    };
+    y:a.y-v.y
 
+  };
 
-    let ang =
-      Math.atan2(v2.y,v2.x)
-      -
-      Math.atan2(v1.y,v1.x);
+  const v2 = {
 
+    x:c.x-v.x,
 
-    let deg =
-      ang*180/Math.PI;
+    y:c.y-v.y
 
+  };
 
-    deg =
-      ((deg%360)+360)%360;
+  let angle =
+    Math.atan2(v2.y,v2.x)
+    -
+    Math.atan2(v1.y,v1.x);
 
+  let degrees =
+    angle*180/Math.PI;
 
-    if(deg>180)
-      deg=360-deg;
+  degrees =
+    ((degrees%360)+360)%360;
 
+  if(degrees > 180)
+    degrees = 360-degrees;
 
-    return deg;
+  return degrees;
 
-  }
+}
 
 
-  /*
-   * HEX → RGBA
-   */
+/* =========================================================
+   MOUSE MOVE
+========================================================= */
 
-  function hexToRgba(hex, alpha){
+svg.addEventListener(
+  'mousemove',
+  e => {
 
-    hex = hex.replace('#','');
-
-    const r =
-      parseInt(hex.substring(0,2),16);
-
-    const g =
-      parseInt(hex.substring(2,4),16);
-
-    const b =
-      parseInt(hex.substring(4,6),16);
-
-    return `rgba(${r},${g},${b},${alpha})`;
-
-  }
-
-
-  /*
-   * POLYGON EDITOR
-   */
-
-  function showPolygonEditor(shape){
-
-    if(!shape || shape.type !== 'polygon')
-      return;
-
-
-    selectedShape = shape;
-
-
-    polygonColor.value =
-      shape.color || '#5B9BFF';
-
-
-    polygonOpacity.value =
-      Math.round(
-        (shape.opacity ?? 0.25) * 100
-      );
-
-
-    polygonEditor.classList.add('visible');
-
-  }
-
-
-  function hidePolygonEditor(){
-
-    polygonEditor.classList.remove('visible');
-
-    selectedShape = null;
-
-  }
-
-
-  polygonColor.addEventListener('input', () => {
-
-    if(!selectedShape)
-      return;
-
-    selectedShape.color =
-      polygonColor.value;
-
-    render();
-
-  });
-
-
-  polygonOpacity.addEventListener('input', () => {
-
-    if(!selectedShape)
-      return;
-
-    selectedShape.opacity =
-      parseInt(polygonOpacity.value,10)/100;
-
-    render();
-
-  });
-
-
-  /*
-   * Find polygon underneath cursor
-   */
-
-  function findPolygonAt(sx,sy){
-
-    /*
-     * SVG doesn't provide an easy polygon hit-test
-     * in all browsers, so we use point-in-polygon.
-     */
-
-    for(let i=shapes.length-1;i>=0;i--){
-
-      const shape = shapes[i];
-
-      if(shape.type !== 'polygon')
-        continue;
-
-
-      const pts =
-        shape.pts
-          .map(byId)
-          .filter(Boolean);
-
-
-      if(pts.length < 3)
-        continue;
-
-
-      const screenPts =
-        pts.map(p =>
-          worldToScreen(p.x,p.y)
-        );
-
-
-      if(pointInPolygon(
-        sx,
-        sy,
-        screenPts
-      )){
-
-        return shape;
-
-      }
-
-    }
-
-
-    return null;
-
-  }
-
-
-  function pointInPolygon(x,y,pts){
-
-    let inside = false;
-
-
-    for(
-      let i=0,j=pts.length-1;
-      i<pts.length;
-      j=i++
-    ){
-
-      const xi=pts[i].x;
-      const yi=pts[i].y;
-
-      const xj=pts[j].x;
-      const yj=pts[j].y;
-
-
-      const intersect =
-        ((yi>y)!==(yj>y))
-        &&
-        (
-          x <
-          (xj-xi)*(y-yi)/(yj-yi)+xi
-        );
-
-
-      if(intersect)
-        inside=!inside;
-
-    }
-
-
-    return inside;
-
-  }
-
-
-  /*
-   * MOUSE MOVE
-   */
-
-  svg.addEventListener('mousemove', e => {
-
-    const raw = svgPoint(e);
+    const raw =
+      svgPoint(e);
 
     mouseInside = true;
 
 
-    /*
-     * PAN
-     */
+    /* PAN */
 
     if(isPanning){
 
@@ -1205,18 +1899,20 @@
       const dy =
         raw.y-panStart.mouseY;
 
-
       cameraX =
         panStart.cameraX
-        - dx/getUnit();
-
+        -
+        dx/getUnit();
 
       cameraY =
         panStart.cameraY
-        + dy/getUnit();
+        +
+        dy/getUnit();
 
-
-      didPan = true;
+      updateCoordinates(
+        raw.x,
+        raw.y
+      );
 
       render();
 
@@ -1225,9 +1921,7 @@
     }
 
 
-    /*
-     * POINT DRAG
-     */
+    /* POINT DRAG */
 
     if(dragId !== null){
 
@@ -1238,34 +1932,26 @@
           dragId
         );
 
+      const point =
+        byId(dragId);
 
-      const p =
-        points.find(
-          p=>p.id===dragId
-        );
+      if(point){
 
+        point.x =
+          snap.worldX;
 
-      if(p){
-
-        p.x = snap.worldX;
-
-        p.y = snap.worldY;
+        point.y =
+          snap.worldY;
 
       }
 
+      currentSnap =
+        snap;
 
-      currentSnap = snap;
-
-      const w =
-        screenToWorld(
-          raw.x,
-          raw.y
-        );
-
-
-      coordEl.textContent =
-        `x: ${w.x.toFixed(2)}   y: ${w.y.toFixed(2)}`;
-
+      updateCoordinates(
+        raw.x,
+        raw.y
+      );
 
       render();
 
@@ -1281,61 +1967,61 @@
         null
       );
 
+    currentSnap =
+      snap;
 
-    currentSnap = snap;
-
-
-    const w =
-      screenToWorld(
-        raw.x,
-        raw.y
-      );
-
-
-    coordEl.textContent =
-      `x: ${w.x.toFixed(2)}   y: ${w.y.toFixed(2)}`;
-
-
-    const newHover =
+    hoverId =
       snap.snappedTo;
 
-
-    if(newHover !== hoverId){
-
-      hoverId = newHover;
-
-    }
-
+    updateCoordinates(
+      raw.x,
+      raw.y
+    );
 
     render();
 
-  });
+  }
+);
 
 
-  /*
-   * MOUSE LEAVE
-   */
+/* =========================================================
+   COORDINATES
+========================================================= */
 
-  svg.addEventListener('mouseleave', () => {
+function updateCoordinates(
+  sx,
+  sy
+){
 
-    mouseInside = false;
+  const world =
+    screenToWorld(
+      sx,
+      sy
+    );
 
-    if(dragId === null){
+  coordEl.textContent =
+    `x: ${world.x.toFixed(2)}   y: ${world.y.toFixed(2)}`;
 
-      hoverId = null;
+}
+
+
+/* =========================================================
+   MOUSE DOWN
+========================================================= */
+
+svg.addEventListener(
+  'mousedown',
+  e => {
+
+    if(e.button === 1){
+
+      startPan(e);
+
+      e.preventDefault();
+
+      return;
 
     }
-
-    render();
-
-  });
-
-
-  /*
-   * MOUSE DOWN
-   */
-
-  svg.addEventListener('mousedown', e => {
 
     if(e.button !== 0)
       return;
@@ -1345,30 +2031,22 @@
       svgPoint(e);
 
 
-    /*
-     * SELECT MODE
-     */
+    /* SELECT */
 
     if(tool === 'select'){
-
-      /*
-       * First try a point.
-       */
 
       const near =
         findNearPoint(
           raw.x,
           raw.y,
-          POINT_SNAP_PX,
+          14,
           null
         );
 
-
       if(near){
 
-        dragId = near.id;
-
-        selectedShape = null;
+        dragId =
+          near.id;
 
         hidePolygonEditor();
 
@@ -1379,20 +2057,17 @@
       }
 
 
-      /*
-       * Then try polygon.
-       */
-
       const polygon =
         findPolygonAt(
           raw.x,
           raw.y
         );
 
-
       if(polygon){
 
-        showPolygonEditor(polygon);
+        showPolygonEditor(
+          polygon
+        );
 
         render();
 
@@ -1402,10 +2077,10 @@
 
 
       /*
-       * Empty canvas.
+       * Empty space.
        *
-       * We don't immediately pan.
-       * Double-click is required.
+       * A double click arms the pan.
+       * The following drag begins the actual pan.
        */
 
       return;
@@ -1421,9 +2096,7 @@
       );
 
 
-    /*
-     * POINT
-     */
+    /* POINT */
 
     if(tool === 'point'){
 
@@ -1436,18 +2109,14 @@
     }
 
 
-    /*
-     * LINE
-     */
+    /* LINE */
 
     if(tool === 'line'){
 
-      const p =
+      const point =
         getOrCreatePoint(snap);
 
-
-      pending.push(p);
-
+      pending.push(point);
 
       if(pending.length === 2){
 
@@ -1461,11 +2130,9 @@
 
         });
 
-
-        pending=[];
+        pending = [];
 
       }
-
 
       render();
 
@@ -1474,18 +2141,14 @@
     }
 
 
-    /*
-     * CIRCLE
-     */
+    /* CIRCLE */
 
     if(tool === 'circle'){
 
-      const p =
+      const point =
         getOrCreatePoint(snap);
 
-
-      pending.push(p);
-
+      pending.push(point);
 
       if(pending.length === 2){
 
@@ -1499,11 +2162,9 @@
 
         });
 
-
-        pending=[];
+        pending = [];
 
       }
-
 
       render();
 
@@ -1512,46 +2173,27 @@
     }
 
 
-    /*
-     * POLYGON
-     */
+    /* POLYGON */
 
     if(tool === 'polygon'){
 
-      const p =
+      const point =
         getOrCreatePoint(snap);
-
 
       if(
         pending.length >= 3
         &&
-        p.id === pending[0].id
+        point.id === pending[0].id
       ){
 
-        shapes.push({
-
-          type:'polygon',
-
-          pts:pending.map(
-            pt=>pt.id
-          ),
-
-          color:'#5B9BFF',
-
-          opacity:0.25
-
-        });
-
-
-        pending=[];
+        createPolygon();
 
       }
       else{
 
-        pending.push(p);
+        pending.push(point);
 
       }
-
 
       render();
 
@@ -1560,18 +2202,14 @@
     }
 
 
-    /*
-     * ANGLE
-     */
+    /* ANGLE */
 
     if(tool === 'angle'){
 
-      const p =
+      const point =
         getOrCreatePoint(snap);
 
-
-      pending.push(p);
-
+      pending.push(point);
 
       if(pending.length === 3){
 
@@ -1587,143 +2225,241 @@
 
         });
 
-
-        pending=[];
+        pending = [];
 
       }
-
 
       render();
 
+    }
+
+  }
+);
+
+
+/* =========================================================
+   DOUBLE CLICK
+========================================================= */
+
+svg.addEventListener(
+  'dblclick',
+  e => {
+
+    if(tool !== 'select')
       return;
 
-    }
+    const raw =
+      svgPoint(e);
 
-  });
+    const near =
+      findNearPoint(
+        raw.x,
+        raw.y,
+        18,
+        null
+      );
 
-
-  /*
-   * DOUBLE CLICK
-   *
-   * Double-click empty space and then drag.
-   */
-
-  svg.addEventListener('dblclick', e => {
-
-    if(tool === 'select'){
-
-      const raw =
-        svgPoint(e);
-
-
-      const near =
-        findNearPoint(
-          raw.x,
-          raw.y,
-          POINT_SNAP_PX,
-          null
-        );
-
-
-      const polygon =
-        findPolygonAt(
-          raw.x,
-          raw.y
-        );
-
-
-      /*
-       * Only allow panning from empty canvas.
-       */
-
-      if(!near && !polygon){
-
-        e.preventDefault();
-
-        doubleClickPending = true;
-
-      }
-
-    }
-
+    const polygon =
+      findPolygonAt(
+        raw.x,
+        raw.y
+      );
 
     /*
-     * Polygon early finish.
+     * Only empty canvas can start panning.
      */
 
-    if(
-      tool === 'polygon'
-      &&
-      pending.length >= 3
-    ){
+    if(!near && !polygon){
 
-      shapes.push({
+      panArmed = true;
 
-        type:'polygon',
+      hintBox.textContent =
+        'Drag to move around the infinite grid.';
 
-        pts:pending.map(
-          pt=>pt.id
-        ),
-
-        color:'#5B9BFF',
-
-        opacity:0.25
-
-      });
-
-
-      pending=[];
-
-      render();
+      e.preventDefault();
 
     }
 
-  });
+  }
+);
 
 
-  /*
-   * Start pan after double-click.
-   *
-   * We use a small timeout because the browser sends
-   * dblclick after the second mousedown.
-   */
+/* =========================================================
+   PAN
+========================================================= */
 
-  svg.addEventListener('mousedown', e => {
+function startPan(e){
 
-    if(e.button !== 0)
-      return;
+  const raw =
+    svgPoint(e);
+
+  isPanning = true;
+
+  panStart = {
+
+    mouseX:raw.x,
+
+    mouseY:raw.y,
+
+    cameraX:cameraX,
+
+    cameraY:cameraY
+
+  };
+
+  svg.classList.add('panning');
+
+}
+
+
+window.addEventListener(
+  'mousemove',
+  e => {
 
     if(
-      tool === 'select'
-      &&
-      doubleClickPending
+      !panArmed
+      ||
+      isPanning
+      ||
+      tool !== 'select'
+    )
+      return;
+
+    /*
+     * Only start after the mouse actually moves.
+     */
+
+    const raw =
+      svgPoint(e);
+
+    if(
+      Math.abs(raw.x - panStartMouseX) > 3 ||
+      Math.abs(raw.y - panStartMouseY) > 3
     ){
 
-      const raw =
-        svgPoint(e);
+      isPanning = true;
 
+      panArmed = false;
+
+      panStart = {
+
+        mouseX:raw.x,
+
+        mouseY:raw.y,
+
+        cameraX:cameraX,
+
+        cameraY:cameraY
+
+      };
+
+      svg.classList.add('panning');
+
+    }
+
+  }
+);
+
+
+/*
+ * The mouse position at the moment of the
+ * double click.
+ */
+
+let panStartMouseX = 0;
+
+let panStartMouseY = 0;
+
+
+svg.addEventListener(
+  'dblclick',
+  e => {
+
+    if(tool !== 'select')
+      return;
+
+    const raw =
+      svgPoint(e);
+
+    panStartMouseX =
+      raw.x;
+
+    panStartMouseY =
+      raw.y;
+
+  }
+);
+
+
+/*
+ * Proper double-click + drag behavior.
+ *
+ * We listen to the second mousedown and,
+ * if the previous click was a double click,
+ * arm the pan.
+ */
+
+let clickTimer = null;
+
+let lastClickTime = 0;
+
+let lastClickX = 0;
+
+let lastClickY = 0;
+
+
+svg.addEventListener(
+  'mousedown',
+  e => {
+
+    if(
+      e.button !== 0
+      ||
+      tool !== 'select'
+    )
+      return;
+
+    const raw =
+      svgPoint(e);
+
+    const now =
+      performance.now();
+
+    const timeDiff =
+      now-lastClickTime;
+
+    const distanceDiff =
+      Math.hypot(
+        raw.x-lastClickX,
+        raw.y-lastClickY
+      );
+
+
+    if(
+      timeDiff < 350
+      &&
+      distanceDiff < 12
+    ){
 
       const near =
         findNearPoint(
           raw.x,
           raw.y,
-          POINT_SNAP_PX,
+          18,
           null
         );
-
 
       const polygon =
         findPolygonAt(
           raw.x,
           raw.y
         );
-
 
       if(!near && !polygon){
 
         isPanning = true;
 
-        didPan = false;
+        panArmed = false;
 
         panStart = {
 
@@ -1737,61 +2473,70 @@
 
         };
 
-
         svg.classList.add('panning');
 
       }
 
-
-      doubleClickPending = false;
-
     }
 
-  });
+
+    lastClickTime =
+      now;
+
+    lastClickX =
+      raw.x;
+
+    lastClickY =
+      raw.y;
+
+  }
+);
 
 
-  /*
-   * GLOBAL MOUSE UP
-   */
+/* =========================================================
+   MOUSE UP
+========================================================= */
 
-  window.addEventListener('mouseup', () => {
+window.addEventListener(
+  'mouseup',
+  () => {
 
     if(dragId !== null){
 
       dragId = null;
 
-      render();
-
     }
-
 
     if(isPanning){
 
       isPanning = false;
 
-      svg.classList.remove('panning');
-
-      render();
+      svg.classList.remove(
+        'panning'
+      );
 
     }
 
-  });
+    panArmed = false;
+
+    render();
+
+  }
+);
 
 
-  /*
-   * MOUSE WHEEL ZOOM
-   *
-   * Zooms toward cursor position.
-   */
+/* =========================================================
+   ZOOM
+========================================================= */
 
-  svg.addEventListener('wheel', e => {
+svg.addEventListener(
+  'wheel',
+  e => {
 
     e.preventDefault();
 
-
     const mouse =
       svgPoint(e);
-
 
     const before =
       screenToWorld(
@@ -1800,24 +2545,34 @@
       );
 
 
+    /*
+     * Higher setting = faster zoom.
+     */
+
+    const speed =
+      zoomSpeedValueInternal / 12;
+
     const factor =
       e.deltaY < 0
-        ? 1.12
-        : 1/1.12;
+        ? Math.pow(1.08,speed)
+        : Math.pow(1/1.08,speed);
 
 
     zoom *= factor;
 
-
     zoom =
       Math.max(
-        0.05,
-        Math.min(50,zoom)
+        .04,
+        Math.min(
+          50,
+          zoom
+        )
       );
 
 
     /*
-     * Keep cursor over same world point.
+     * Keep the world point underneath
+     * the cursor stationary.
      */
 
     const after =
@@ -1826,10 +2581,8 @@
         mouse.y
       );
 
-
     cameraX +=
       before.x-after.x;
-
 
     cameraY +=
       before.y-after.y;
@@ -1837,1039 +2590,1414 @@
 
     render();
 
-  }, {passive:false});
+  },
+  {
+    passive:false
+  }
+);
 
 
-  /*
-   * RESIZE
-   */
+/* =========================================================
+   POLYGON
+========================================================= */
 
-  window.addEventListener('resize', () => {
+function createPolygon(){
 
-    render();
+  shapes.push({
+
+    type:'polygon',
+
+    pts:
+      pending.map(
+        p=>p.id
+      ),
+
+    color:'#5B9BFF',
+
+    opacity:.25
 
   });
 
+  pending = [];
 
-  /*
-   * SVG ELEMENT HELPER
-   */
+}
 
-  function el(tag, attrs){
 
-    const e =
-      document.createElementNS(
-        NS,
-        tag
+function findPolygonAt(
+  sx,
+  sy
+){
+
+  for(
+    let i=shapes.length-1;
+    i>=0;
+    i--
+  ){
+
+    const shape =
+      shapes[i];
+
+    if(
+      shape.type !== 'polygon'
+    )
+      continue;
+
+    const pts =
+      shape.pts
+        .map(byId)
+        .filter(Boolean);
+
+    if(pts.length < 3)
+      continue;
+
+    const screenPts =
+      pts.map(
+        p =>
+          worldToScreen(
+            p.x,
+            p.y
+          )
       );
 
+    if(
+      pointInPolygon(
+        sx,
+        sy,
+        screenPts
+      )
+    ){
 
-    for(const k in attrs){
-
-      e.setAttribute(
-        k,
-        attrs[k]
-      );
+      return shape;
 
     }
 
+  }
 
-    return e;
+  return null;
+
+}
+
+
+function pointInPolygon(
+  x,
+  y,
+  pointsArray
+){
+
+  let inside = false;
+
+  for(
+    let i=0,
+    j=pointsArray.length-1;
+
+    i<pointsArray.length;
+
+    j=i++
+  ){
+
+    const xi =
+      pointsArray[i].x;
+
+    const yi =
+      pointsArray[i].y;
+
+    const xj =
+      pointsArray[j].x;
+
+    const yj =
+      pointsArray[j].y;
+
+
+    const intersect =
+      (
+        (yi>y)
+        !==
+        (yj>y)
+      )
+      &&
+      (
+        x <
+        (xj-xi)
+        *
+        (y-yi)
+        /
+        (yj-yi)
+        +
+        xi
+      );
+
+
+    if(intersect)
+      inside = !inside;
+
+  }
+
+  return inside;
+
+}
+
+
+/* =========================================================
+   POLYGON EDITOR
+========================================================= */
+
+function showPolygonEditor(shape){
+
+  selectedShape =
+    shape;
+
+  polygonColor.value =
+    shape.color || '#5B9BFF';
+
+  const opacity =
+    Math.round(
+      (shape.opacity ?? .25)*100
+    );
+
+  polygonOpacity.value =
+    opacity;
+
+  opacityValue.textContent =
+    opacity+'%';
+
+  polygonEditor.classList.add(
+    'visible'
+  );
+
+}
+
+
+function hidePolygonEditor(){
+
+  polygonEditor.classList.remove(
+    'visible'
+  );
+
+  selectedShape =
+    null;
+
+}
+
+
+closeEditor.addEventListener(
+  'click',
+  hidePolygonEditor
+);
+
+
+polygonColor.addEventListener(
+  'input',
+  () => {
+
+    if(!selectedShape)
+      return;
+
+    selectedShape.color =
+      polygonColor.value;
+
+    render();
+
+  }
+);
+
+
+polygonOpacity.addEventListener(
+  'input',
+  () => {
+
+    if(!selectedShape)
+      return;
+
+    const value =
+      Number(
+        polygonOpacity.value
+      );
+
+    selectedShape.opacity =
+      value/100;
+
+    opacityValue.textContent =
+      value+'%';
+
+    render();
+
+  }
+);
+
+
+/* =========================================================
+   UNDO
+========================================================= */
+
+document
+  .getElementById('undo-btn')
+  .addEventListener(
+    'click',
+    () => {
+
+      if(shapes.length){
+
+        const removed =
+          shapes.pop();
+
+        if(
+          selectedShape ===
+          removed
+        ){
+
+          hidePolygonEditor();
+
+        }
+
+      }
+      else if(points.length){
+
+        points.pop();
+
+      }
+
+      render();
+
+    }
+  );
+
+
+/* =========================================================
+   CLEAR
+========================================================= */
+
+document
+  .getElementById('clear-btn')
+  .addEventListener(
+    'click',
+    () => {
+
+      points = [];
+
+      shapes = [];
+
+      pending = [];
+
+      selectedShape =
+        null;
+
+      hidePolygonEditor();
+
+      render();
+
+    }
+  );
+
+
+/* =========================================================
+   SVG HELPER
+========================================================= */
+
+function el(
+  tag,
+  attributes
+){
+
+  const element =
+    document.createElementNS(
+      NS,
+      tag
+    );
+
+  for(
+    const key in attributes
+  ){
+
+    element.setAttribute(
+      key,
+      attributes[key]
+    );
+
+  }
+
+  return element;
+
+}
+
+
+/* =========================================================
+   GRID RENDERING
+========================================================= */
+
+function drawGrid(rect){
+
+  const group =
+    el('g',{});
+
+
+  const grid =
+    getGridSize();
+
+  const unit =
+    getUnit();
+
+
+  /*
+   * Visible world bounds.
+   */
+
+  const topLeft =
+    screenToWorld(
+      0,
+      0
+    );
+
+  const bottomRight =
+    screenToWorld(
+      rect.width,
+      rect.height
+    );
+
+
+  /*
+   * If the grid gets extremely dense,
+   * increase the rendering step.
+   */
+
+  const desiredPixels =
+    28;
+
+  let gridStep =
+    grid;
+
+  while(
+    gridStep*unit <
+    desiredPixels
+  ){
+
+    gridStep *= 2;
 
   }
 
 
   /*
-   * GRID
+   * Visible indices.
    */
 
-  function drawGridAndAxes(rect){
+  const minX =
+    Math.floor(
+      bottomRight.x/gridStep
+    )-1;
 
-    const g =
-      el('g',{});
+  const maxX =
+    Math.ceil(
+      topLeft.x/gridStep
+    )+1;
 
+  const minY =
+    Math.floor(
+      bottomRight.y/gridStep
+    )-1;
 
-    const grid =
-      getGridSize();
+  const maxY =
+    Math.ceil(
+      topLeft.y/gridStep
+    )+1;
 
 
-    const unit =
-      getUnit();
+  /*
+   * Maximum cells for performance.
+   */
 
+  const MAX_LINES = 220;
 
-    /*
-     * Determine visible world bounds.
-     */
 
-    const topLeft =
-      screenToWorld(
-        0,
-        0
-      );
+  const countX =
+    maxX-minX;
 
+  const countY =
+    maxY-minY;
 
-    const bottomRight =
-      screenToWorld(
-        rect.width,
-        rect.height
-      );
 
+  /*
+   * Draw vertical grid lines.
+   */
 
-    let minX =
-      Math.floor(
-        bottomRight.x/grid
-      )-1;
-
-
-    let maxX =
-      Math.ceil(
-        topLeft.x/grid
-      )+1;
-
-
-    let minY =
-      Math.floor(
-        bottomRight.y/grid
-      )-1;
-
-
-    let maxY =
-      Math.ceil(
-        topLeft.y/grid
-      )+1;
-
-
-    /*
-     * Avoid generating millions of lines
-     * when zoomed extremely far out.
-     */
-
-    const maxLines = 500;
-
-
-    if(maxX-minX > maxLines){
-
-      const skip =
-        Math.ceil(
-          (maxX-minX)/maxLines
-        );
-
-
-      minX =
-        Math.floor(minX/skip)*skip;
-
-      maxX =
-        Math.ceil(maxX/skip)*skip;
-
-
-      for(
-        let i=minX;
-        i<=maxX;
-        i+=skip
-      ){
-
-        const wx =
-          i*grid;
-
-
-        const s =
-          worldToScreen(
-            wx,
-            0
-          );
-
-
-        g.appendChild(
-          el('line',{
-            x1:s.x,
-            y1:0,
-            x2:s.x,
-            y2:rect.height,
-            class:
-              wx===0
-              ? 'axis-line'
-              : 'grid-line'
-          })
-        );
-
-      }
-
-    }
-    else{
-
-      for(
-        let i=minX;
-        i<=maxX;
-        i++
-      ){
-
-        const wx =
-          i*grid;
-
-
-        const s =
-          worldToScreen(
-            wx,
-            0
-          );
-
-
-        g.appendChild(
-          el('line',{
-            x1:s.x,
-            y1:0,
-            x2:s.x,
-            y2:rect.height,
-            class:
-              Math.abs(wx)<1e-12
-              ? 'axis-line'
-              : 'grid-line'
-          })
-        );
-
-      }
-
-    }
-
-
-    if(maxY-minY > maxLines){
-
-      const skip =
-        Math.ceil(
-          (maxY-minY)/maxLines
-        );
-
-
-      minY =
-        Math.floor(minY/skip)*skip;
-
-      maxY =
-        Math.ceil(maxY/skip)*skip;
-
-
-      for(
-        let j=minY;
-        j<=maxY;
-        j+=skip
-      ){
-
-        const wy =
-          j*grid;
-
-
-        const s =
-          worldToScreen(
-            0,
-            wy
-          );
-
-
-        g.appendChild(
-          el('line',{
-            x1:0,
-            y1:s.y,
-            x2:rect.width,
-            y2:s.y,
-            class:
-              Math.abs(wy)<1e-12
-              ? 'axis-line'
-              : 'grid-line'
-          })
-        );
-
-      }
-
-    }
-    else{
-
-      for(
-        let j=minY;
-        j<=maxY;
-        j++
-      ){
-
-        const wy =
-          j*grid;
-
-
-        const s =
-          worldToScreen(
-            0,
-            wy
-          );
-
-
-        g.appendChild(
-          el('line',{
-            x1:0,
-            y1:s.y,
-            x2:rect.width,
-            y2:s.y,
-            class:
-              Math.abs(wy)<1e-12
-              ? 'axis-line'
-              : 'grid-line'
-          })
-        );
-
-      }
-
-    }
-
-
-    /*
-     * Axis labels.
-     */
-
-    const labelStep =
-      chooseLabelStep(
-        grid,
-        zoom
-      );
-
-
-    const labelMinX =
-      Math.floor(
-        bottomRight.x/labelStep
-      )-1;
-
-
-    const labelMaxX =
-      Math.ceil(
-        topLeft.x/labelStep
-      )+1;
-
-
-    const labelMinY =
-      Math.floor(
-        bottomRight.y/labelStep
-      )-1;
-
-
-    const labelMaxY =
-      Math.ceil(
-        topLeft.y/labelStep
-      )+1;
-
+  if(countX < MAX_LINES){
 
     for(
-      let i=labelMinX;
-      i<=labelMaxX;
+      let i=minX;
+      i<=maxX;
       i++
     ){
 
       const wx =
-        i*labelStep;
+        i*gridStep;
 
-
-      if(Math.abs(wx)<1e-12)
-        continue;
-
-
-      const s =
+      const screen =
         worldToScreen(
           wx,
           0
         );
 
-
-      if(
-        s.x<0 ||
-        s.x>rect.width
-      )
-        continue;
+      const isAxis =
+        Math.abs(wx) < 1e-10;
 
 
-      const t =
-        el('text',{
-          class:'axis-label',
-          x:s.x,
-          y:Math.min(
-            Math.max(
-              worldToScreen(0,0).y+14,
-              12
-            ),
-            rect.height-4
-          ),
-          'text-anchor':'middle'
-        });
+      group.appendChild(
+        el('line',{
 
+          x1:screen.x,
 
-      t.textContent =
-        formatNumber(wx);
+          y1:0,
 
+          x2:screen.x,
 
-      g.appendChild(t);
+          y2:rect.height,
+
+          class:
+            isAxis
+            ? 'axis-line'
+            : 'grid-border'
+
+        })
+      );
 
     }
 
+  }
+
+
+  /*
+   * Horizontal grid lines.
+   */
+
+  if(countY < MAX_LINES){
 
     for(
-      let j=labelMinY;
-      j<=labelMaxY;
-      j++
+      let i=minY;
+      i<=maxY;
+      i++
     ){
 
       const wy =
-        j*labelStep;
+        i*gridStep;
 
-
-      if(Math.abs(wy)<1e-12)
-        continue;
-
-
-      const s =
+      const screen =
         worldToScreen(
           0,
           wy
         );
 
-
-      if(
-        s.y<0 ||
-        s.y>rect.height
-      )
-        continue;
+      const isAxis =
+        Math.abs(wy) < 1e-10;
 
 
-      const t =
-        el('text',{
-          class:'axis-label',
-          x:Math.min(
-            Math.max(
-              worldToScreen(0,0).x-8,
-              20
-            ),
-            rect.width-4
-          ),
-          y:s.y+4,
-          'text-anchor':'end'
-        });
+      group.appendChild(
+        el('line',{
 
+          x1:0,
 
-      t.textContent =
-        formatNumber(wy);
+          y1:screen.y,
 
+          x2:rect.width,
 
-      g.appendChild(t);
+          y2:screen.y,
+
+          class:
+            isAxis
+            ? 'axis-line'
+            : 'grid-border'
+
+        })
+      );
 
     }
 
+  }
 
-    /*
-     * Origin.
-     */
 
-    const originScreen =
+  /*
+   * Axis labels.
+   *
+   * Labels use the original requested
+   * grid spacing.
+   */
+
+  const labelStep =
+    chooseLabelStep(
+      grid,
+      zoom
+    );
+
+
+  const labelMinX =
+    Math.floor(
+      bottomRight.x/labelStep
+    )-1;
+
+  const labelMaxX =
+    Math.ceil(
+      topLeft.x/labelStep
+    )+1;
+
+  const labelMinY =
+    Math.floor(
+      bottomRight.y/labelStep
+    )-1;
+
+  const labelMaxY =
+    Math.ceil(
+      topLeft.y/labelStep
+    )+1;
+
+
+  /*
+   * X labels
+   */
+
+  for(
+    let i=labelMinX;
+    i<=labelMaxX;
+    i++
+  ){
+
+    const wx =
+      i*labelStep;
+
+    if(Math.abs(wx)<1e-10)
+      continue;
+
+    const screen =
+      worldToScreen(
+        wx,
+        0
+      );
+
+    if(
+      screen.x<0
+      ||
+      screen.x>rect.width
+    )
+      continue;
+
+
+    const origin =
       worldToScreen(
         0,
         0
       );
 
 
-    const o =
+    const label =
       el('text',{
-        class:'axis-label origin',
-        x:Math.max(
-          originScreen.x-8,
-          20
-        ),
-        y:Math.min(
-          Math.max(
-            originScreen.y+14,
-            12
+
+        class:'axis-label',
+
+        x:screen.x,
+
+        y:
+          Math.min(
+            Math.max(
+              origin.y+15,
+              12
+            ),
+            rect.height-5
           ),
-          rect.height-4
-        ),
-        'text-anchor':'end'
+
+        'text-anchor':'middle'
+
       });
 
 
-    o.textContent='0';
-
-    g.appendChild(o);
-
-
-    return g;
-
-  }
+    label.textContent =
+      formatNumber(wx);
 
 
-  function chooseLabelStep(grid, zoom){
-
-    /*
-     * We want labels roughly every 40–100 pixels.
-     */
-
-    const desiredWorld =
-      70/(UNIT_BASE*zoom);
-
-
-    const raw =
-      Math.max(
-        grid,
-        desiredWorld
-      );
-
-
-    const exponent =
-      Math.floor(
-        Math.log10(raw)
-      );
-
-
-    const base =
-      Math.pow(
-        10,
-        exponent
-      );
-
-
-    const multipliers =
-      [1,2,5,10];
-
-
-    for(const m of multipliers){
-
-      const step =
-        m*base;
-
-
-      if(step>=raw){
-
-        /*
-         * Keep labels aligned to the actual grid
-         * whenever possible.
-         */
-
-        const ratio =
-          step/grid;
-
-
-        if(
-          Math.abs(
-            ratio-Math.round(ratio)
-          ) < 1e-8
-        ){
-
-          return step;
-
-        }
-
-        return step;
-
-      }
-
-    }
-
-
-    return 10*base;
-
-  }
-
-
-  function formatNumber(n){
-
-    if(Math.abs(n)<1e-10)
-      return '0';
-
-
-    if(
-      Math.abs(n)>=1000000
-      ||
-      Math.abs(n)<0.001
-    ){
-
-      return n.toExponential(2);
-
-    }
-
-
-    return Number(
-      n.toFixed(6)
-    ).toString();
+    group.appendChild(label);
 
   }
 
 
   /*
-   * RENDER
+   * Y labels
    */
 
-  function render(){
+  for(
+    let i=labelMinY;
+    i<=labelMaxY;
+    i++
+  ){
 
-    const rect =
-      svg.getBoundingClientRect();
+    const wy =
+      i*labelStep;
+
+    if(Math.abs(wy)<1e-10)
+      continue;
+
+    const screen =
+      worldToScreen(
+        0,
+        wy
+      );
+
+    if(
+      screen.y<0
+      ||
+      screen.y>rect.height
+    )
+      continue;
 
 
-    svg.innerHTML='';
+    const origin =
+      worldToScreen(
+        0,
+        0
+      );
 
 
-    /*
-     * GRID
-     */
+    const label =
+      el('text',{
 
-    svg.appendChild(
-      drawGridAndAxes(rect)
+        class:'axis-label',
+
+        x:
+          Math.min(
+            Math.max(
+              origin.x-9,
+              25
+            ),
+            rect.width-5
+          ),
+
+        y:
+          screen.y+4,
+
+        'text-anchor':'end'
+
+      });
+
+
+    label.textContent =
+      formatNumber(wy);
+
+
+    group.appendChild(label);
+
+  }
+
+
+  /*
+   * Origin label.
+   */
+
+  const origin =
+    worldToScreen(
+      0,
+      0
     );
 
 
-    /*
-     * SHAPES
-     */
+  const originLabel =
+    el('text',{
 
-    for(const s of shapes){
+      class:'axis-label',
 
-      /*
-       * LINE
-       */
+      x:
+        Math.max(
+          origin.x-9,
+          25
+        ),
 
-      if(s.type==='line'){
+      y:
+        Math.min(
+          Math.max(
+            origin.y+15,
+            12
+          ),
+          rect.height-5
+        ),
 
-        const a=byId(s.a);
-        const b=byId(s.b);
+      'text-anchor':'end'
 
-
-        if(!a||!b)
-          continue;
-
-
-        const A =
-          worldToScreen(
-            a.x,
-            a.y
-          );
+    });
 
 
-        const B =
-          worldToScreen(
-            b.x,
-            b.y
-          );
+  originLabel.textContent =
+    '0';
+
+  group.appendChild(
+    originLabel
+  );
 
 
-        svg.appendChild(
-          el('line',{
-            class:'seg',
-            x1:A.x,
-            y1:A.y,
-            x2:B.x,
-            y2:B.y
-          })
+  return group;
+
+}
+
+
+/* =========================================================
+   LABEL STEP
+========================================================= */
+
+function chooseLabelStep(
+  grid,
+  currentZoom
+){
+
+  const desired =
+    75/
+    (
+      BASE_UNIT*
+      currentZoom
+    );
+
+
+  let step =
+    grid;
+
+
+  while(step < desired){
+
+    const options = [
+      step*2,
+      step*5,
+      step*10
+    ];
+
+    let next =
+      options.find(
+        x => x>=desired
+      );
+
+    if(!next)
+      next=step*10;
+
+    step=next;
+
+  }
+
+  return step;
+
+}
+
+
+/* =========================================================
+   FORMAT NUMBERS
+========================================================= */
+
+function formatNumber(n){
+
+  if(
+    Math.abs(n) < 0.0000001
+  ){
+
+    return '0';
+
+  }
+
+  if(
+    Math.abs(n) >= 1000000
+  ){
+
+    return n.toExponential(2);
+
+  }
+
+  return cleanNumber(n);
+
+}
+
+
+function cleanNumber(n){
+
+  return Number(
+    n.toFixed(8)
+  ).toString();
+
+}
+
+
+/* =========================================================
+   HEX → RGBA
+========================================================= */
+
+function hexToRgba(
+  hex,
+  alpha
+){
+
+  hex =
+    hex.replace('#','');
+
+  const r =
+    parseInt(
+      hex.substring(0,2),
+      16
+    );
+
+  const g =
+    parseInt(
+      hex.substring(2,4),
+      16
+    );
+
+  const b =
+    parseInt(
+      hex.substring(4,6),
+      16
+    );
+
+  return `rgba(${r},${g},${b},${alpha})`;
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+  const rect =
+    svg.getBoundingClientRect();
+
+  svg.innerHTML='';
+
+
+  /*
+   * GRID
+   */
+
+  svg.appendChild(
+    drawGrid(rect)
+  );
+
+
+  /*
+   * SHAPES
+   */
+
+  for(
+    const shape of shapes
+  ){
+
+    /* ---------------------------------------------
+       LINE
+    --------------------------------------------- */
+
+    if(shape.type === 'line'){
+
+      const a =
+        byId(shape.a);
+
+      const b =
+        byId(shape.b);
+
+      if(!a||!b)
+        continue;
+
+
+      const A =
+        worldToScreen(
+          a.x,
+          a.y
+        );
+
+      const B =
+        worldToScreen(
+          b.x,
+          b.y
         );
 
 
-        const mx =
-          (A.x+B.x)/2;
+      svg.appendChild(
+        el('line',{
+
+          class:'seg',
+
+          x1:A.x,
+
+          y1:A.y,
+
+          x2:B.x,
+
+          y2:B.y
+
+        })
+      );
 
 
-        const my =
-          (A.y+B.y)/2;
+      const label =
+        el('text',{
+
+          class:'measure-label',
+
+          x:
+            (A.x+B.x)/2+8,
+
+          y:
+            (A.y+B.y)/2-8
+
+        });
 
 
-        const label =
-          el('text',{
-            class:'measure-label',
-            x:mx+8,
-            y:my-8
-          });
+      label.textContent =
+        distance(a,b)
+          .toFixed(2)
+        +
+        'u';
 
 
-        label.textContent =
-          dist(a,b).toFixed(2)+'u';
+      svg.appendChild(label);
+
+    }
 
 
-        svg.appendChild(label);
+    /* ---------------------------------------------
+       CIRCLE
+    --------------------------------------------- */
 
-      }
+    else if(
+      shape.type === 'circle'
+    ){
 
+      const center =
+        byId(
+          shape.center
+        );
 
-      /*
-       * CIRCLE
-       */
+      const edge =
+        byId(
+          shape.edge
+        );
 
-      else if(s.type==='circle'){
-
-        const c=byId(s.center);
-        const edge=byId(s.edge);
-
-
-        if(!c||!edge)
-          continue;
-
-
-        const C =
-          worldToScreen(
-            c.x,
-            c.y
-          );
+      if(!center||!edge)
+        continue;
 
 
-        const E =
-          worldToScreen(
-            edge.x,
-            edge.y
-          );
+      const C =
+        worldToScreen(
+          center.x,
+          center.y
+        );
 
-
-        const rpx =
-          Math.hypot(
-            C.x-E.x,
-            C.y-E.y
-          );
-
-
-        svg.appendChild(
-          el('circle',{
-            class:'circ',
-            cx:C.x,
-            cy:C.y,
-            r:rpx
-          })
+      const E =
+        worldToScreen(
+          edge.x,
+          edge.y
         );
 
 
-        svg.appendChild(
-          el('line',{
-            class:'ghost',
-            x1:C.x,
-            y1:C.y,
-            x2:E.x,
-            y2:E.y
-          })
+      const radius =
+        Math.hypot(
+          C.x-E.x,
+          C.y-E.y
         );
 
 
-        const label =
-          el('text',{
-            class:'measure-label',
-            x:C.x+8,
-            y:C.y-rpx-8
-          });
+      svg.appendChild(
+        el('circle',{
+
+          class:'circ',
+
+          cx:C.x,
+
+          cy:C.y,
+
+          r:radius
+
+        })
+      );
 
 
-        label.textContent =
-          'r = '+dist(c,edge).toFixed(2)+'u';
+      svg.appendChild(
+        el('line',{
+
+          class:'ghost',
+
+          x1:C.x,
+
+          y1:C.y,
+
+          x2:E.x,
+
+          y2:E.y
+
+        })
+      );
 
 
-        svg.appendChild(label);
+      const label =
+        el('text',{
 
-      }
+          class:'measure-label',
 
+          x:C.x+8,
 
-      /*
-       * POLYGON
-       */
+          y:C.y-radius-8
 
-      else if(s.type==='polygon'){
-
-        const pts =
-          s.pts
-            .map(byId)
-            .filter(Boolean);
+        });
 
 
-        if(pts.length<2)
-          continue;
+      label.textContent =
+        'r = '
+        +
+        distance(
+          center,
+          edge
+        ).toFixed(2)
+        +
+        'u';
 
 
-        const pointsAttr =
-          pts
-            .map(p => {
+      svg.appendChild(label);
 
-              const s =
+    }
+
+
+    /* ---------------------------------------------
+       POLYGON
+    --------------------------------------------- */
+
+    else if(
+      shape.type === 'polygon'
+    ){
+
+      const pts =
+        shape.pts
+          .map(byId)
+          .filter(Boolean);
+
+      if(pts.length<2)
+        continue;
+
+
+      const pointsAttr =
+        pts
+          .map(
+            point => {
+
+              const screen =
                 worldToScreen(
-                  p.x,
-                  p.y
+                  point.x,
+                  point.y
                 );
 
-              return `${s.x},${s.y}`;
+              return (
+                screen.x
+                +
+                ','
+                +
+                screen.y
+              );
 
-            })
-            .join(' ');
+            }
+          )
+          .join(' ');
 
 
-        const color =
-          s.color || '#5B9BFF';
+      const polygon =
+        el('polygon',{
 
-
-        const opacity =
-          s.opacity ?? 0.25;
-
-
-        const polygon =
-          el('polygon',{
-
-            class:
-              'poly'
-              +
-              (
-                selectedShape===s
-                ? ' selected'
-                : ''
-              ),
-
-            points:pointsAttr,
-
-            fill:hexToRgba(
-              color,
-              opacity
+          class:
+            'poly'
+            +
+            (
+              selectedShape===shape
+              ? ' selected'
+              : ''
             ),
 
-            stroke:'#E8E8EA'
+          points:
+            pointsAttr,
 
-          });
+          fill:
+            hexToRgba(
+              shape.color ||
+              '#5B9BFF',
 
+              shape.opacity ??
+              .25
+            )
 
-        /*
-         * Clicking polygon selects it.
-         */
-
-        polygon.addEventListener(
-          'mousedown',
-          e => {
-
-            if(tool !== 'select')
-              return;
+        });
 
 
-            e.stopPropagation();
+      polygon.addEventListener(
+        'mousedown',
+        e => {
 
+          if(tool !== 'select')
+            return;
 
-            showPolygonEditor(s);
+          e.stopPropagation();
 
-            render();
-
-          }
-        );
-
-
-        svg.appendChild(polygon);
-
-      }
-
-
-      /*
-       * ANGLE
-       */
-
-      else if(s.type==='angle'){
-
-        const a=byId(s.a);
-        const v=byId(s.vertex);
-        const c=byId(s.c);
-
-
-        if(!a||!v||!c)
-          continue;
-
-
-        const A =
-          worldToScreen(
-            a.x,
-            a.y
+          showPolygonEditor(
+            shape
           );
 
+          render();
 
-        const V =
-          worldToScreen(
-            v.x,
-            v.y
-          );
+        }
+      );
 
 
-        const C =
-          worldToScreen(
-            c.x,
-            c.y
-          );
-
-
-        svg.appendChild(
-          el('line',{
-            class:'ghost',
-            x1:V.x,
-            y1:V.y,
-            x2:A.x,
-            y2:A.y
-          })
-        );
-
-
-        svg.appendChild(
-          el('line',{
-            class:'ghost',
-            x1:V.x,
-            y1:V.y,
-            x2:C.x,
-            y2:C.y
-          })
-        );
-
-
-        const deg =
-          angleBetween(
-            a,
-            v,
-            c
-          );
-
-
-        const r=28;
-
-
-        const startAng =
-          Math.atan2(
-            A.y-V.y,
-            A.x-V.x
-          );
-
-
-        let endAng =
-          Math.atan2(
-            C.y-V.y,
-            C.x-V.x
-          );
-
-
-        let sweep =
-          endAng-startAng;
-
-
-        while(sweep<0)
-          sweep+=2*Math.PI;
-
-
-        const large =
-          sweep>Math.PI
-            ? 1
-            : 0;
-
-
-        const sx =
-          V.x+
-          r*Math.cos(startAng);
-
-
-        const sy =
-          V.y+
-          r*Math.sin(startAng);
-
-
-        const ex =
-          V.x+
-          r*Math.cos(endAng);
-
-
-        const ey =
-          V.y+
-          r*Math.sin(endAng);
-
-
-        svg.appendChild(
-          el('path',{
-            class:'angle-arc',
-            d:
-              `M ${sx} ${sy}
-               A ${r} ${r} 0 ${large} 1 ${ex} ${ey}`
-          })
-        );
-
-
-        const midAng =
-          startAng+sweep/2;
-
-
-        const lx =
-          V.x+
-          (r+18)*
-          Math.cos(midAng);
-
-
-        const ly =
-          V.y+
-          (r+18)*
-          Math.sin(midAng);
-
-
-        const label =
-          el('text',{
-            class:'angle-label',
-            x:lx,
-            y:ly,
-            'text-anchor':'middle'
-          });
-
-
-        label.textContent =
-          deg.toFixed(1)+'°';
-
-
-        svg.appendChild(label);
-
-      }
+      svg.appendChild(
+        polygon
+      );
 
     }
 
 
-    /*
-     * PENDING CONSTRUCTION
-     */
+    /* ---------------------------------------------
+       ANGLE
+    --------------------------------------------- */
 
-    if(pending.length){
+    else if(
+      shape.type === 'angle'
+    ){
 
-      for(
-        let i=0;
-        i<pending.length-1;
-        i++
-      ){
+      const a =
+        byId(shape.a);
 
-        const A =
-          worldToScreen(
-            pending[i].x,
-            pending[i].y
-          );
+      const v =
+        byId(shape.vertex);
 
+      const c =
+        byId(shape.c);
 
-        const B =
-          worldToScreen(
-            pending[i+1].x,
-            pending[i+1].y
-          );
+      if(!a||!v||!c)
+        continue;
 
 
-        svg.appendChild(
-          el('line',{
-            class:'ghost',
-            x1:A.x,
-            y1:A.y,
-            x2:B.x,
-            y2:B.y
-          })
-        );
-
-      }
-
-    }
-
-
-    /*
-     * POINTS
-     */
-
-    for(const p of points){
-
-      const s =
+      const A =
         worldToScreen(
-          p.x,
-          p.y
+          a.x,
+          a.y
+        );
+
+      const V =
+        worldToScreen(
+          v.x,
+          v.y
+        );
+
+      const C =
+        worldToScreen(
+          c.x,
+          c.y
         );
 
 
-      const isHover =
-        p.id===hoverId
+      svg.appendChild(
+        el('line',{
+
+          class:'ghost',
+
+          x1:V.x,
+
+          y1:V.y,
+
+          x2:A.x,
+
+          y2:A.y
+
+        })
+      );
+
+
+      svg.appendChild(
+        el('line',{
+
+          class:'ghost',
+
+          x1:V.x,
+
+          y1:V.y,
+
+          x2:C.x,
+
+          y2:C.y
+
+        })
+      );
+
+
+      const degrees =
+        angleBetween(
+          a,
+          v,
+          c
+        );
+
+
+      const radius = 28;
+
+
+      const startAngle =
+        Math.atan2(
+          A.y-V.y,
+          A.x-V.x
+        );
+
+
+      const endAngle =
+        Math.atan2(
+          C.y-V.y,
+          C.x-V.x
+        );
+
+
+      let sweep =
+        endAngle-startAngle;
+
+
+      while(sweep<0)
+        sweep += Math.PI*2;
+
+
+      const large =
+        sweep>Math.PI
+          ? 1
+          : 0;
+
+
+      const sx =
+        V.x+
+        radius*
+        Math.cos(startAngle);
+
+      const sy =
+        V.y+
+        radius*
+        Math.sin(startAngle);
+
+      const ex =
+        V.x+
+        radius*
+        Math.cos(endAngle);
+
+      const ey =
+        V.y+
+        radius*
+        Math.sin(endAngle);
+
+
+      svg.appendChild(
+        el('path',{
+
+          class:'angle-arc',
+
+          d:
+            `M ${sx} ${sy}
+             A ${radius} ${radius}
+             0 ${large} 1 ${ex} ${ey}`
+
+        })
+      );
+
+
+      const middle =
+        startAngle+
+        sweep/2;
+
+
+      const label =
+        el('text',{
+
+          class:'angle-label',
+
+          x:
+            V.x+
+            (radius+18)*
+            Math.cos(middle),
+
+          y:
+            V.y+
+            (radius+18)*
+            Math.sin(middle),
+
+          'text-anchor':'middle'
+
+        });
+
+
+      label.textContent =
+        degrees.toFixed(1)
+        +
+        '°';
+
+
+      svg.appendChild(label);
+
+    }
+
+  }
+
+
+  /*
+   * PENDING CONSTRUCTION
+   */
+
+  if(pending.length){
+
+    for(
+      let i=0;
+      i<pending.length-1;
+      i++
+    ){
+
+      const A =
+        worldToScreen(
+          pending[i].x,
+          pending[i].y
+        );
+
+      const B =
+        worldToScreen(
+          pending[i+1].x,
+          pending[i+1].y
+        );
+
+
+      svg.appendChild(
+        el('line',{
+
+          class:'ghost',
+
+          x1:A.x,
+
+          y1:A.y,
+
+          x2:B.x,
+
+          y2:B.y
+
+        })
+      );
+
+    }
+
+  }
+
+
+  /*
+   * POINTS
+   */
+
+  if(showPoints){
+
+    for(
+      const point of points
+    ){
+
+      const screen =
+        worldToScreen(
+          point.x,
+          point.y
+        );
+
+
+      const hover =
+        point.id === hoverId
         ||
-        p.id===dragId;
+        point.id === dragId;
 
 
       svg.appendChild(
@@ -2879,25 +4007,77 @@
             'pt'
             +
             (
-              isHover
+              hover
               ? ' hover'
               : ''
             )
             +
             (
-              p.id===dragId
+              point.id===dragId
               ? ' dragging'
               : ''
             ),
 
-          cx:s.x,
+          cx:screen.x,
 
-          cy:s.y,
+          cy:screen.y,
 
-          r:5
+          r:
+            hover
+            ? 6
+            : 5
 
         })
       );
+
+
+      if(showLabels){
+
+        const label =
+          el('text',{
+
+            class:'pt-label',
+
+            x:
+              screen.x+9,
+
+            y:
+              screen.y-9
+
+          });
+
+
+        label.textContent =
+          pointName(
+            point.id
+          );
+
+
+        svg.appendChild(
+          label
+        );
+
+      }
+
+    }
+
+  }
+  else if(showLabels){
+
+    /*
+     * Allow labels to remain visible
+     * even if point markers are hidden.
+     */
+
+    for(
+      const point of points
+    ){
+
+      const screen =
+        worldToScreen(
+          point.x,
+          point.y
+        );
 
 
       const label =
@@ -2905,170 +4085,92 @@
 
           class:'pt-label',
 
-          x:s.x+9,
+          x:
+            screen.x+7,
 
-          y:s.y-9
+          y:
+            screen.y-7
 
         });
 
 
       label.textContent =
-        pointName(p.id);
+        pointName(
+          point.id
+        );
 
 
       svg.appendChild(label);
 
     }
 
-
-    /*
-     * SNAP INDICATOR
-     */
-
-    if(
-      mouseInside
-      &&
-      currentSnap
-      &&
-      (
-        tool!=='select'
-        ||
-        dragId!==null
-      )
-    ){
-
-      svg.appendChild(
-        el('circle',{
-
-          class:
-            'snap-ring'
-            +
-            (
-              currentSnap.kind==='point'
-              ? ' point-snap'
-              : ''
-            ),
-
-          cx:currentSnap.x,
-
-          cy:currentSnap.y,
-
-          r:
-            currentSnap.kind==='point'
-            ? 10
-            : 7
-
-        })
-      );
-
-    }
-
   }
 
 
   /*
-   * LOOKUP
+   * SNAP INDICATOR
    */
 
-  function byId(id){
+  if(
+    mouseInside
+    &&
+    currentSnap
+    &&
+    (
+      tool !== 'select'
+      ||
+      dragId !== null
+    )
+  ){
 
-    return points.find(
-      p=>p.id===id
+    svg.appendChild(
+      el('circle',{
+
+        class:
+          'snap-ring'
+          +
+          (
+            currentSnap.kind === 'point'
+            ? ' point-snap'
+            : ''
+          ),
+
+        cx:
+          currentSnap.x,
+
+        cy:
+          currentSnap.y,
+
+        r:
+          currentSnap.kind === 'point'
+          ? 10
+          : 7
+
+      })
     );
 
   }
 
-
-  /*
-   * POINT NAMES
-   */
-
-  function pointName(id){
-
-    const idx =
-      points.findIndex(
-        p=>p.id===id
-      );
+}
 
 
-    let n=idx;
+/* =========================================================
+   RESIZE
+========================================================= */
 
-    let name='';
-
-
-    do{
-
-      name =
-        String.fromCharCode(
-          65+(n%26)
-        )
-        +
-        name;
+window.addEventListener(
+  'resize',
+  render
+);
 
 
-      n =
-        Math.floor(n/26)-1;
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
-    }
-    while(n>=0);
+setTool('select');
 
-
-    return name;
-
-  }
-
-
-  /*
-   * RIGHT CLICK / MIDDLE CLICK
-   *
-   * Also allows easy panning with middle mouse button.
-   */
-
-  svg.addEventListener(
-    'mousedown',
-    e => {
-
-      if(e.button !== 1)
-        return;
-
-
-      const raw =
-        svgPoint(e);
-
-
-      isPanning=true;
-
-      didPan=false;
-
-
-      panStart={
-
-        mouseX:raw.x,
-
-        mouseY:raw.y,
-
-        cameraX:cameraX,
-
-        cameraY:cameraY
-
-      };
-
-
-      svg.classList.add('panning');
-
-      e.preventDefault();
-
-    }
-  );
-
-
-  /*
-   * Initial render
-   */
-
-  render();
-
-  setTool('select');
+render();
 
 })();
 </script>
