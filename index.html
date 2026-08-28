@@ -6,47 +6,44 @@
 <title>GeoGebra — Idiot Sikker</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
 :root{
   --bg:#17181b;
-  --bg2:#101114;
-  --panel:#1d1f23;
-  --panel2:#25282e;
+  --bg2:#111214;
+  --panel:#1e2024;
+  --panel2:#24262b;
   --panel3:#292c32;
-  --border:#30343c;
-  --border2:#3b404a;
+  --border:#30333a;
   --grid:#292c31;
-  --axis:#555b66;
-  --text:#e9ebef;
-  --dim:#858b96;
+  --axis:#50545d;
+  --text:#e8e9ec;
+  --dim:#8b909a;
   --blue:#5b9bff;
-  --blue2:#3568b5;
+  --blue2:#3b6fbf;
   --cyan:#7fd9c4;
   --red:#e2685a;
-  --green:#65d39c;
-  --shadow:0 28px 90px rgba(0,0,0,.55);
-  --ease:cubic-bezier(.2,.8,.2,1);
+  --green:#65c18c;
+  --shadow:0 24px 80px rgba(0,0,0,.48);
 }
 
 body.light{
-  --bg:#f5f6f8;
-  --bg2:#e5e7eb;
+  --bg:#f4f5f7;
+  --bg2:#e7e9ed;
   --panel:#ffffff;
-  --panel2:#f0f2f5;
-  --panel3:#e7e9ed;
-  --border:#d5d9e0;
-  --border2:#c5cad2;
+  --panel2:#f0f1f4;
+  --panel3:#e5e7eb;
+  --border:#d5d8de;
   --grid:#dfe2e7;
-  --axis:#a8aeb8;
-  --text:#202329;
-  --dim:#6c727d;
+  --axis:#aeb3bc;
+  --text:#202226;
+  --dim:#686d76;
   --blue:#3478ed;
   --blue2:#2458b2;
   --cyan:#279b82;
   --red:#d64e40;
-  --green:#2b9d69;
-  --shadow:0 28px 90px rgba(0,0,0,.18);
+  --green:#3a9d68;
+  --shadow:0 24px 80px rgba(0,0,0,.18);
 }
 
 *{
@@ -88,19 +85,16 @@ button{
 #toolbar{
   width:82px;
   height:100%;
-  flex-shrink:0;
-  background:color-mix(in srgb,var(--panel) 94%,transparent);
+  background:var(--panel);
   border-right:1px solid var(--border);
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:11px 0;
+  padding:12px 0;
   gap:5px;
   z-index:20;
   overflow-y:auto;
-  overflow-x:hidden;
   scrollbar-width:none;
-  box-shadow:8px 0 30px rgba(0,0,0,.08);
 }
 
 #toolbar::-webkit-scrollbar{
@@ -108,13 +102,12 @@ button{
 }
 
 .brand{
-  width:100%;
-  font-size:7px;
+  font-size:8px;
   color:var(--dim);
-  letter-spacing:.16em;
+  letter-spacing:.15em;
   text-align:center;
-  line-height:1.35;
-  margin:3px 0 11px;
+  line-height:1.3;
+  margin:3px 0 12px;
 }
 
 .brand b{
@@ -126,11 +119,10 @@ button{
 }
 
 .tool{
-  position:relative;
   width:62px;
   min-height:48px;
   border:1px solid transparent;
-  border-radius:10px;
+  border-radius:9px;
   background:transparent;
   color:var(--dim);
   cursor:pointer;
@@ -140,99 +132,44 @@ button{
   justify-content:center;
   gap:3px;
   transition:
-    background .18s var(--ease),
-    color .18s var(--ease),
-    border-color .18s var(--ease),
-    transform .18s var(--ease),
-    box-shadow .18s var(--ease);
+    background .16s ease,
+    color .16s ease,
+    border-color .16s ease,
+    transform .12s ease,
+    box-shadow .16s ease;
 }
 
 .tool:hover{
-  background:rgba(91,155,255,.075);
+  background:rgba(91,155,255,.08);
   color:var(--text);
-  transform:translateY(-2px);
+  transform:translateY(-1px);
 }
 
 .tool:active{
-  transform:scale(.93);
+  transform:scale(.96);
 }
 
 .tool.active{
-  background:linear-gradient(
-    145deg,
-    rgba(91,155,255,.18),
-    rgba(91,155,255,.08)
-  );
-  border-color:color-mix(
-    in srgb,
-    var(--blue2) 90%,
-    var(--border)
-  );
+  background:rgba(91,155,255,.14);
+  border-color:var(--blue2);
   color:var(--blue);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.04),
-    0 6px 20px rgba(59,111,191,.12);
-}
-
-.tool.active::before{
-  content:"";
-  position:absolute;
-  left:-1px;
-  top:9px;
-  bottom:9px;
-  width:2px;
-  border-radius:0 3px 3px 0;
-  background:var(--blue);
-  box-shadow:0 0 12px rgba(91,155,255,.65);
+  box-shadow:0 0 0 1px rgba(91,155,255,.05),
+             0 5px 18px rgba(91,155,255,.08);
 }
 
 .tool svg{
   width:19px;
   height:19px;
-  transition:
-    transform .2s var(--ease);
-}
-
-.tool:hover svg{
-  transform:scale(1.08);
 }
 
 .tool span{
   font-family:'IBM Plex Mono',monospace;
   font-size:8px;
-  letter-spacing:.02em;
-}
-
-.shortcut-badge{
-  position:absolute;
-  right:4px;
-  top:4px;
-  min-width:14px;
-  height:14px;
-  padding:0 3px;
-  border-radius:4px;
-  background:var(--panel3);
-  border:1px solid var(--border);
-  color:var(--dim);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:7px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  line-height:1;
-  pointer-events:none;
-}
-
-.tool.active .shortcut-badge{
-  color:var(--blue);
-  border-color:var(--blue2);
-  background:rgba(91,155,255,.1);
 }
 
 .tool-divider{
-  width:43px;
+  width:44px;
   height:1px;
-  flex-shrink:0;
   background:var(--border);
   margin:5px 0;
 }
@@ -247,7 +184,6 @@ button{
 
 #canvas-wrap{
   flex:1;
-  min-width:0;
   position:relative;
   overflow:hidden;
   background:var(--bg);
@@ -264,15 +200,10 @@ button{
   cursor:grabbing;
 }
 
-/* =========================================================
-   SVG OBJECTS
-========================================================= */
-
 .grid-line{
   stroke:var(--grid);
   stroke-width:1;
   vector-effect:non-scaling-stroke;
-  transition:stroke .2s ease;
 }
 
 .axis-line{
@@ -286,7 +217,6 @@ button{
   font-size:10px;
   fill:var(--dim);
   pointer-events:none;
-  transition:opacity .2s ease;
 }
 
 .pt{
@@ -294,21 +224,16 @@ button{
   stroke:var(--bg2);
   stroke-width:1.5;
   cursor:grab;
-  transition:
-    fill .14s ease,
-    r .14s ease,
-    filter .14s ease;
+  transition:fill .12s ease,r .12s ease;
 }
 
 .pt.hover{
   fill:var(--blue);
-  filter:drop-shadow(0 0 5px rgba(91,155,255,.5));
 }
 
 .pt.dragging{
   fill:var(--blue);
   cursor:grabbing;
-  filter:drop-shadow(0 0 8px rgba(91,155,255,.65));
 }
 
 .pt-label{
@@ -332,18 +257,16 @@ button{
 }
 
 .poly{
-  stroke:var(--text);
   stroke-width:2;
   vector-effect:non-scaling-stroke;
   transition:
-    opacity .2s ease,
-    stroke-width .2s ease;
+    opacity .15s ease,
+    stroke-width .15s ease;
 }
 
 .poly.selected{
   stroke:var(--blue);
   stroke-width:3;
-  filter:drop-shadow(0 0 5px rgba(91,155,255,.35));
 }
 
 .ghost{
@@ -382,7 +305,6 @@ button{
   stroke-width:1.5;
   opacity:.9;
   vector-effect:non-scaling-stroke;
-  animation:snapPulse 1.2s ease-in-out infinite;
 }
 
 .snap-ring.point-snap{
@@ -395,15 +317,6 @@ button{
   fill:var(--text);
 }
 
-@keyframes snapPulse{
-  0%,100%{
-    opacity:.5;
-  }
-  50%{
-    opacity:1;
-  }
-}
-
 /* =========================================================
    HUD
 ========================================================= */
@@ -412,19 +325,16 @@ button{
   position:absolute;
   top:14px;
   left:14px;
-  background:color-mix(in srgb,var(--panel) 88%,transparent);
+  background:color-mix(in srgb,var(--panel) 90%,transparent);
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:9px;
   padding:8px 12px;
   font-family:'IBM Plex Mono',monospace;
   font-size:10px;
   color:var(--dim);
   pointer-events:none;
-  backdrop-filter:blur(12px);
-  box-shadow:0 8px 25px rgba(0,0,0,.1);
-  transition:
-    transform .2s var(--ease),
-    opacity .2s ease;
+  backdrop-filter:blur(10px);
+  box-shadow:0 8px 30px rgba(0,0,0,.12);
 }
 
 .hud b{
@@ -435,40 +345,360 @@ button{
   position:absolute;
   bottom:14px;
   right:14px;
-  background:color-mix(in srgb,var(--panel) 88%,transparent);
+  background:color-mix(in srgb,var(--panel) 90%,transparent);
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:9px;
   padding:7px 12px;
   font-family:'IBM Plex Mono',monospace;
   font-size:10px;
   color:var(--cyan);
   pointer-events:none;
-  backdrop-filter:blur(12px);
-  box-shadow:0 8px 25px rgba(0,0,0,.1);
+  backdrop-filter:blur(10px);
 }
 
 #hint{
   position:absolute;
   bottom:14px;
   left:14px;
-  max-width:500px;
-  background:color-mix(in srgb,var(--panel) 88%,transparent);
+  max-width:470px;
+  background:color-mix(in srgb,var(--panel) 90%,transparent);
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:9px;
   padding:8px 13px;
   font-size:11px;
   color:var(--dim);
   pointer-events:none;
-  backdrop-filter:blur(12px);
-  box-shadow:0 8px 25px rgba(0,0,0,.1);
+  backdrop-filter:blur(10px);
   transition:
-    opacity .25s ease,
-    transform .25s var(--ease);
+    opacity .2s ease,
+    transform .2s ease;
 }
 
 #hint.hidden{
   opacity:0;
-  transform:translateY(6px);
+  transform:translateY(8px);
+}
+
+/* =========================================================
+   TOP ACTIONS
+========================================================= */
+
+#top-actions{
+  position:absolute;
+  top:14px;
+  right:14px;
+  display:flex;
+  gap:7px;
+  z-index:10;
+}
+
+.top-action{
+  height:34px;
+  padding:0 12px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:color-mix(in srgb,var(--panel) 90%,transparent);
+  color:var(--dim);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:10px;
+  backdrop-filter:blur(10px);
+  transition:
+    background .16s ease,
+    color .16s ease,
+    border-color .16s ease,
+    transform .12s ease;
+}
+
+.top-action:hover{
+  color:var(--text);
+  border-color:var(--blue2);
+  background:var(--panel2);
+  transform:translateY(-1px);
+}
+
+.top-action svg{
+  width:15px;
+  height:15px;
+}
+
+/* =========================================================
+   SETTINGS OVERLAY
+========================================================= */
+
+#settings-overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.42);
+  backdrop-filter:blur(5px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s ease;
+}
+
+#settings-overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+#settings{
+  width:760px;
+  max-width:calc(100vw - 30px);
+  max-height:calc(100vh - 40px);
+  overflow:auto;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  transform:translateY(15px) scale(.97);
+  transition:
+    transform .24s cubic-bezier(.2,.8,.2,1);
+}
+
+#settings-overlay.open #settings{
+  transform:translateY(0) scale(1);
+}
+
+.settings-header{
+  padding:18px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.settings-header h2{
+  margin:0;
+  font-size:17px;
+}
+
+.settings-header small{
+  display:block;
+  margin-top:3px;
+  color:var(--dim);
+  font-size:10px;
+}
+
+.close-settings{
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:8px;
+  background:var(--panel2);
+  color:var(--dim);
+  cursor:pointer;
+  font-size:18px;
+  transition:.16s ease;
+}
+
+.close-settings:hover{
+  color:var(--text);
+  transform:rotate(4deg);
+}
+
+/* Wide settings grid */
+
+.settings-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+}
+
+.settings-section{
+  padding:18px 20px;
+  border-bottom:1px solid var(--border);
+}
+
+.settings-section:nth-child(odd){
+  border-right:1px solid var(--border);
+}
+
+.settings-section:last-child{
+  border-bottom:0;
+}
+
+.settings-title{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--dim);
+  margin-bottom:13px;
+}
+
+.setting-row{
+  min-height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  font-size:12px;
+}
+
+.setting-row + .setting-row{
+  margin-top:8px;
+}
+
+.setting-description{
+  color:var(--text);
+}
+
+.setting-description small{
+  display:block;
+  color:var(--dim);
+  font-size:10px;
+  margin-top:2px;
+}
+
+/* Inputs */
+
+select,
+input[type="number"]{
+  background:var(--panel2);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:7px 9px;
+  outline:none;
+}
+
+select:focus,
+input[type="number"]:focus{
+  border-color:var(--blue);
+}
+
+input[type="number"]{
+  width:95px;
+}
+
+/* Switch */
+
+.switch{
+  position:relative;
+  width:40px;
+  height:22px;
+  flex-shrink:0;
+}
+
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:20px;
+  cursor:pointer;
+  transition:.18s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  width:16px;
+  height:16px;
+  left:2px;
+  top:2px;
+  border-radius:50%;
+  background:var(--dim);
+  transition:.18s;
+}
+
+.switch input:checked + .slider{
+  background:var(--blue2);
+  border-color:var(--blue);
+}
+
+.switch input:checked + .slider:before{
+  transform:translateX(18px);
+  background:white;
+}
+
+/* Shortcut editor */
+
+.shortcut-list{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.shortcut-row{
+  display:grid;
+  grid-template-columns:28px 1fr 90px;
+  align-items:center;
+  gap:8px;
+  padding:6px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  transition:.16s ease;
+}
+
+.shortcut-row:hover{
+  border-color:var(--blue2);
+}
+
+.shortcut-number{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:7px;
+  background:var(--panel3);
+  color:var(--blue);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+}
+
+.shortcut-mode{
+  font-size:11px;
+  color:var(--text);
+}
+
+.shortcut-mode small{
+  display:block;
+  color:var(--dim);
+  font-size:9px;
+  margin-top:2px;
+}
+
+.shortcut-input{
+  height:30px;
+  width:100%;
+  text-align:center;
+  text-transform:uppercase;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  background:var(--panel3);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:7px;
+  outline:none;
+}
+
+.shortcut-input:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(91,155,255,.08);
+}
+
+.shortcut-fixed{
+  padding:8px 10px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  color:var(--dim);
+  line-height:1.7;
 }
 
 /* =========================================================
@@ -479,34 +709,30 @@ button{
   position:absolute;
   z-index:50;
   display:none;
-  width:245px;
-  background:color-mix(in srgb,var(--panel) 96%,transparent);
+  width:238px;
+  background:var(--panel);
   border:1px solid var(--border);
-  border-radius:13px;
+  border-radius:11px;
   box-shadow:var(--shadow);
-  padding:11px;
-  backdrop-filter:blur(15px);
-  transform-origin:top left;
-  animation:menuIn .18s var(--ease);
+  padding:10px;
+  animation:menuIn .15s ease;
 }
 
 @keyframes menuIn{
   from{
     opacity:0;
-    transform:scale(.94) translateY(-5px);
+    transform:translateY(4px) scale(.96);
   }
   to{
     opacity:1;
-    transform:scale(1) translateY(0);
+    transform:translateY(0) scale(1);
   }
 }
 
 .menu-title{
-  font-size:9px;
+  font-size:10px;
   color:var(--dim);
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  margin:3px 6px 9px;
+  margin:4px 6px 8px;
 }
 
 .color-row{
@@ -516,26 +742,24 @@ button{
 }
 
 .color-choice{
-  width:26px;
-  height:26px;
-  border-radius:7px;
+  width:25px;
+  height:25px;
+  border-radius:6px;
   border:2px solid transparent;
   cursor:pointer;
   transition:
-    transform .15s var(--ease),
-    border-color .15s ease,
-    box-shadow .15s ease;
+    transform .12s ease,
+    border-color .12s ease;
 }
 
 .color-choice:hover{
-  transform:translateY(-2px) scale(1.06);
   border-color:var(--text);
-  box-shadow:0 5px 14px rgba(0,0,0,.25);
+  transform:scale(1.1);
 }
 
 .transparency-row{
   margin-top:13px;
-  padding-top:11px;
+  padding-top:10px;
   border-top:1px solid var(--border);
 }
 
@@ -547,9 +771,8 @@ button{
 }
 
 .transparency-label{
-  font-size:9px;
+  font-size:10px;
   color:var(--dim);
-  letter-spacing:.08em;
 }
 
 #polygon-transparency-value{
@@ -565,357 +788,6 @@ button{
 }
 
 /* =========================================================
-   SETTINGS OVERLAY
-========================================================= */
-
-#settings-overlay{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.43);
-  backdrop-filter:blur(7px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
-  opacity:0;
-  pointer-events:none;
-  transition:
-    opacity .25s ease,
-    backdrop-filter .25s ease;
-}
-
-#settings-overlay.open{
-  opacity:1;
-  pointer-events:auto;
-}
-
-#settings{
-  width:min(860px,calc(100vw - 42px));
-  max-height:min(720px,calc(100vh - 42px));
-  overflow:hidden;
-  background:color-mix(in srgb,var(--panel) 97%,transparent);
-  border:1px solid var(--border);
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  transform:translateY(18px) scale(.96);
-  transition:
-    transform .3s var(--ease),
-    opacity .25s ease;
-}
-
-#settings-overlay.open #settings{
-  transform:translateY(0) scale(1);
-}
-
-.settings-header{
-  height:68px;
-  padding:0 22px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.settings-heading{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.settings-icon{
-  width:35px;
-  height:35px;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(91,155,255,.11);
-  color:var(--blue);
-  border:1px solid rgba(91,155,255,.18);
-}
-
-.settings-heading h2{
-  margin:0;
-  font-size:16px;
-}
-
-.settings-heading p{
-  margin:2px 0 0;
-  font-size:10px;
-  color:var(--dim);
-}
-
-.close-settings{
-  width:34px;
-  height:34px;
-  border:1px solid var(--border);
-  border-radius:9px;
-  background:var(--panel2);
-  color:var(--dim);
-  cursor:pointer;
-  font-size:19px;
-  transition:
-    transform .18s var(--ease),
-    background .18s ease,
-    color .18s ease;
-}
-
-.close-settings:hover{
-  color:var(--text);
-  background:var(--panel3);
-  transform:rotate(4deg) scale(1.04);
-}
-
-.settings-content{
-  padding:17px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  max-height:calc(100vh - 140px);
-  overflow:auto;
-  scrollbar-width:thin;
-}
-
-.settings-card{
-  background:var(--panel2);
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:15px;
-  min-width:0;
-  transition:
-    border-color .18s ease,
-    transform .18s var(--ease),
-    box-shadow .18s ease;
-}
-
-.settings-card:hover{
-  border-color:var(--border2);
-  box-shadow:0 8px 25px rgba(0,0,0,.08);
-}
-
-.settings-card.full{
-  grid-column:1 / -1;
-}
-
-.settings-title{
-  font-size:9px;
-  text-transform:uppercase;
-  letter-spacing:.13em;
-  color:var(--dim);
-  margin-bottom:12px;
-}
-
-.setting-row{
-  min-height:37px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  font-size:12px;
-}
-
-.setting-row + .setting-row{
-  margin-top:6px;
-}
-
-.setting-description{
-  color:var(--text);
-  min-width:0;
-}
-
-.setting-description small{
-  display:block;
-  color:var(--dim);
-  font-size:9px;
-  margin-top:3px;
-}
-
-select,
-input[type="number"]{
-  background:var(--panel3);
-  color:var(--text);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:7px 9px;
-  outline:none;
-  transition:
-    border-color .15s ease,
-    box-shadow .15s ease;
-}
-
-select:focus,
-input[type="number"]:focus{
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(91,155,255,.1);
-}
-
-input[type="number"]{
-  width:90px;
-}
-
-/* =========================================================
-   SWITCH
-========================================================= */
-
-.switch{
-  position:relative;
-  width:42px;
-  height:23px;
-  flex-shrink:0;
-}
-
-.switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
-
-.slider{
-  position:absolute;
-  inset:0;
-  background:var(--panel3);
-  border:1px solid var(--border);
-  border-radius:20px;
-  cursor:pointer;
-  transition:
-    background .2s ease,
-    border-color .2s ease;
-}
-
-.slider:before{
-  content:"";
-  position:absolute;
-  width:17px;
-  height:17px;
-  left:2px;
-  top:2px;
-  border-radius:50%;
-  background:var(--dim);
-  transition:
-    transform .2s var(--ease),
-    background .2s ease,
-    box-shadow .2s ease;
-}
-
-.switch input:checked + .slider{
-  background:var(--blue2);
-  border-color:var(--blue);
-}
-
-.switch input:checked + .slider:before{
-  transform:translateX(19px);
-  background:white;
-  box-shadow:0 2px 7px rgba(0,0,0,.25);
-}
-
-/* =========================================================
-   SHORTCUTS
-========================================================= */
-
-.shortcut-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-}
-
-.shortcut-item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  padding:8px 9px;
-  border-radius:9px;
-  background:var(--panel3);
-  border:1px solid var(--border);
-  transition:
-    border-color .15s ease,
-    transform .15s var(--ease);
-}
-
-.shortcut-item:hover{
-  border-color:var(--border2);
-  transform:translateY(-1px);
-}
-
-.shortcut-name{
-  font-size:10px;
-  color:var(--text);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.shortcut-key{
-  min-width:31px;
-  height:25px;
-  padding:0 7px;
-  border-radius:6px;
-  border:1px solid var(--border2);
-  background:var(--panel);
-  color:var(--cyan);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:
-    background .15s ease,
-    border-color .15s ease,
-    color .15s ease,
-    transform .15s var(--ease);
-}
-
-.shortcut-key:hover{
-  background:rgba(91,155,255,.1);
-  border-color:var(--blue);
-  color:var(--blue);
-  transform:scale(1.04);
-}
-
-.shortcut-key.listening{
-  border-color:var(--blue);
-  background:rgba(91,155,255,.12);
-  color:var(--blue);
-  animation:listeningPulse 1s ease-in-out infinite;
-}
-
-@keyframes listeningPulse{
-  0%,100%{
-    box-shadow:0 0 0 0 rgba(91,155,255,0);
-  }
-  50%{
-    box-shadow:0 0 0 4px rgba(91,155,255,.12);
-  }
-}
-
-.shortcut-fixed{
-  min-width:31px;
-  height:25px;
-  padding:0 7px;
-  border-radius:6px;
-  border:1px solid var(--border);
-  background:var(--panel);
-  color:var(--dim);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.shortcut-info{
-  margin-top:9px;
-  padding:9px 10px;
-  border-radius:8px;
-  background:rgba(91,155,255,.06);
-  border:1px solid rgba(91,155,255,.1);
-  color:var(--dim);
-  font-size:9px;
-  line-height:1.5;
-}
-
-/* =========================================================
    TOAST
 ========================================================= */
 
@@ -923,8 +795,8 @@ input[type="number"]{
   position:absolute;
   left:50%;
   bottom:25px;
-  transform:translate(-50%,18px) scale(.96);
-  background:color-mix(in srgb,var(--panel) 96%,transparent);
+  transform:translate(-50%,15px) scale(.97);
+  background:var(--panel);
   border:1px solid var(--border);
   border-radius:9px;
   padding:9px 14px;
@@ -934,10 +806,9 @@ input[type="number"]{
   pointer-events:none;
   transition:
     opacity .2s ease,
-    transform .2s var(--ease);
+    transform .2s ease;
   z-index:200;
-  box-shadow:0 12px 35px rgba(0,0,0,.25);
-  backdrop-filter:blur(12px);
+  box-shadow:0 12px 40px rgba(0,0,0,.25);
 }
 
 #toast.show{
@@ -946,25 +817,29 @@ input[type="number"]{
 }
 
 /* =========================================================
-   RESPONSIVE SETTINGS
+   RESPONSIVE
 ========================================================= */
 
-@media(max-width:720px){
-  #settings{
-    width:calc(100vw - 20px);
-    max-height:calc(100vh - 20px);
-  }
-
-  .settings-content{
+@media(max-width:700px){
+  .settings-grid{
     grid-template-columns:1fr;
   }
 
-  .settings-card.full{
-    grid-column:auto;
+  .settings-section:nth-child(odd){
+    border-right:0;
   }
 
-  .shortcut-grid{
-    grid-template-columns:repeat(2,1fr);
+  #settings{
+    width:calc(100vw - 20px);
+  }
+
+  #top-actions{
+    right:8px;
+    top:8px;
+  }
+
+  .top-action span{
+    display:none;
   }
 }
 </style>
@@ -974,777 +849,697 @@ input[type="number"]{
 
 <div id="app">
 
-<!-- =======================================================
-     TOOLBAR
-======================================================= -->
-
-<div id="toolbar">
-
-  <div class="brand">
-    <b>GeoGebra</b>
-    IDIOT SIKKER
-  </div>
-
-  <!-- 1 SELECT -->
-  <button class="tool active"
-          data-tool="select"
-          title="Select / Move">
-    <span class="shortcut-badge" data-shortcut-badge="1">1</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <path d="M5 3l14 8-6 2-2 6-6-16z"/>
-    </svg>
-
-    <span>SELECT</span>
-  </button>
-
-  <!-- 2 POINT -->
-  <button class="tool"
-          data-tool="point"
-          title="Point">
-    <span class="shortcut-badge" data-shortcut-badge="2">2</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <circle cx="12" cy="12" r="3" fill="currentColor"/>
-    </svg>
-
-    <span>POINT</span>
-  </button>
-
-  <!-- 3 LINE -->
-  <button class="tool"
-          data-tool="line"
-          title="Segment">
-    <span class="shortcut-badge" data-shortcut-badge="3">3</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <line x1="4" y1="20" x2="20" y2="4"/>
-      <circle cx="4" cy="20" r="2"/>
-      <circle cx="20" cy="4" r="2"/>
-    </svg>
-
-    <span>LINE</span>
-  </button>
-
-  <!-- 4 CIRCLE -->
-  <button class="tool"
-          data-tool="circle"
-          title="Circle">
-    <span class="shortcut-badge" data-shortcut-badge="4">4</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <circle cx="12" cy="12" r="8"/>
-      <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-    </svg>
-
-    <span>CIRCLE</span>
-  </button>
-
-  <!-- 5 POLYGON -->
-  <button class="tool"
-          data-tool="polygon"
-          title="Polygon">
-    <span class="shortcut-badge" data-shortcut-badge="5">5</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <polygon points="12,3 21,9 18,20 6,20 3,9"/>
-    </svg>
-
-    <span>POLY</span>
-  </button>
-
-  <!-- 6 ANGLE -->
-  <button class="tool"
-          data-tool="angle"
-          title="Angle">
-    <span class="shortcut-badge" data-shortcut-badge="6">6</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <path d="M4 20h16"/>
-      <path d="M4 20L18 6"/>
-      <path d="M8 20a8 8 0 0 1 2-5.5"/>
-    </svg>
-
-    <span>ANGLE</span>
-  </button>
-
-  <div class="tool-divider"></div>
-
-  <!-- 7 MIDPOINT -->
-  <button class="tool"
-          data-tool="midpoint"
-          title="Midpoint">
-    <span class="shortcut-badge" data-shortcut-badge="7">7</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <circle cx="5" cy="12" r="2"/>
-      <circle cx="19" cy="12" r="2"/>
-      <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
-      <line x1="7" y1="12" x2="17" y2="12"/>
-    </svg>
-
-    <span>MIDPOINT</span>
-  </button>
-
-  <!-- 8 PERP -->
-  <button class="tool"
-          data-tool="perpendicular"
-          title="Perpendicular">
-    <span class="shortcut-badge" data-shortcut-badge="8">8</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <line x1="4" y1="18" x2="20" y2="6"/>
-      <line x1="12" y1="12" x2="12" y2="22"/>
-    </svg>
-
-    <span>PERP</span>
-  </button>
-
-  <!-- 9 DISTANCE -->
-  <button class="tool"
-          data-tool="distance"
-          title="Distance">
-    <span class="shortcut-badge" data-shortcut-badge="9">9</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <line x1="4" y1="12" x2="20" y2="12"/>
-      <path d="M7 8l-3 4 3 4"/>
-      <path d="M17 8l3 4-3 4"/>
-    </svg>
-
-    <span>DISTANCE</span>
-  </button>
-
-  <!-- TEXT -->
-  <button class="tool"
-          data-tool="text"
-          title="Text — T">
-    <span class="shortcut-badge">T</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <path d="M5 5h14"/>
-      <path d="M12 5v14"/>
-      <path d="M8 19h8"/>
-    </svg>
-
-    <span>TEXT</span>
-  </button>
-
-  <!-- DELETE -->
-  <button class="tool"
-          data-tool="delete"
-          title="Delete — X">
-    <span class="shortcut-badge">X</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <path d="M5 7h14"/>
-      <path d="M9 7V4h6v3"/>
-      <path d="M7 7l1 14h8l1-14"/>
-    </svg>
-
-    <span>DELETE</span>
-  </button>
-
-  <div class="tool-divider"></div>
-
-  <!-- UNDO -->
-  <button class="tool"
-          id="undo-btn"
-          title="Undo — Ctrl+Z">
-
-    <span class="shortcut-badge">⌘Z</span>
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <path d="M9 14l-5-5 5-5"/>
-      <path d="M4 9h10a6 6 0 0 1 0 12h-2"/>
-    </svg>
-
-    <span>UNDO</span>
-  </button>
-
-  <!-- CLEAR -->
-  <button class="tool"
-          id="clear-btn"
-          title="Clear board">
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <path d="M3 6h18"/>
-      <path d="M8 6V4h8v2"/>
-      <path d="M6 6l1 14h10l1-14"/>
-    </svg>
-
-    <span>CLEAR</span>
-  </button>
-
-  <!-- SETTINGS -->
-  <button class="tool"
-          id="settings-btn"
-          title="Settings">
-
-    <svg viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="1.8">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.9 1.9-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1 1.55V22h-2.7v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-1.9-1.9.06-.06A1.7 1.7 0 0 0 7.6 15a1.7 1.7 0 0 0-1.55-1H6V11.3h.05a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.88L7.2 8.36l1.9-1.9.06.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1-1.55V5h2.7v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.9 1.9-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1H22V14h-.09a1.7 1.7 0 0 0-1.51 1z"/>
-    </svg>
-
-    <span>SETTINGS</span>
-  </button>
-
-</div>
-
-
-<!-- =======================================================
-     CANVAS
-======================================================= -->
-
-<div id="canvas-wrap">
-
-  <svg id="board"></svg>
-
-  <div class="hud">
-    MODE:
-    <b id="hud-mode">SELECT</b>
-  </div>
-
-  <div id="coord">
-    x: 0 &nbsp; y: 0
-  </div>
-
-  <div id="hint">
-    Hold RMB and drag to move the camera.
-    Drag points to move them.
-  </div>
-
-
   <!-- =====================================================
-       POLYGON MENU
+       TOOLBAR
   ====================================================== -->
 
-  <div id="polygon-menu">
+  <div id="toolbar">
 
-    <div class="menu-title">
-      POLYGON COLOR
+    <div class="brand">
+      <b>GeoGebra</b>
+      IDIOT SIKKER
     </div>
 
-    <div class="color-row">
+    <button class="tool active"
+            data-tool="select"
+            title="Select / Move">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <path d="M5 3l14 8-6 2-2 6-6-16z"/>
+      </svg>
+      <span>SELECT</span>
+    </button>
 
-      <div class="color-choice"
-           data-color="#5B9BFF"
-           style="background:#5B9BFF"></div>
+    <button class="tool"
+            data-tool="point"
+            title="Point">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      </svg>
+      <span>POINT</span>
+    </button>
 
-      <div class="color-choice"
-           data-color="#E2685A"
-           style="background:#E2685A"></div>
+    <button class="tool"
+            data-tool="line"
+            title="Segment">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <line x1="4" y1="20" x2="20" y2="4"/>
+        <circle cx="4" cy="20" r="2"/>
+        <circle cx="20" cy="4" r="2"/>
+      </svg>
+      <span>LINE</span>
+    </button>
 
-      <div class="color-choice"
-           data-color="#7FD9C4"
-           style="background:#7FD9C4"></div>
+    <button class="tool"
+            data-tool="circle"
+            title="Circle">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="8"/>
+        <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+      </svg>
+      <span>CIRCLE</span>
+    </button>
 
-      <div class="color-choice"
-           data-color="#E8A33D"
-           style="background:#E8A33D"></div>
+    <button class="tool"
+            data-tool="polygon"
+            title="Polygon">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <polygon points="12,3 21,9 18,20 6,20 3,9"/>
+      </svg>
+      <span>POLY</span>
+    </button>
 
-      <div class="color-choice"
-           data-color="#A778E8"
-           style="background:#A778E8"></div>
+    <button class="tool"
+            data-tool="angle"
+            title="Angle">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <path d="M4 20h16"/>
+        <path d="M4 20L18 6"/>
+        <path d="M8 20a8 8 0 0 1 2-5.5"/>
+      </svg>
+      <span>ANGLE</span>
+    </button>
 
-      <div class="color-choice"
-           data-color="#E86FA3"
-           style="background:#E86FA3"></div>
+    <div class="tool-divider"></div>
 
-      <div class="color-choice"
-           data-color="#FFFFFF"
-           style="background:#FFFFFF"></div>
+    <button class="tool"
+            data-tool="midpoint"
+            title="Midpoint">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <circle cx="5" cy="12" r="2"/>
+        <circle cx="19" cy="12" r="2"/>
+        <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+        <line x1="7" y1="12" x2="17" y2="12"/>
+      </svg>
+      <span>MIDPOINT</span>
+    </button>
 
-      <div class="color-choice"
-           data-color="#555555"
-           style="background:#555555"></div>
+    <button class="tool"
+            data-tool="perpendicular"
+            title="Perpendicular">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <line x1="4" y1="18" x2="20" y2="6"/>
+        <line x1="12" y1="12" x2="12" y2="22"/>
+      </svg>
+      <span>PERP</span>
+    </button>
+
+    <button class="tool"
+            data-tool="distance"
+            title="Distance">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <line x1="4" y1="12" x2="20" y2="12"/>
+        <path d="M7 8l-3 4 3 4"/>
+        <path d="M17 8l3 4-3 4"/>
+      </svg>
+      <span>DISTANCE</span>
+    </button>
+
+    <button class="tool"
+            data-tool="text"
+            title="Text — T">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <path d="M5 5h14"/>
+        <path d="M12 5v14"/>
+        <path d="M8 19h8"/>
+      </svg>
+      <span>TEXT</span>
+    </button>
+
+    <button class="tool"
+            data-tool="delete"
+            title="Delete — X">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <path d="M5 7h14"/>
+        <path d="M9 7V4h6v3"/>
+        <path d="M7 7l1 14h8l1-14"/>
+      </svg>
+      <span>DELETE</span>
+    </button>
+
+    <div class="tool-divider"></div>
+
+    <button class="tool"
+            id="undo-btn"
+            title="Undo — Ctrl+Z">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <path d="M9 14l-5-5 5-5"/>
+        <path d="M4 9h10a6 6 0 0 1 0 12h-2"/>
+      </svg>
+      <span>UNDO</span>
+    </button>
+
+    <button class="tool"
+            id="clear-btn"
+            title="Clear board">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <path d="M3 6h18"/>
+        <path d="M8 6V4h8v2"/>
+        <path d="M6 6l1 14h10l1-14"/>
+      </svg>
+      <span>CLEAR</span>
+    </button>
+
+    <button class="tool"
+            id="settings-btn"
+            title="Settings">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.9 1.9-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1 1.55V22h-2.7v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-1.9-1.9.06-.06A1.7 1.7 0 0 0 7.6 15a1.7 1.7 0 0 0-1.55-1H6V11.3h.05a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.88L7.2 8.36l1.9-1.9.06.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.9 1.9-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1H22V14h-.09a1.7 1.7 0 0 0-1.51 1z"/>
+      </svg>
+      <span>SETTINGS</span>
+    </button>
+
+  </div>
+
+  <!-- =====================================================
+       CANVAS
+  ====================================================== -->
+
+  <div id="canvas-wrap">
+
+    <svg id="board"></svg>
+
+    <div class="hud">
+      MODE: <b id="hud-mode">SELECT</b>
+    </div>
+
+    <div id="top-actions">
+
+      <button class="top-action" id="share-btn">
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8">
+          <path d="M12 16V4"/>
+          <path d="M7 9l5-5 5 5"/>
+          <path d="M5 14v5h14v-5"/>
+        </svg>
+        <span>SHARE</span>
+      </button>
 
     </div>
 
-    <div class="transparency-row">
+    <div id="coord">
+      x: 0 &nbsp; y: 0
+    </div>
 
-      <div class="transparency-header">
-        <span class="transparency-label">
-          TRANSPARENCY
-        </span>
+    <div id="hint">
+      Hold RMB and drag to move the camera. Drag points to move them.
+    </div>
 
-        <span id="polygon-transparency-value">
-          18%
-        </span>
+    <!-- ===================================================
+         POLYGON MENU
+    ==================================================== -->
+
+    <div id="polygon-menu">
+
+      <div class="menu-title">
+        POLYGON COLOR
       </div>
 
-      <input
-        id="polygon-transparency"
-        type="range"
-        min="0"
-        max="100"
-        value="18"
-      >
+      <div class="color-row">
+
+        <div class="color-choice"
+             data-color="#5B9BFF"
+             style="background:#5B9BFF"></div>
+
+        <div class="color-choice"
+             data-color="#E2685A"
+             style="background:#E2685A"></div>
+
+        <div class="color-choice"
+             data-color="#7FD9C4"
+             style="background:#7FD9C4"></div>
+
+        <div class="color-choice"
+             data-color="#E8A33D"
+             style="background:#E8A33D"></div>
+
+        <div class="color-choice"
+             data-color="#A778E8"
+             style="background:#A778E8"></div>
+
+        <div class="color-choice"
+             data-color="#E86FA3"
+             style="background:#E86FA3"></div>
+
+        <div class="color-choice"
+             data-color="#FFFFFF"
+             style="background:#FFFFFF"></div>
+
+        <div class="color-choice"
+             data-color="#555555"
+             style="background:#555555"></div>
+
+      </div>
+
+      <div class="transparency-row">
+
+        <div class="transparency-header">
+          <span class="transparency-label">
+            TRANSPARENCY
+          </span>
+
+          <span id="polygon-transparency-value">
+            18%
+          </span>
+        </div>
+
+        <input
+          id="polygon-transparency"
+          type="range"
+          min="0"
+          max="100"
+          value="18"
+        >
+
+      </div>
 
     </div>
 
-  </div>
+    <div id="toast"></div>
 
+    <!-- ===================================================
+         SETTINGS
+    ==================================================== -->
 
-  <div id="toast"></div>
+    <div id="settings-overlay">
 
+      <div id="settings">
 
-  <!-- =====================================================
-       SETTINGS
-  ====================================================== -->
-
-  <div id="settings-overlay">
-
-    <div id="settings">
-
-      <div class="settings-header">
-
-        <div class="settings-heading">
-
-          <div class="settings-icon">
-
-            <svg width="19"
-                 height="19"
-                 viewBox="0 0 24 24"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="1.8">
-
-              <circle cx="12" cy="12" r="3"/>
-
-              <path d="
-                M19.4 15
-                a1.7 1.7 0 0 0 .34 1.88
-                l.06.06
-                -1.9 1.9
-                -.06-.06
-                a1.7 1.7 0 0 0-1.88-.34
-                1.7 1.7 0 0 0-1 1.55
-                V22
-                h-2.7
-                v-.09
-                a1.7 1.7 0 0 0-1-1.55
-                1.7 1.7 0 0 0-1.88.34
-                l-.06.06
-                -1.9-1.9
-                .06-.06
-                A1.7 1.7 0 0 0 7.6 15
-                a1.7 1.7 0 0 0-1.55-1
-                H6
-                V11.3
-                h.05
-                a1.7 1.7 0 0 0 1.55-1
-                1.7 1.7 0 0 0-.34-1.88
-                L7.2 8.36
-                l1.9-1.9
-                .06.06
-                a1.7 1.7 0 0 0 1.88.34
-                1.7 1.7 0 0 0 1-1.55
-                V5
-                h2.7
-                v.09
-                a1.7 1.7 0 0 0 1 1.55
-                1.7 1.7 0 0 0 1.88-.34
-                l.06-.06
-                1.9 1.9
-                -.06.06
-                a1.7 1.7 0 0 0-.34 1.88
-                1.7 1.7 0 0 0 1.55 1
-                H22
-                V14
-                h-.09
-                a1.7 1.7 0 0 0-1.51 1z
-              "/>
-
-            </svg>
-
-          </div>
+        <div class="settings-header">
 
           <div>
             <h2>Settings</h2>
-            <p>Customize your GeoGebra workspace</p>
+            <small>GeoGebra workspace preferences</small>
           </div>
+
+          <button
+            class="close-settings"
+            id="close-settings">
+            ×
+          </button>
 
         </div>
 
-        <button
-          class="close-settings"
-          id="close-settings">
-          ×
-        </button>
+        <div class="settings-grid">
 
-      </div>
+          <!-- APPEARANCE -->
 
+          <div class="settings-section">
 
-      <div class="settings-content">
-
-        <!-- APPEARANCE -->
-
-        <div class="settings-card">
-
-          <div class="settings-title">
-            Appearance
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Dark mode
-
-              <small>
-                Use the dark GeoGebra theme
-              </small>
+            <div class="settings-title">
+              Appearance
             </div>
 
-            <label class="switch">
+            <div class="setting-row">
+
+              <div class="setting-description">
+                Dark mode
+                <small>Use the dark GeoBoard theme</small>
+              </div>
+
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="dark-mode"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
+
+            </div>
+
+            <div class="setting-row">
+
+              <div class="setting-description">
+                Show tips
+                <small>Display the bottom help message</small>
+              </div>
+
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="show-tips"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
+
+            </div>
+
+          </div>
+
+          <!-- CAMERA -->
+
+          <div class="settings-section">
+
+            <div class="settings-title">
+              Camera
+            </div>
+
+            <div class="setting-row">
+
+              <div class="setting-description">
+                Zoom speed
+                <small>How quickly the wheel zooms</small>
+              </div>
 
               <input
-                type="checkbox"
-                id="dark-mode"
-                checked
+                id="zoom-speed"
+                type="number"
+                min="1"
+                max="20"
+                step="1"
+                value="6"
               >
 
-              <span class="slider"></span>
-
-            </label>
-
-          </div>
-
-        </div>
-
-
-        <!-- CAMERA -->
-
-        <div class="settings-card">
-
-          <div class="settings-title">
-            Camera
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Zoom speed
-
-              <small>
-                How quickly the wheel zooms
-              </small>
             </div>
 
-            <input
-              id="zoom-speed"
-              type="number"
-              min="1"
-              max="20"
-              step="1"
-              value="6"
-            >
-
           </div>
 
-        </div>
+          <!-- GRID -->
 
+          <div class="settings-section">
 
-        <!-- GRID -->
+            <div class="settings-title">
+              Grid
+            </div>
 
-        <div class="settings-card">
+            <div class="setting-row">
 
-          <div class="settings-title">
-            Grid
-          </div>
+              <div class="setting-description">
+                Grid spacing
+                <small>Distance between grid squares</small>
+              </div>
 
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Grid spacing
-
-              <small>
-                Distance between grid squares
-              </small>
+              <select id="grid-spacing">
+                <option value="0.1">0.1</option>
+                <option value="0.2">0.2</option>
+                <option value="0.3">0.3</option>
+                <option value="0.4">0.4</option>
+                <option value="0.5">0.5</option>
+                <option value="0.6">0.6</option>
+                <option value="0.7">0.7</option>
+                <option value="0.8">0.8</option>
+                <option value="0.9">0.9</option>
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+              </select>
 
             </div>
 
-            <select id="grid-spacing">
+            <div class="setting-row">
 
-              <option value="0.1">0.1</option>
-              <option value="0.2">0.2</option>
-              <option value="0.3">0.3</option>
-              <option value="0.4">0.4</option>
-              <option value="0.5">0.5</option>
-              <option value="0.6">0.6</option>
-              <option value="0.7">0.7</option>
-              <option value="0.8">0.8</option>
-              <option value="0.9">0.9</option>
-              <option value="1" selected>1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-              <option value="40">40</option>
-              <option value="50">50</option>
+              <div class="setting-description">
+                Show grid
+              </div>
 
-            </select>
-
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Show grid
-            </div>
-
-            <label class="switch">
-
-              <input
-                type="checkbox"
-                id="show-grid"
-                checked
-              >
-
-              <span class="slider"></span>
-
-            </label>
-
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Show axes
-            </div>
-
-            <label class="switch">
-
-              <input
-                type="checkbox"
-                id="show-axes"
-                checked
-              >
-
-              <span class="slider"></span>
-
-            </label>
-
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Snap to grid
-            </div>
-
-            <label class="switch">
-
-              <input
-                type="checkbox"
-                id="snap-grid"
-                checked
-              >
-
-              <span class="slider"></span>
-
-            </label>
-
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Snap to points
-            </div>
-
-            <label class="switch">
-
-              <input
-                type="checkbox"
-                id="snap-points"
-                checked
-              >
-
-              <span class="slider"></span>
-
-            </label>
-
-          </div>
-
-        </div>
-
-
-        <!-- OBJECTS -->
-
-        <div class="settings-card">
-
-          <div class="settings-title">
-            Objects
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Show points
-
-              <small>
-                Hide point markers
-              </small>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="show-grid"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
 
             </div>
 
-            <label class="switch">
+            <div class="setting-row">
 
-              <input
-                type="checkbox"
-                id="show-points"
-                checked
-              >
+              <div class="setting-description">
+                Show axes
+              </div>
 
-              <span class="slider"></span>
-
-            </label>
-
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Show point numbers
-
-              <small>
-                Show A, B, C, D...
-              </small>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="show-axes"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
 
             </div>
 
-            <label class="switch">
+            <div class="setting-row">
 
-              <input
-                type="checkbox"
-                id="show-labels"
-                checked
-              >
+              <div class="setting-description">
+                Snap to grid
+              </div>
 
-              <span class="slider"></span>
-
-            </label>
-
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Show measurements
-
-              <small>
-                Distances and radii
-              </small>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="snap-grid"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
 
             </div>
 
-            <label class="switch">
+            <div class="setting-row">
 
-              <input
-                type="checkbox"
-                id="show-measurements"
-                checked
-              >
+              <div class="setting-description">
+                Snap to points
+              </div>
 
-              <span class="slider"></span>
-
-            </label>
-
-          </div>
-
-          <div class="setting-row">
-
-            <div class="setting-description">
-              Show tips
-
-              <small>
-                Show helpful tool hints
-              </small>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="snap-points"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
 
             </div>
 
-            <label class="switch">
+          </div>
 
-              <input
-                type="checkbox"
-                id="show-tips"
-                checked
-              >
+          <!-- OBJECTS -->
 
-              <span class="slider"></span>
+          <div class="settings-section">
 
-            </label>
+            <div class="settings-title">
+              Objects
+            </div>
+
+            <div class="setting-row">
+
+              <div class="setting-description">
+                Show points
+                <small>Hide point markers</small>
+              </div>
+
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="show-points"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
+
+            </div>
+
+            <div class="setting-row">
+
+              <div class="setting-description">
+                Show point numbers
+                <small>Show A, B, C, D...</small>
+              </div>
+
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="show-labels"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
+
+            </div>
+
+            <div class="setting-row">
+
+              <div class="setting-description">
+                Show measurements
+                <small>Distances and radii</small>
+              </div>
+
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="show-measurements"
+                  checked
+                >
+                <span class="slider"></span>
+              </label>
+
+            </div>
 
           </div>
 
-        </div>
+          <!-- SHORTCUTS -->
 
+          <div class="settings-section">
 
-        <!-- SHORTCUTS -->
+            <div class="settings-title">
+              Mode shortcuts
+            </div>
 
-        <div class="settings-card full">
+            <div class="shortcut-list">
 
-          <div class="settings-title">
-            Keyboard shortcuts
+              <div class="shortcut-row">
+                <div class="shortcut-number">1</div>
+                <div class="shortcut-mode">
+                  Select
+                  <small>Move / select</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="1"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+              <div class="shortcut-row">
+                <div class="shortcut-number">2</div>
+                <div class="shortcut-mode">
+                  Point
+                  <small>Create points</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="2"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+              <div class="shortcut-row">
+                <div class="shortcut-number">3</div>
+                <div class="shortcut-mode">
+                  Line
+                  <small>Create segments</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="3"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+              <div class="shortcut-row">
+                <div class="shortcut-number">4</div>
+                <div class="shortcut-mode">
+                  Circle
+                  <small>Create circles</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="4"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+              <div class="shortcut-row">
+                <div class="shortcut-number">5</div>
+                <div class="shortcut-mode">
+                  Polygon
+                  <small>Create polygons</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="5"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+              <div class="shortcut-row">
+                <div class="shortcut-number">6</div>
+                <div class="shortcut-mode">
+                  Angle
+                  <small>Measure angles</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="6"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+              <div class="shortcut-row">
+                <div class="shortcut-number">7</div>
+                <div class="shortcut-mode">
+                  Midpoint
+                  <small>Create midpoints</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="7"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+              <div class="shortcut-row">
+                <div class="shortcut-number">8</div>
+                <div class="shortcut-mode">
+                  Perpendicular
+                  <small>Create perpendiculars</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="8"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+              <div class="shortcut-row">
+                <div class="shortcut-number">9</div>
+                <div class="shortcut-mode">
+                  Distance
+                  <small>Measure distances</small>
+                </div>
+                <input class="shortcut-input"
+                       data-slot="9"
+                       maxlength="1"
+                       autocomplete="off">
+              </div>
+
+            </div>
+
           </div>
 
-          <div
-            class="shortcut-grid"
-            id="shortcut-grid">
+          <!-- FIXED -->
 
-          </div>
+          <div class="settings-section">
 
-          <div class="shortcut-info">
-            Click any shortcut key to rebind it.
-            Each key can belong to only one mode.
-            T, X and Ctrl+Z are fixed shortcuts.
-            Press Escape while rebinding to cancel.
+            <div class="settings-title">
+              Fixed shortcuts
+            </div>
+
+            <div class="shortcut-fixed">
+              T — Text<br>
+              X — Delete<br>
+              Ctrl + Z — Undo<br>
+              Esc — Cancel
+            </div>
+
           </div>
 
         </div>
@@ -1756,23 +1551,18 @@ input[type="number"]{
   </div>
 
 </div>
-
 
 <script>
 (function(){
 
 'use strict';
 
-
 /* =========================================================
-   DOM
+   ELEMENTS
 ========================================================= */
 
-const svg =
-  document.getElementById('board');
-
-const NS =
-  'http://www.w3.org/2000/svg';
+const svg = document.getElementById('board');
+const NS = 'http://www.w3.org/2000/svg';
 
 const hudMode =
   document.getElementById('hud-mode');
@@ -1793,15 +1583,17 @@ const toast =
   document.getElementById('toast');
 
 const transparencySlider =
-  document.getElementById(
-    'polygon-transparency'
-  );
+  document.getElementById('polygon-transparency');
 
 const transparencyValue =
-  document.getElementById(
-    'polygon-transparency-value'
-  );
+  document.getElementById('polygon-transparency-value');
 
+/* =========================================================
+   STORAGE
+========================================================= */
+
+const STORAGE_KEY =
+  'geoboard_idiot_sikker_v5';
 
 /* =========================================================
    DATA
@@ -1832,11 +1624,25 @@ let panStart = null;
 
 let selectedPolygon = null;
 
-let mouseInside = false;
 let currentSnap = null;
+let mouseInside = false;
 
-let listeningShortcut = null;
+let toastTimer = null;
 
+let isRestoring = false;
+
+/*
+  Board undo history.
+
+  Every board-changing action stores a complete
+  snapshot. Settings, camera and mode are NOT
+  included.
+*/
+
+let undoHistory = [];
+let undoIndex = -1;
+
+const MAX_UNDO = 100;
 
 /* =========================================================
    SETTINGS
@@ -1864,58 +1670,23 @@ let settings = {
 
 };
 
-
 /* =========================================================
-   TOOLS
+   MODES
 ========================================================= */
 
-const toolNames = {
-
+const modeNames = {
   select:'Select',
-
   point:'Point',
-
   line:'Line',
-
   circle:'Circle',
-
   polygon:'Polygon',
-
   angle:'Angle',
-
   midpoint:'Midpoint',
-
   perpendicular:'Perpendicular',
-
   distance:'Distance'
-
 };
 
-
-/*
-  These are the ONLY tools which can have
-  customizable keyboard shortcuts.
-*/
-
-const modeTools = [
-  'select',
-  'point',
-  'line',
-  'circle',
-  'polygon',
-  'angle',
-  'midpoint',
-  'perpendicular',
-  'distance'
-];
-
-
-/*
-  Default shortcuts.
-*/
-
-let shortcuts = {
-
+const defaultShortcuts = {
   '1':'select',
   '2':'point',
   '3':'line',
@@ -1925,17 +1696,19 @@ let shortcuts = {
   '7':'midpoint',
   '8':'perpendicular',
   '9':'distance'
-
 };
 
-
-/*
-  Fixed shortcuts.
-*/
-
-const FIXED_TEXT_KEY = 't';
-const FIXED_DELETE_KEY = 'x';
-
+let shortcuts = {
+  '1':'1',
+  '2':'2',
+  '3':'3',
+  '4':'4',
+  '5':'5',
+  '6':'6',
+  '7':'7',
+  '8':'8',
+  '9':'9'
+};
 
 /* =========================================================
    HINTS
@@ -1975,18 +1748,274 @@ const hints = {
 
   delete:
     'Click a point or object to delete it.'
-
 };
 
+/* =========================================================
+   SERIALIZATION
+========================================================= */
+
+function clone(value){
+  return JSON.parse(
+    JSON.stringify(value)
+  );
+}
+
+function boardState(){
+
+  return {
+    points:clone(points),
+    shapes:clone(shapes),
+    texts:clone(texts),
+    nextId:nextId
+  };
+}
+
+function restoreBoardState(state){
+
+  points =
+    clone(state.points || []);
+
+  shapes =
+    clone(state.shapes || []);
+
+  texts =
+    clone(state.texts || []);
+
+  nextId =
+    Number(state.nextId) || 1;
+
+  selectedPolygon = null;
+  pending = [];
+
+  render();
+}
 
 /* =========================================================
-   TOOL SELECTION
+   PERSISTENCE
+========================================================= */
+
+function saveEverything(){
+
+  if(isRestoring)
+    return;
+
+  try{
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+
+        points,
+        shapes,
+        texts,
+
+        nextId,
+
+        tool,
+
+        camera,
+
+        settings,
+
+        shortcuts
+
+      })
+    );
+
+  }catch(error){
+
+    console.warn(
+      'GeoBoard could not save:',
+      error
+    );
+
+  }
+}
+
+function loadEverything(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
+
+    if(!raw)
+      return false;
+
+    const data =
+      JSON.parse(raw);
+
+    if(data.points)
+      points = data.points;
+
+    if(data.shapes)
+      shapes = data.shapes;
+
+    if(data.texts)
+      texts = data.texts;
+
+    if(data.nextId)
+      nextId = data.nextId;
+
+    if(data.settings){
+
+      settings = {
+        ...settings,
+        ...data.settings
+      };
+
+    }
+
+    if(data.shortcuts){
+
+      shortcuts = {
+        ...shortcuts,
+        ...data.shortcuts
+      };
+
+    }
+
+    if(data.camera){
+
+      camera = {
+        ...camera,
+        ...data.camera
+      };
+
+    }
+
+    if(
+      data.tool &&
+      (
+        data.tool === 'select' ||
+        data.tool === 'point' ||
+        data.tool === 'line' ||
+        data.tool === 'circle' ||
+        data.tool === 'polygon' ||
+        data.tool === 'angle' ||
+        data.tool === 'midpoint' ||
+        data.tool === 'perpendicular' ||
+        data.tool === 'distance' ||
+        data.tool === 'text' ||
+        data.tool === 'delete'
+      )
+    ){
+
+      tool = data.tool;
+
+    }
+
+    return true;
+
+  }catch(error){
+
+    console.warn(
+      'GeoBoard save was invalid:',
+      error
+    );
+
+    return false;
+  }
+}
+
+/* =========================================================
+   UNDO SYSTEM
+========================================================= */
+
+function recordBoardState(){
+
+  if(isRestoring)
+    return;
+
+  const snapshot =
+    boardState();
+
+  /*
+    If we undid something and then make a new
+    change, remove the abandoned future.
+  */
+
+  if(undoIndex <
+     undoHistory.length-1){
+
+    undoHistory =
+      undoHistory.slice(
+        0,
+        undoIndex+1
+      );
+
+  }
+
+  /*
+    Don't create duplicate snapshots.
+  */
+
+  const current =
+    JSON.stringify(
+      undoHistory[undoIndex]
+    );
+
+  const next =
+    JSON.stringify(snapshot);
+
+  if(current === next)
+    return;
+
+  undoHistory.push(snapshot);
+
+  if(
+    undoHistory.length >
+    MAX_UNDO
+  ){
+
+    undoHistory.shift();
+
+  }
+
+  undoIndex =
+    undoHistory.length-1;
+}
+
+function initializeUndoHistory(){
+
+  undoHistory = [
+    boardState()
+  ];
+
+  undoIndex = 0;
+}
+
+function undo(){
+
+  if(undoIndex <= 0){
+
+    showToast(
+      'Nothing to undo'
+    );
+
+    return;
+  }
+
+  undoIndex--;
+
+  restoreBoardState(
+    undoHistory[undoIndex]
+  );
+
+  saveEverything();
+
+  showToast(
+    'Undo'
+  );
+}
+
+/* =========================================================
+   TOOL
 ========================================================= */
 
 function setTool(t){
-
-  if(!t)
-    return;
 
   tool = t;
 
@@ -2008,32 +2037,114 @@ function setTool(t){
   hudMode.textContent =
     t.toUpperCase();
 
-  if(settings.showTips){
+  hintBox.textContent =
+    hints[t] || '';
 
-    hintBox.textContent =
-      hints[t] || '';
-
-    hintBox.classList.remove(
-      'hidden'
-    );
-
-  }else{
-
-    hintBox.classList.add(
-      'hidden'
-    );
-
-  }
+  hintBox.classList.toggle(
+    'hidden',
+    !settings.showTips
+  );
 
   hidePolygonMenu();
 
-  render();
+  saveEverything();
 
+  render();
 }
 
+/* =========================================================
+   SETTINGS UI
+========================================================= */
+
+function syncSettingsUI(){
+
+  document.getElementById(
+    'dark-mode'
+  ).checked =
+    settings.dark;
+
+  document.getElementById(
+    'show-tips'
+  ).checked =
+    settings.showTips;
+
+  document.getElementById(
+    'zoom-speed'
+  ).value =
+    settings.zoomSpeed;
+
+  document.getElementById(
+    'grid-spacing'
+  ).value =
+    String(settings.gridSpacing);
+
+  document.getElementById(
+    'show-grid'
+  ).checked =
+    settings.showGrid;
+
+  document.getElementById(
+    'show-axes'
+  ).checked =
+    settings.showAxes;
+
+  document.getElementById(
+    'snap-grid'
+  ).checked =
+    settings.snapGrid;
+
+  document.getElementById(
+    'snap-points'
+  ).checked =
+    settings.snapPoints;
+
+  document.getElementById(
+    'show-points'
+  ).checked =
+    settings.showPoints;
+
+  document.getElementById(
+    'show-labels'
+  ).checked =
+    settings.showLabels;
+
+  document.getElementById(
+    'show-measurements'
+  ).checked =
+    settings.showMeasurements;
+
+  document.body.classList.toggle(
+    'light',
+    !settings.dark
+  );
+
+  hintBox.classList.toggle(
+    'hidden',
+    !settings.showTips
+  );
+
+  syncShortcutUI();
+}
+
+function syncShortcutUI(){
+
+  document
+    .querySelectorAll(
+      '.shortcut-input'
+    )
+    .forEach(input=>{
+
+      const slot =
+        input.dataset.slot;
+
+      input.value =
+        shortcuts[slot] || '';
+
+    });
+}
 
 /* =========================================================
-   SETTINGS OPEN / CLOSE
+   SETTINGS EVENTS
 ========================================================= */
 
 document
@@ -2042,44 +2153,27 @@ document
     'click',
     ()=>{
 
-      settingsOverlay.classList.add(
-        'open'
-      );
+      syncSettingsUI();
 
-      updateShortcutUI();
+      settingsOverlay
+        .classList
+        .add('open');
 
     }
   );
-
 
 document
   .getElementById('close-settings')
   .addEventListener(
     'click',
-    closeSettings
+    ()=>{
+
+      settingsOverlay
+        .classList
+        .remove('open');
+
+    }
   );
-
-
-function closeSettings(){
-
-  listeningShortcut = null;
-
-  document
-    .querySelectorAll(
-      '.shortcut-key.listening'
-    )
-    .forEach(el=>{
-      el.classList.remove(
-        'listening'
-      );
-    });
-
-  settingsOverlay.classList.remove(
-    'open'
-  );
-
-}
-
 
 settingsOverlay.addEventListener(
   'mousedown',
@@ -2090,17 +2184,14 @@ settingsOverlay.addEventListener(
       settingsOverlay
     ){
 
-      closeSettings();
+      settingsOverlay
+        .classList
+        .remove('open');
 
     }
 
   }
 );
-
-
-/* =========================================================
-   APPEARANCE
-========================================================= */
 
 document
   .getElementById('dark-mode')
@@ -2116,15 +2207,31 @@ document
         !settings.dark
       );
 
+      saveEverything();
+
       render();
 
     }
   );
 
+document
+  .getElementById('show-tips')
+  .addEventListener(
+    'change',
+    e=>{
 
-/* =========================================================
-   CAMERA SETTINGS
-========================================================= */
+      settings.showTips =
+        e.target.checked;
+
+      hintBox.classList.toggle(
+        'hidden',
+        !settings.showTips
+      );
+
+      saveEverything();
+
+    }
+  );
 
 document
   .getElementById('zoom-speed')
@@ -2144,13 +2251,10 @@ document
       e.target.value =
         settings.zoomSpeed;
 
+      saveEverything();
+
     }
   );
-
-
-/* =========================================================
-   GRID SETTINGS
-========================================================= */
 
 document
   .getElementById('grid-spacing')
@@ -2161,11 +2265,12 @@ document
       settings.gridSpacing =
         Number(e.target.value);
 
+      saveEverything();
+
       render();
 
     }
   );
-
 
 [
   ['show-grid','showGrid'],
@@ -2174,53 +2279,130 @@ document
   ['snap-points','snapPoints'],
   ['show-points','showPoints'],
   ['show-labels','showLabels'],
-  ['show-measurements','showMeasurements'],
-  ['show-tips','showTips']
+  ['show-measurements','showMeasurements']
 ]
-.forEach(
-  ([id,key])=>{
+.forEach(([id,key])=>{
 
-    document
-      .getElementById(id)
-      .addEventListener(
-        'change',
-        e=>{
+  document
+    .getElementById(id)
+    .addEventListener(
+      'change',
+      e=>{
 
-          settings[key] =
-            e.target.checked;
+        settings[key] =
+          e.target.checked;
 
-          if(key === 'showTips'){
+        saveEverything();
 
-            if(settings.showTips){
+        render();
 
-              hintBox.textContent =
-                hints[tool] || '';
+      }
+    );
 
-              hintBox.classList.remove(
-                'hidden'
-              );
-
-            }else{
-
-              hintBox.classList.add(
-                'hidden'
-              );
-
-            }
-
-          }
-
-          render();
-
-        }
-      );
-
-  }
-);
-
+});
 
 /* =========================================================
-   TOOL BUTTONS
+   CUSTOM SHORTCUTS
+========================================================= */
+
+document
+  .querySelectorAll(
+    '.shortcut-input'
+  )
+  .forEach(input=>{
+
+    input.addEventListener(
+      'keydown',
+      e=>{
+
+        e.preventDefault();
+
+        /*
+          Only single printable keys are allowed.
+        */
+
+        if(
+          e.key === 'Escape' ||
+          e.key === 'Tab' ||
+          e.key === 'Enter'
+        ){
+
+          return;
+
+        }
+
+        const key =
+          e.key.length === 1
+            ? e.key.toUpperCase()
+            : '';
+
+        if(!key)
+          return;
+
+        const slot =
+          input.dataset.slot;
+
+        /*
+          Prevent the same key from being
+          assigned to another mode.
+        */
+
+        for(
+          const otherSlot in shortcuts
+        ){
+
+          if(
+            otherSlot !== slot &&
+            shortcuts[otherSlot] === key
+          ){
+
+            showToast(
+              `"${key}" is already bound to mode ${otherSlot}`
+            );
+
+            syncShortcutUI();
+
+            return;
+          }
+
+        }
+
+        /*
+          T and X are fixed shortcuts.
+        */
+
+        if(
+          key === 'T' ||
+          key === 'X'
+        ){
+
+          showToast(
+            `"${key}" is reserved`
+          );
+
+          syncShortcutUI();
+
+          return;
+        }
+
+        shortcuts[slot] =
+          key;
+
+        syncShortcutUI();
+
+        saveEverything();
+
+        showToast(
+          `Shortcut ${slot} → ${key}`
+        );
+
+      }
+    );
+
+  });
+
+/* =========================================================
+   TOOLS
 ========================================================= */
 
 document
@@ -2232,14 +2414,15 @@ document
     button.addEventListener(
       'click',
       ()=>{
+
         setTool(
           button.dataset.tool
         );
+
       }
     );
 
   });
-
 
 /* =========================================================
    CLEAR
@@ -2253,10 +2436,19 @@ document
 
       if(
         !confirm(
-          'Clear the entire board?'
+          'Clear the entire board? This cannot be undone.'
         )
-      )
+      ){
+
         return;
+
+      }
+
+      /*
+        IMPORTANT:
+        Clear is deliberately NOT recorded
+        in undo history.
+      */
 
       points = [];
       shapes = [];
@@ -2276,6 +2468,10 @@ document
 
       selectedPolygon = null;
 
+      initializeUndoHistory();
+
+      saveEverything();
+
       render();
 
       showToast(
@@ -2285,42 +2481,9 @@ document
     }
   );
 
-
 /* =========================================================
-   UNDO
+   UNDO BUTTON
 ========================================================= */
-
-function undo(){
-
-  if(shapes.length){
-
-    shapes.pop();
-
-  }
-  else if(texts.length){
-
-    texts.pop();
-
-  }
-  else if(points.length){
-
-    points.pop();
-
-  }
-  else{
-
-    showToast(
-      'Nothing to undo'
-    );
-
-    return;
-
-  }
-
-  render();
-
-}
-
 
 document
   .getElementById('undo-btn')
@@ -2328,7 +2491,6 @@ document
     'click',
     undo
   );
-
 
 /* =========================================================
    COORDINATES
@@ -2349,14 +2511,9 @@ function ensureOrigin(){
   }
 
   return rect;
-
 }
 
-
-function worldToScreen(
-  wx,
-  wy
-){
+function worldToScreen(wx,wy){
 
   return {
 
@@ -2376,11 +2533,7 @@ function worldToScreen(
 
 }
 
-
-function screenToWorld(
-  sx,
-  sy
-){
+function screenToWorld(sx,sy){
 
   return {
 
@@ -2397,7 +2550,6 @@ function screenToWorld(
   };
 
 }
-
 
 function svgPoint(e){
 
@@ -2418,7 +2570,6 @@ function svgPoint(e){
 
 }
 
-
 /* =========================================================
    SNAP
 ========================================================= */
@@ -2431,13 +2582,9 @@ function findNearPoint(
 ){
 
   let best = null;
+  let bestDistance = threshold;
 
-  let bestDistance =
-    threshold;
-
-  for(
-    const p of points
-  ){
+  for(const p of points){
 
     if(
       p.id === exclude
@@ -2460,20 +2607,15 @@ function findNearPoint(
       d < bestDistance
     ){
 
-      best =
-        p;
-
-      bestDistance =
-        d;
+      best = p;
+      bestDistance = d;
 
     }
 
   }
 
   return best;
-
 }
-
 
 function resolveSnap(
   sx,
@@ -2515,13 +2657,11 @@ function resolveSnap(
 
   }
 
-
   const w =
     screenToWorld(
       sx,
       sy
     );
-
 
   if(settings.snapGrid){
 
@@ -2562,7 +2702,6 @@ function resolveSnap(
 
   }
 
-
   return {
 
     x:sx,
@@ -2579,20 +2718,15 @@ function resolveSnap(
 
 }
 
-
 /* =========================================================
    POINTS
 ========================================================= */
 
-function addPointWorld(
-  x,
-  y
-){
+function addPointWorld(x,y){
 
   const p = {
 
     id:nextId++,
-
     x,
     y
 
@@ -2601,13 +2735,9 @@ function addPointWorld(
   points.push(p);
 
   return p;
-
 }
 
-
-function getOrCreatePoint(
-  snap
-){
+function getOrCreatePoint(snap){
 
   if(
     snap.snappedTo !== null &&
@@ -2620,13 +2750,11 @@ function getOrCreatePoint(
 
   }
 
-
   const w =
     screenToWorld(
       snap.x,
       snap.y
     );
-
 
   return addPointWorld(
 
@@ -2640,7 +2768,6 @@ function getOrCreatePoint(
 
 }
 
-
 function byId(id){
 
   return points.find(
@@ -2649,7 +2776,6 @@ function byId(id){
 
 }
 
-
 function pointName(id){
 
   const index =
@@ -2657,32 +2783,28 @@ function pointName(id){
       p=>p.id === id
     );
 
-  let n=index;
+  if(index < 0)
+    return '';
 
-  let name='';
+  let n = index;
+  let name = '';
 
   do{
 
     name =
       String.fromCharCode(
         65+(n%26)
-      ) +
+      )+
       name;
 
     n =
-      Math.floor(
-        n/26
-      )-1;
+      Math.floor(n/26)-1;
 
   }
-  while(
-    n>=0
-  );
+  while(n>=0);
 
   return name;
-
 }
-
 
 /* =========================================================
    MATH
@@ -2697,12 +2819,7 @@ function distance(a,b){
 
 }
 
-
-function angleBetween(
-  a,
-  v,
-  c
-){
+function angleBetween(a,v,c){
 
   const v1 = {
 
@@ -2718,7 +2835,6 @@ function angleBetween(
 
   };
 
-
   let angle =
     Math.atan2(
       v2.y,
@@ -2729,31 +2845,22 @@ function angleBetween(
       v1.x
     );
 
-
   let deg =
     angle *
     180 /
     Math.PI;
 
-
   deg =
     ((deg%360)+360)%360;
 
-
-  if(
-    deg>180
-  )
-    deg =
-      360-deg;
-
+  if(deg>180)
+    deg=360-deg;
 
   return deg;
-
 }
 
-
 /* =========================================================
-   RMB CAMERA PAN
+   RIGHT MOUSE PAN
 ========================================================= */
 
 svg.addEventListener(
@@ -2765,47 +2872,33 @@ svg.addEventListener(
   }
 );
 
-
 svg.addEventListener(
   'mousedown',
   e=>{
 
-    /*
-      RIGHT MOUSE BUTTON
-      = PAN CAMERA
-    */
-
-    if(
-      e.button === 2
-    ){
-
-      e.preventDefault();
-
-      ensureOrigin();
-
-      isPanning = true;
-
-      panStart = {
-
-        mouseX:e.clientX,
-        mouseY:e.clientY,
-
-        cameraX:camera.x,
-        cameraY:camera.y
-
-      };
-
-      svg.classList.add(
-        'panning'
-      );
-
+    if(e.button !== 2)
       return;
 
-    }
+    e.preventDefault();
+
+    isPanning = true;
+
+    panStart = {
+
+      mouseX:e.clientX,
+      mouseY:e.clientY,
+
+      cameraX:camera.x,
+      cameraY:camera.y
+
+    };
+
+    svg.classList.add(
+      'panning'
+    );
 
   }
 );
-
 
 window.addEventListener(
   'mousemove',
@@ -2814,22 +2907,13 @@ window.addEventListener(
     if(!isPanning)
       return;
 
-
     const dx =
-      (
-        e.clientX -
-        panStart.mouseX
-      ) /
+      (e.clientX-panStart.mouseX) /
       (40*camera.zoom);
-
 
     const dy =
-      (
-        e.clientY -
-        panStart.mouseY
-      ) /
+      (e.clientY-panStart.mouseY) /
       (40*camera.zoom);
-
 
     camera.x =
       panStart.cameraX-dx;
@@ -2837,34 +2921,32 @@ window.addEventListener(
     camera.y =
       panStart.cameraY+dy;
 
+    saveEverything();
 
     render();
 
   }
 );
 
-
 window.addEventListener(
   'mouseup',
   e=>{
 
-    if(
-      e.button === 2
-    ){
+    if(e.button !== 2)
+      return;
 
-      isPanning = false;
+    isPanning = false;
 
-      svg.classList.remove(
-        'panning'
-      );
+    svg.classList.remove(
+      'panning'
+    );
 
-      panStart = null;
+    panStart = null;
 
-    }
+    saveEverything();
 
   }
 );
-
 
 /* =========================================================
    MOUSE MOVE
@@ -2879,10 +2961,8 @@ svg.addEventListener(
     if(isPanning)
       return;
 
-
     const raw =
       svgPoint(e);
-
 
     const snap =
       resolveSnap(
@@ -2891,10 +2971,8 @@ svg.addEventListener(
         dragId
       );
 
-
     currentSnap =
       snap;
-
 
     const w =
       screenToWorld(
@@ -2902,23 +2980,19 @@ svg.addEventListener(
         snap.y
       );
 
-
     coordEl.textContent =
       `x: ${formatNumber(w.x)}   y: ${formatNumber(w.y)}`;
 
-
     /*
-      Drag point.
+      Dragging a point is a board change.
+      We record the original state once when
+      dragging starts, not every mousemove.
     */
 
-    if(
-      dragId !== null
-    ){
+    if(dragId !== null){
 
       const p =
-        byId(
-          dragId
-        );
+        byId(dragId);
 
       if(p){
 
@@ -2933,10 +3007,8 @@ svg.addEventListener(
 
     }
 
-
     const newHover =
       snap.snappedTo;
-
 
     if(
       newHover !== hoverId
@@ -2952,7 +3024,6 @@ svg.addEventListener(
   }
 );
 
-
 /* =========================================================
    MOUSE ENTER / LEAVE
 ========================================================= */
@@ -2960,10 +3031,11 @@ svg.addEventListener(
 svg.addEventListener(
   'mouseenter',
   ()=>{
+
     mouseInside = true;
+
   }
 );
-
 
 svg.addEventListener(
   'mouseleave',
@@ -2982,39 +3054,25 @@ svg.addEventListener(
   }
 );
 
-
 /* =========================================================
-   MAIN LEFT MOUSE
+   MAIN LEFT MOUSE DOWN
 ========================================================= */
 
 svg.addEventListener(
   'mousedown',
   e=>{
 
-    ensureOrigin();
-
-
-    /*
-      Ignore anything except LMB.
-    */
-
-    if(
-      e.button !== 0
-    )
+    if(e.button !== 0)
       return;
 
+    ensureOrigin();
 
     const raw =
       svgPoint(e);
 
+    /* SELECT */
 
-    /* =====================================================
-       SELECT
-    ===================================================== */
-
-    if(
-      tool === 'select'
-    ){
+    if(tool === 'select'){
 
       const near =
         findNearPoint(
@@ -3024,8 +3082,13 @@ svg.addEventListener(
           null
         );
 
-
       if(near){
+
+        /*
+          Record BEFORE movement.
+        */
+
+        recordBoardState();
 
         dragId =
           near.id;
@@ -3036,13 +3099,11 @@ svg.addEventListener(
 
       }
 
-
       const polygon =
         findPolygonAt(
           raw.x,
           raw.y
         );
-
 
       if(polygon){
 
@@ -3062,19 +3123,20 @@ svg.addEventListener(
 
       }
 
+      hidePolygonMenu();
 
       return;
 
     }
 
+    /* DELETE */
 
-    /* =====================================================
-       DELETE
-    ===================================================== */
+    if(tool === 'delete'){
 
-    if(
-      tool === 'delete'
-    ){
+      /*
+        deleteAt itself records the board state
+        only if something is actually deleted.
+      */
 
       deleteAt(
         raw.x,
@@ -3085,40 +3147,33 @@ svg.addEventListener(
 
     }
 
-
     const snap =
       resolveSnap(
         raw.x,
         raw.y
       );
 
+    /* POINT */
 
-    /* =====================================================
-       POINT
-    ===================================================== */
+    if(tool === 'point'){
 
-    if(
-      tool === 'point'
-    ){
+      recordBoardState();
 
       getOrCreatePoint(
         snap
       );
 
+      saveEverything();
+
       render();
 
       return;
 
     }
 
+    /* LINE */
 
-    /* =====================================================
-       LINE
-    ===================================================== */
-
-    if(
-      tool === 'line'
-    ){
+    if(tool === 'line'){
 
       const p =
         getOrCreatePoint(
@@ -3127,27 +3182,24 @@ svg.addEventListener(
 
       pending.push(p);
 
+      if(pending.length === 2){
 
-      if(
-        pending.length === 2
-      ){
+        recordBoardState();
 
         shapes.push({
 
           type:'line',
 
-          a:
-            pending[0].id,
-
-          b:
-            pending[1].id
+          a:pending[0].id,
+          b:pending[1].id
 
         });
 
         pending = [];
 
-      }
+        saveEverything();
 
+      }
 
       render();
 
@@ -3155,14 +3207,9 @@ svg.addEventListener(
 
     }
 
+    /* CIRCLE */
 
-    /* =====================================================
-       CIRCLE
-    ===================================================== */
-
-    if(
-      tool === 'circle'
-    ){
+    if(tool === 'circle'){
 
       const p =
         getOrCreatePoint(
@@ -3171,10 +3218,9 @@ svg.addEventListener(
 
       pending.push(p);
 
+      if(pending.length === 2){
 
-      if(
-        pending.length === 2
-      ){
+        recordBoardState();
 
         shapes.push({
 
@@ -3190,8 +3236,9 @@ svg.addEventListener(
 
         pending = [];
 
-      }
+        saveEverything();
 
+      }
 
       render();
 
@@ -3199,25 +3246,22 @@ svg.addEventListener(
 
     }
 
+    /* POLYGON */
 
-    /* =====================================================
-       POLYGON
-    ===================================================== */
-
-    if(
-      tool === 'polygon'
-    ){
+    if(tool === 'polygon'){
 
       const p =
         getOrCreatePoint(
           snap
         );
 
-
       if(
         pending.length >= 3 &&
-        p.id === pending[0].id
+        p.id ===
+        pending[0].id
       ){
+
+        recordBoardState();
 
         shapes.push({
 
@@ -3225,7 +3269,7 @@ svg.addEventListener(
 
           pts:
             pending.map(
-              p=>p.id
+              pt=>pt.id
             ),
 
           color:'#5B9BFF',
@@ -3236,6 +3280,8 @@ svg.addEventListener(
 
         pending = [];
 
+        saveEverything();
+
       }
       else{
 
@@ -3243,21 +3289,15 @@ svg.addEventListener(
 
       }
 
-
       render();
 
       return;
 
     }
 
+    /* ANGLE */
 
-    /* =====================================================
-       ANGLE
-    ===================================================== */
-
-    if(
-      tool === 'angle'
-    ){
+    if(tool === 'angle'){
 
       const p =
         getOrCreatePoint(
@@ -3266,10 +3306,9 @@ svg.addEventListener(
 
       pending.push(p);
 
+      if(pending.length === 3){
 
-      if(
-        pending.length === 3
-      ){
+        recordBoardState();
 
         shapes.push({
 
@@ -3288,8 +3327,9 @@ svg.addEventListener(
 
         pending = [];
 
-      }
+        saveEverything();
 
+      }
 
       render();
 
@@ -3297,14 +3337,9 @@ svg.addEventListener(
 
     }
 
+    /* MIDPOINT */
 
-    /* =====================================================
-       MIDPOINT
-    ===================================================== */
-
-    if(
-      tool === 'midpoint'
-    ){
+    if(tool === 'midpoint'){
 
       const p =
         getOrCreatePoint(
@@ -3313,17 +3348,15 @@ svg.addEventListener(
 
       pending.push(p);
 
+      if(pending.length === 2){
 
-      if(
-        pending.length === 2
-      ){
+        recordBoardState();
 
         const a =
           pending[0];
 
         const b =
           pending[1];
-
 
         const mid =
           addPointWorld(
@@ -3334,7 +3367,6 @@ svg.addEventListener(
 
           );
 
-
         shapes.push({
 
           type:'midpoint',
@@ -3344,11 +3376,11 @@ svg.addEventListener(
 
         });
 
-
         pending = [];
 
-      }
+        saveEverything();
 
+      }
 
       render();
 
@@ -3356,14 +3388,9 @@ svg.addEventListener(
 
     }
 
+    /* PERPENDICULAR */
 
-    /* =====================================================
-       PERPENDICULAR
-    ===================================================== */
-
-    if(
-      tool === 'perpendicular'
-    ){
+    if(tool === 'perpendicular'){
 
       const p =
         getOrCreatePoint(
@@ -3372,10 +3399,9 @@ svg.addEventListener(
 
       pending.push(p);
 
+      if(pending.length === 3){
 
-      if(
-        pending.length === 3
-      ){
+        recordBoardState();
 
         shapes.push({
 
@@ -3392,11 +3418,11 @@ svg.addEventListener(
 
         });
 
-
         pending = [];
 
-      }
+        saveEverything();
 
+      }
 
       render();
 
@@ -3404,14 +3430,9 @@ svg.addEventListener(
 
     }
 
+    /* DISTANCE */
 
-    /* =====================================================
-       DISTANCE
-    ===================================================== */
-
-    if(
-      tool === 'distance'
-    ){
+    if(tool === 'distance'){
 
       const p =
         getOrCreatePoint(
@@ -3420,10 +3441,9 @@ svg.addEventListener(
 
       pending.push(p);
 
+      if(pending.length === 2){
 
-      if(
-        pending.length === 2
-      ){
+        recordBoardState();
 
         shapes.push({
 
@@ -3437,11 +3457,11 @@ svg.addEventListener(
 
         });
 
-
         pending = [];
 
-      }
+        saveEverything();
 
+      }
 
       render();
 
@@ -3449,14 +3469,9 @@ svg.addEventListener(
 
     }
 
+    /* TEXT */
 
-    /* =====================================================
-       TEXT
-    ===================================================== */
-
-    if(
-      tool === 'text'
-    ){
+    if(tool === 'text'){
 
       const w =
         screenToWorld(
@@ -3464,37 +3479,33 @@ svg.addEventListener(
           raw.y
         );
 
-
       const text =
         prompt(
           'Enter text:'
         );
 
-
       if(text){
+
+        recordBoardState();
 
         texts.push({
 
           x:w.x,
-
           y:w.y,
-
           text:text
 
         });
 
+        saveEverything();
+
       }
 
-
       render();
-
-      return;
 
     }
 
   }
 );
-
 
 /* =========================================================
    LEFT MOUSE UP
@@ -3504,19 +3515,26 @@ window.addEventListener(
   'mouseup',
   e=>{
 
-    if(
-      e.button === 0
-    ){
+    if(e.button !== 0)
+      return;
 
-      dragId = null;
+    if(dragId !== null){
 
-      render();
+      /*
+        We already recorded the BEFORE state
+        on mouse down.
+      */
+
+      saveEverything();
 
     }
 
+    dragId = null;
+
+    render();
+
   }
 );
-
 
 /* =========================================================
    ZOOM
@@ -3530,10 +3548,8 @@ svg.addEventListener(
 
     ensureOrigin();
 
-
     const mouse =
       svgPoint(e);
-
 
     const before =
       screenToWorld(
@@ -3541,23 +3557,17 @@ svg.addEventListener(
         mouse.y
       );
 
-
     const speed =
       settings.zoomSpeed /
       100;
 
-
     const factor =
       e.deltaY < 0
-
         ? 1+speed
-
         : 1/(1+speed);
-
 
     camera.zoom *=
       factor;
-
 
     camera.zoom =
       Math.max(
@@ -3568,13 +3578,11 @@ svg.addEventListener(
         )
       );
 
-
     const after =
       screenToWorld(
         mouse.x,
         mouse.y
       );
-
 
     camera.x +=
       before.x-after.x;
@@ -3582,6 +3590,7 @@ svg.addEventListener(
     camera.y +=
       before.y-after.y;
 
+    saveEverything();
 
     render();
 
@@ -3591,15 +3600,11 @@ svg.addEventListener(
   }
 );
 
-
 /* =========================================================
-   POLYGON FIND
+   POLYGON EDITING
 ========================================================= */
 
-function findPolygonAt(
-  x,
-  y
-){
+function findPolygonAt(x,y){
 
   for(
     let i=shapes.length-1;
@@ -3610,18 +3615,15 @@ function findPolygonAt(
     const s =
       shapes[i];
 
-
     if(
       s.type !== 'polygon'
     )
       continue;
 
-
     const pts =
       s.pts
         .map(byId)
         .filter(Boolean);
-
 
     if(
       pointInPolygon(
@@ -3637,11 +3639,8 @@ function findPolygonAt(
 
   }
 
-
   return null;
-
 }
-
 
 function pointInPolygon(
   x,
@@ -3649,9 +3648,7 @@ function pointInPolygon(
   pts
 ){
 
-  let inside =
-    false;
-
+  let inside = false;
 
   for(
     let i=0,
@@ -3668,20 +3665,14 @@ function pointInPolygon(
         pts[i].y
       );
 
-
     const b =
       worldToScreen(
         pts[j].x,
         pts[j].y
       );
 
-
     const intersect =
-      (
-        (a.y>y) !==
-        (b.y>y)
-      )
-      &&
+      ((a.y>y)!=(b.y>y)) &&
       (
         x <
         (b.x-a.x) *
@@ -3690,102 +3681,34 @@ function pointInPolygon(
         a.x
       );
 
-
     if(intersect)
-      inside =
-        !inside;
+      inside=!inside;
 
   }
 
-
   return inside;
-
 }
 
-
-/* =========================================================
-   POLYGON MENU
-========================================================= */
-
-function showPolygonMenu(
-  x,
-  y
-){
+function showPolygonMenu(x,y){
 
   const wrap =
     document.getElementById(
       'canvas-wrap'
     );
 
-
   const rect =
     wrap.getBoundingClientRect();
 
-
-  const menuWidth =
-    245;
-
-  const menuHeight =
-    150;
-
-
-  let left =
-    x -
-    rect.left +
-    8;
-
-
-  let top =
-    y -
-    rect.top +
-    8;
-
-
-  if(
-    left+menuWidth >
-    rect.width
-  ){
-
-    left =
-      rect.width -
-      menuWidth -
-      8;
-
-  }
-
-
-  if(
-    top+menuHeight >
-    rect.height
-  ){
-
-    top =
-      rect.height -
-      menuHeight -
-      8;
-
-  }
-
-
   polygonMenu.style.left =
-    Math.max(
-      8,
-      left
-    )+'px';
-
+    (x-rect.left+8)+'px';
 
   polygonMenu.style.top =
-    Math.max(
-      8,
-      top
-    )+'px';
-
+    (y-rect.top+8)+'px';
 
   polygonMenu.style.display =
     'block';
 
 }
-
 
 function hidePolygonMenu(){
 
@@ -3797,14 +3720,10 @@ function hidePolygonMenu(){
 
 }
 
-
 function updateTransparencyUI(){
 
-  if(
-    !selectedPolygon
-  )
+  if(!selectedPolygon)
     return;
-
 
   if(
     selectedPolygon.transparency ===
@@ -3816,10 +3735,8 @@ function updateTransparencyUI(){
 
   }
 
-
   transparencySlider.value =
     selectedPolygon.transparency;
-
 
   transparencyValue.textContent =
     selectedPolygon.transparency +
@@ -3827,9 +3744,8 @@ function updateTransparencyUI(){
 
 }
 
-
 /* =========================================================
-   COLOR
+   POLYGON COLOR
 ========================================================= */
 
 document
@@ -3842,70 +3758,135 @@ document
       'click',
       ()=>{
 
-        if(
-          selectedPolygon
-        ){
+        if(!selectedPolygon)
+          return;
 
-          selectedPolygon.color =
-            choice.dataset.color;
+        /*
+          Record BEFORE changing color.
+        */
 
+        recordBoardState();
 
-          render();
+        selectedPolygon.color =
+          choice.dataset.color;
 
-          showToast(
-            'Polygon color changed'
-          );
+        saveEverything();
 
-        }
+        render();
 
+        showToast(
+          'Polygon color changed'
+        );
 
-        hidePolygonMenu();
+        /*
+          Keep menu open so multiple edits
+          can be made naturally.
+        */
+
+        updateTransparencyUI();
 
       }
     );
 
   });
 
-
 /* =========================================================
-   TRANSPARENCY
+   POLYGON TRANSPARENCY
 ========================================================= */
+
+let transparencyUndoStarted = false;
+
+transparencySlider.addEventListener(
+  'pointerdown',
+  ()=>{
+
+    transparencyUndoStarted = false;
+
+  }
+);
 
 transparencySlider.addEventListener(
   'input',
   ()=>{
 
-    if(
-      !selectedPolygon
-    )
+    if(!selectedPolygon)
       return;
 
+    if(!transparencyUndoStarted){
+
+      recordBoardState();
+
+      transparencyUndoStarted = true;
+
+    }
 
     selectedPolygon.transparency =
       Number(
         transparencySlider.value
       );
 
-
     transparencyValue.textContent =
       selectedPolygon.transparency +
       '%';
 
+    saveEverything();
 
     render();
 
   }
 );
 
+transparencySlider.addEventListener(
+  'change',
+  ()=>{
+
+    transparencyUndoStarted = false;
+
+  }
+);
 
 /* =========================================================
    DELETE
 ========================================================= */
 
-function deleteAt(
-  x,
-  y
+function shapeUsesPoint(
+  shape,
+  id
 ){
+
+  const ids = [];
+
+  if(shape.a !== undefined)
+    ids.push(shape.a);
+
+  if(shape.b !== undefined)
+    ids.push(shape.b);
+
+  if(shape.c !== undefined)
+    ids.push(shape.c);
+
+  if(shape.vertex !== undefined)
+    ids.push(shape.vertex);
+
+  if(shape.center !== undefined)
+    ids.push(shape.center);
+
+  if(shape.edge !== undefined)
+    ids.push(shape.edge);
+
+  if(shape.through !== undefined)
+    ids.push(shape.through);
+
+  if(shape.point !== undefined)
+    ids.push(shape.point);
+
+  if(shape.pts)
+    ids.push(...shape.pts);
+
+  return ids.includes(id);
+}
+
+function deleteAt(x,y){
 
   const p =
     findNearPoint(
@@ -3915,90 +3896,40 @@ function deleteAt(
       null
     );
 
-
   if(p){
+
+    recordBoardState();
 
     shapes =
       shapes.filter(
-        s=>{
-
-          const ids=[];
-
-
-          if(
-            s.a !== undefined
-          )
-            ids.push(s.a);
-
-
-          if(
-            s.b !== undefined
-          )
-            ids.push(s.b);
-
-
-          if(
-            s.c !== undefined
-          )
-            ids.push(s.c);
-
-
-          if(
-            s.vertex !== undefined
-          )
-            ids.push(s.vertex);
-
-
-          if(
-            s.center !== undefined
-          )
-            ids.push(s.center);
-
-
-          if(
-            s.edge !== undefined
-          )
-            ids.push(s.edge);
-
-
-          if(
-            s.through !== undefined
-          )
-            ids.push(s.through);
-
-
-          if(
-            s.point !== undefined
-          )
-            ids.push(s.point);
-
-
-          if(s.pts)
-            ids.push(
-              ...s.pts
-            );
-
-
-          return !ids.includes(
+        s=>
+          !shapeUsesPoint(
+            s,
             p.id
-          );
-
-        }
+          )
       );
-
 
     points =
       points.filter(
-        q=>q.id !== p.id
+        q=>
+          q.id !== p.id
       );
 
+    hoverId = null;
+
+    selectedPolygon = null;
+
+    saveEverything();
 
     render();
+
+    showToast(
+      'Object deleted'
+    );
 
     return;
 
   }
-
 
   const polygon =
     findPolygonAt(
@@ -4006,21 +3937,30 @@ function deleteAt(
       y
     );
 
-
   if(polygon){
+
+    recordBoardState();
 
     shapes =
       shapes.filter(
         s=>s !== polygon
       );
 
+    selectedPolygon = null;
+
+    hidePolygonMenu();
+
+    saveEverything();
 
     render();
+
+    showToast(
+      'Polygon deleted'
+    );
 
     return;
 
   }
-
 
   showToast(
     'Nothing to delete here'
@@ -4028,56 +3968,29 @@ function deleteAt(
 
 }
 
-
 /* =========================================================
-   GRID LABEL STEP
+   GRID
 ========================================================= */
-
-/*
-  Keeps labels visually clean.
-
-  Zoomed in:
-    1 2 3 4 5...
-
-  Zooming out:
-    10 20 30 40...
-
-  Further:
-    100 200 300...
-
-  Further:
-    1000 2000 3000...
-*/
 
 function getAxisLabelStep(){
 
   const pixelsPerUnit =
-    40 *
-    camera.zoom;
-
+    40 * camera.zoom;
 
   const desiredPixels =
-    58;
-
+    55;
 
   const rawStep =
     desiredPixels /
     pixelsPerUnit;
 
-
-  if(
-    rawStep <= 1
-  )
+  if(rawStep <= 1)
     return 1;
-
 
   const exponent =
     Math.floor(
-      Math.log10(
-        rawStep
-      )
+      Math.log10(rawStep)
     );
-
 
   const base =
     Math.pow(
@@ -4085,62 +3998,33 @@ function getAxisLabelStep(){
       exponent
     );
 
-
   const normalized =
-    rawStep /
-    base;
-
+    rawStep/base;
 
   let nice;
 
+  if(normalized <= 1)
+    nice = 1;
 
-  if(
-    normalized <= 1
-  ){
+  else if(normalized <= 2)
+    nice = 2;
 
-    nice=1;
+  else if(normalized <= 5)
+    nice = 5;
 
-  }
-  else if(
-    normalized <= 2
-  ){
+  else
+    nice = 10;
 
-    nice=2;
-
-  }
-  else if(
-    normalized <= 5
-  ){
-
-    nice=5;
-
-  }
-  else{
-
-    nice=10;
-
-  }
-
-
-  return nice *
-         base;
-
+  return nice * base;
 }
-
-
-/* =========================================================
-   GRID
-========================================================= */
 
 function drawGridAndAxes(){
 
   const rect =
     svg.getBoundingClientRect();
 
-
   const group =
     el('g',{});
-
 
   if(
     !settings.showGrid &&
@@ -4151,13 +4035,11 @@ function drawGridAndAxes(){
 
   }
 
-
   const topLeft =
     screenToWorld(
       0,
       0
     );
-
 
   const bottomRight =
     screenToWorld(
@@ -4165,141 +4047,41 @@ function drawGridAndAxes(){
       rect.height
     );
 
-
   const spacing =
     settings.gridSpacing;
 
+  /* GRID */
 
-  /* =======================================================
-     GRID
-  ====================================================== */
-
-  if(
-    settings.showGrid
-  ){
+  if(settings.showGrid){
 
     const minX =
       Math.floor(
-        topLeft.x /
-        spacing
+        topLeft.x/spacing
       )-1;
-
 
     const maxX =
       Math.ceil(
-        bottomRight.x /
-        spacing
+        bottomRight.x/spacing
       )+1;
-
 
     const minY =
       Math.floor(
-        bottomRight.y /
-        spacing
+        bottomRight.y/spacing
       )-1;
-
 
     const maxY =
       Math.ceil(
-        topLeft.y /
-        spacing
+        topLeft.y/spacing
       )+1;
-
-
-    /*
-      Protect against absurd amounts of lines
-      at extreme zoom levels.
-    */
-
-    const lineLimit =
-      700;
-
-
-    const xCount =
-      maxX-minX;
-
-
-    const yCount =
-      maxY-minY;
-
-
-    /*
-      If there would be too many grid lines,
-      draw a larger visual grid interval.
-    */
-
-    let visualSpacing =
-      spacing;
-
-
-    if(
-      xCount > lineLimit ||
-      yCount > lineLimit
-    ){
-
-      const scale =
-        Math.max(
-          xCount,
-          yCount
-        ) /
-        lineLimit;
-
-
-      const multiplier =
-        Math.ceil(
-          scale
-        );
-
-
-      visualSpacing =
-        spacing *
-        multiplier;
-
-    }
-
-
-    const visualMinX =
-      Math.floor(
-        topLeft.x /
-        visualSpacing
-      )-1;
-
-
-    const visualMaxX =
-      Math.ceil(
-        bottomRight.x /
-        visualSpacing
-      )+1;
-
-
-    const visualMinY =
-      Math.floor(
-        bottomRight.y /
-        visualSpacing
-      )-1;
-
-
-    const visualMaxY =
-      Math.ceil(
-        topLeft.y /
-        visualSpacing
-      )+1;
-
-
-    /*
-      VERTICAL
-    */
 
     for(
-      let i=visualMinX;
-      i<=visualMaxX;
+      let i=minX;
+      i<=maxX;
       i++
     ){
 
       const wx =
-        i *
-        visualSpacing;
-
+        i*spacing;
 
       const s =
         worldToScreen(
@@ -4307,53 +4089,37 @@ function drawGridAndAxes(){
           0
         );
 
-
       const isAxis =
         Math.abs(wx) <
-        visualSpacing /
-        100;
-
+        spacing/100;
 
       group.appendChild(
         el(
           'line',
           {
-
             x1:s.x,
             y1:0,
-
             x2:s.x,
             y2:rect.height,
-
             class:
               isAxis &&
               settings.showAxes
-
                 ? 'axis-line'
-
                 : 'grid-line'
-
           }
         )
       );
 
     }
 
-
-    /*
-      HORIZONTAL
-    */
-
     for(
-      let i=visualMinY;
-      i<=visualMaxY;
+      let i=minY;
+      i<=maxY;
       i++
     ){
 
       const wy =
-        i *
-        visualSpacing;
-
+        i*spacing;
 
       const s =
         worldToScreen(
@@ -4361,32 +4127,23 @@ function drawGridAndAxes(){
           wy
         );
 
-
       const isAxis =
         Math.abs(wy) <
-        visualSpacing /
-        100;
-
+        spacing/100;
 
       group.appendChild(
         el(
           'line',
           {
-
             x1:0,
             y1:s.y,
-
             x2:rect.width,
             y2:s.y,
-
             class:
               isAxis &&
               settings.showAxes
-
                 ? 'axis-line'
-
                 : 'grid-line'
-
           }
         )
       );
@@ -4395,54 +4152,38 @@ function drawGridAndAxes(){
 
   }
 
+  /* AXIS LABELS */
 
-  /* =======================================================
-     AXIS LABELS
-  ====================================================== */
-
-  if(
-    settings.showAxes
-  ){
+  if(settings.showAxes){
 
     const labelStep =
       getAxisLabelStep();
 
-
     const minX =
       Math.floor(
-        topLeft.x /
-        labelStep
+        topLeft.x/labelStep
       ) *
       labelStep;
-
 
     const maxX =
       Math.ceil(
-        bottomRight.x /
-        labelStep
+        bottomRight.x/labelStep
       ) *
       labelStep;
-
 
     const minY =
       Math.floor(
-        bottomRight.y /
-        labelStep
+        bottomRight.y/labelStep
       ) *
       labelStep;
-
 
     const maxY =
       Math.ceil(
-        topLeft.y /
-        labelStep
+        topLeft.y/labelStep
       ) *
       labelStep;
 
-
-    /*
-      X LABELS
-    */
+    /* X */
 
     for(
       let x=minX;
@@ -4452,11 +4193,9 @@ function drawGridAndAxes(){
 
       if(
         Math.abs(x) <
-        labelStep /
-        100000
+        labelStep/100000
       )
         continue;
-
 
       const s =
         worldToScreen(
@@ -4464,35 +4203,27 @@ function drawGridAndAxes(){
           0
         );
 
-
       if(
         s.x<0 ||
         s.x>rect.width
       )
         continue;
 
-
-      const zero =
-        worldToScreen(
-          0,
-          0
-        );
-
-
       const t =
         el(
           'text',
           {
-
-            class:
-              'axis-label',
+            class:'axis-label',
 
             x:s.x,
 
             y:
               Math.min(
                 Math.max(
-                  zero.y+14,
+                  worldToScreen(
+                    0,
+                    0
+                  ).y+14,
                   12
                 ),
                 rect.height-4
@@ -4500,23 +4231,17 @@ function drawGridAndAxes(){
 
             'text-anchor':
               'middle'
-
           }
         );
 
-
       t.textContent =
         formatNumber(x);
-
 
       group.appendChild(t);
 
     }
 
-
-    /*
-      Y LABELS
-    */
+    /* Y */
 
     for(
       let y=minY;
@@ -4526,11 +4251,9 @@ function drawGridAndAxes(){
 
       if(
         Math.abs(y) <
-        labelStep /
-        100000
+        labelStep/100000
       )
         continue;
-
 
       const s =
         worldToScreen(
@@ -4538,60 +4261,43 @@ function drawGridAndAxes(){
           y
         );
 
-
       if(
         s.y<0 ||
         s.y>rect.height
       )
         continue;
 
-
-      const zero =
-        worldToScreen(
-          0,
-          0
-        );
-
-
       const t =
         el(
           'text',
           {
-
-            class:
-              'axis-label',
+            class:'axis-label',
 
             x:
               Math.min(
                 Math.max(
-                  zero.x-8,
+                  worldToScreen(
+                    0,
+                    0
+                  ).x-8,
                   20
                 ),
                 rect.width-4
               ),
 
-            y:
-              s.y+4,
+            y:s.y+4,
 
             'text-anchor':
               'end'
-
           }
         );
-
 
       t.textContent =
         formatNumber(y);
 
-
       group.appendChild(t);
 
     }
-
-
-    /*
-      ZERO
-    */
 
     const zero =
       worldToScreen(
@@ -4599,41 +4305,26 @@ function drawGridAndAxes(){
         0
       );
 
-
     const o =
       el(
         'text',
         {
-
-          class:
-            'axis-label',
-
-          x:
-            zero.x-8,
-
-          y:
-            zero.y+14,
-
-          'text-anchor':
-            'end'
-
+          class:'axis-label',
+          x:zero.x-8,
+          y:zero.y+14,
+          'text-anchor':'end'
         }
       );
 
-
     o.textContent =
       '0';
-
 
     group.appendChild(o);
 
   }
 
-
   return group;
-
 }
-
 
 /* =========================================================
    RENDER
@@ -4644,35 +4335,19 @@ function render(){
   const rect =
     ensureOrigin();
 
-
-  svg.innerHTML =
-    '';
-
-
-  /*
-    GRID
-  */
+  svg.innerHTML = '';
 
   svg.appendChild(
     drawGridAndAxes()
   );
 
+  /* SHAPES */
 
-  /*
-    SHAPES
-  */
+  for(const s of shapes){
 
-  for(
-    const s of shapes
-  ){
+    /* LINE */
 
-    /* =====================================================
-       LINE
-    ==================================================== */
-
-    if(
-      s.type === 'line'
-    ){
+    if(s.type === 'line'){
 
       const a =
         byId(s.a);
@@ -4680,13 +4355,8 @@ function render(){
       const b =
         byId(s.b);
 
-
-      if(
-        !a ||
-        !b
-      )
+      if(!a || !b)
         continue;
-
 
       const A =
         worldToScreen(
@@ -4694,59 +4364,45 @@ function render(){
           a.y
         );
 
-
       const B =
         worldToScreen(
           b.x,
           b.y
         );
 
-
       svg.appendChild(
         el(
           'line',
           {
-
             class:'seg',
-
             x1:A.x,
             y1:A.y,
-
             x2:B.x,
             y2:B.y
-
           }
         )
       );
 
-
-      if(
-        settings.showMeasurements
-      ){
+      if(settings.showMeasurements){
 
         const label =
           el(
             'text',
             {
-
-              class:
-                'measure-label',
+              class:'measure-label',
 
               x:
                 (A.x+B.x)/2+8,
 
               y:
                 (A.y+B.y)/2-8
-
             }
           );
 
-
         label.textContent =
           distance(a,b)
-            .toFixed(2) +
+            .toFixed(2)+
           'u';
-
 
         svg.appendChild(
           label
@@ -4756,32 +4412,20 @@ function render(){
 
     }
 
-
-    /* =====================================================
-       CIRCLE
-    ==================================================== */
+    /* CIRCLE */
 
     else if(
       s.type === 'circle'
     ){
 
       const c =
-        byId(
-          s.center
-        );
+        byId(s.center);
 
       const edge =
-        byId(
-          s.edge
-        );
+        byId(s.edge);
 
-
-      if(
-        !c ||
-        !edge
-      )
+      if(!c || !edge)
         continue;
-
 
       const C =
         worldToScreen(
@@ -4789,13 +4433,11 @@ function render(){
           c.y
         );
 
-
       const E =
         worldToScreen(
           edge.x,
           edge.y
         );
-
 
       const radius =
         Math.hypot(
@@ -4803,29 +4445,23 @@ function render(){
           C.y-E.y
         );
 
-
       svg.appendChild(
         el(
           'circle',
           {
-
             class:'circ',
 
             cx:C.x,
             cy:C.y,
-
             r:radius
-
           }
         )
       );
-
 
       svg.appendChild(
         el(
           'line',
           {
-
             class:'ghost',
 
             x1:C.x,
@@ -4833,40 +4469,30 @@ function render(){
 
             x2:E.x,
             y2:E.y
-
           }
         )
       );
 
-
-      if(
-        settings.showMeasurements
-      ){
+      if(settings.showMeasurements){
 
         const label =
           el(
             'text',
             {
+              class:'measure-label',
 
-              class:
-                'measure-label',
-
-              x:
-                C.x+8,
+              x:C.x+8,
 
               y:
                 C.y-radius-8
-
             }
           );
 
-
         label.textContent =
-          'r = ' +
+          'r = '+
           distance(c,edge)
-            .toFixed(2) +
+            .toFixed(2)+
           'u';
-
 
         svg.appendChild(
           label
@@ -4876,10 +4502,7 @@ function render(){
 
     }
 
-
-    /* =====================================================
-       POLYGON
-    ==================================================== */
+    /* POLYGON */
 
     else if(
       s.type === 'polygon'
@@ -4890,12 +4513,8 @@ function render(){
           .map(byId)
           .filter(Boolean);
 
-
-      if(
-        pts.length<2
-      )
+      if(pts.length<2)
         continue;
-
 
       const attr =
         pts
@@ -4907,28 +4526,20 @@ function render(){
                 p.y
               );
 
-
-            return (
-              `${P.x},${P.y}`
-            );
+            return `${P.x},${P.y}`;
 
           })
           .join(' ');
 
-
       const transparency =
         s.transparency ===
         undefined
-
           ? 18
-
           : s.transparency;
-
 
       const fillAlpha =
         1 -
         transparency/100;
-
 
       svg.appendChild(
         el(
@@ -4936,7 +4547,7 @@ function render(){
           {
 
             class:
-              'poly' +
+              'poly'+
               (
                 selectedPolygon === s
                   ? ' selected'
@@ -4963,10 +4574,7 @@ function render(){
 
     }
 
-
-    /* =====================================================
-       ANGLE
-    ==================================================== */
+    /* ANGLE */
 
     else if(
       s.type === 'angle'
@@ -4981,14 +4589,8 @@ function render(){
       const c =
         byId(s.c);
 
-
-      if(
-        !a ||
-        !v ||
-        !c
-      )
+      if(!a || !v || !c)
         continue;
-
 
       const A =
         worldToScreen(
@@ -4996,13 +4598,11 @@ function render(){
           a.y
         );
 
-
       const V =
         worldToScreen(
           v.x,
           v.y
         );
-
 
       const C =
         worldToScreen(
@@ -5010,12 +4610,10 @@ function render(){
           c.y
         );
 
-
       svg.appendChild(
         el(
           'line',
           {
-
             class:'ghost',
 
             x1:V.x,
@@ -5023,17 +4621,14 @@ function render(){
 
             x2:A.x,
             y2:A.y
-
           }
         )
       );
-
 
       svg.appendChild(
         el(
           'line',
           {
-
             class:'ghost',
 
             x1:V.x,
@@ -5041,11 +4636,9 @@ function render(){
 
             x2:C.x,
             y2:C.y
-
           }
         )
       );
-
 
       const deg =
         angleBetween(
@@ -5054,9 +4647,7 @@ function render(){
           c
         );
 
-
-      const r=28;
-
+      const r = 28;
 
       const start =
         Math.atan2(
@@ -5064,17 +4655,14 @@ function render(){
           A.x-V.x
         );
 
-
       const end =
         Math.atan2(
           C.y-V.y,
           C.x-V.x
         );
 
-
       let sweep =
         end-start;
-
 
       while(
         sweep<0
@@ -5082,64 +4670,51 @@ function render(){
         sweep +=
           Math.PI*2;
 
-
       const large =
         sweep>Math.PI
           ? 1
           : 0;
 
-
       const sx =
         V.x+
         r*Math.cos(start);
-
 
       const sy =
         V.y+
         r*Math.sin(start);
 
-
       const ex =
         V.x+
         r*Math.cos(end);
-
 
       const ey =
         V.y+
         r*Math.sin(end);
 
-
       svg.appendChild(
         el(
           'path',
           {
-
-            class:
-              'angle-arc',
+            class:'angle-arc',
 
             d:
               `M ${sx} ${sy}
                A ${r} ${r}
                0 ${large} 1
                ${ex} ${ey}`
-
           }
         )
       );
-
 
       const mid =
         start+
         sweep/2;
 
-
       const label =
         el(
           'text',
           {
-
-            class:
-              'angle-label',
+            class:'angle-label',
 
             x:
               V.x+
@@ -5153,15 +4728,12 @@ function render(){
 
             'text-anchor':
               'middle'
-
           }
         );
 
-
       label.textContent =
-        deg.toFixed(1) +
+        deg.toFixed(1)+
         '°';
-
 
       svg.appendChild(
         label
@@ -5169,24 +4741,17 @@ function render(){
 
     }
 
-
-    /* =====================================================
-       MIDPOINT
-    ==================================================== */
+    /* MIDPOINT */
 
     else if(
       s.type === 'midpoint'
     ){
 
       const p =
-        byId(
-          s.point
-        );
-
+        byId(s.point);
 
       if(!p)
         continue;
-
 
       const P =
         worldToScreen(
@@ -5194,34 +4759,25 @@ function render(){
           p.y
         );
 
-
       svg.appendChild(
         el(
           'circle',
           {
-
-            class:
-              'snap-ring',
+            class:'snap-ring',
 
             cx:P.x,
             cy:P.y,
-
             r:8
-
           }
         )
       );
 
     }
 
-
-    /* =====================================================
-       PERPENDICULAR
-    ==================================================== */
+    /* PERPENDICULAR */
 
     else if(
-      s.type ===
-      'perpendicular'
+      s.type === 'perpendicular'
     ){
 
       const a =
@@ -5233,7 +4789,6 @@ function render(){
       const through =
         byId(s.through);
 
-
       if(
         !a ||
         !b ||
@@ -5241,13 +4796,11 @@ function render(){
       )
         continue;
 
-
       const dx =
         b.x-a.x;
 
       const dy =
         b.y-a.y;
-
 
       const len =
         Math.hypot(
@@ -5255,12 +4808,8 @@ function render(){
           dy
         );
 
-
-      if(
-        len===0
-      )
+      if(len===0)
         continue;
-
 
       const px =
         -dy/len;
@@ -5268,10 +4817,8 @@ function render(){
       const py =
         dx/len;
 
-
       const length =
         100;
-
 
       const p1 = {
 
@@ -5285,7 +4832,6 @@ function render(){
 
       };
 
-
       const p2 = {
 
         x:
@@ -5298,13 +4844,11 @@ function render(){
 
       };
 
-
       const A =
         worldToScreen(
           p1.x,
           p1.y
         );
-
 
       const B =
         worldToScreen(
@@ -5312,12 +4856,10 @@ function render(){
           p2.y
         );
 
-
       svg.appendChild(
         el(
           'line',
           {
-
             class:'seg',
 
             x1:A.x,
@@ -5325,17 +4867,13 @@ function render(){
 
             x2:B.x,
             y2:B.y
-
           }
         )
       );
 
     }
 
-
-    /* =====================================================
-       DISTANCE
-    ==================================================== */
+    /* DISTANCE */
 
     else if(
       s.type === 'distance'
@@ -5347,13 +4885,8 @@ function render(){
       const b =
         byId(s.b);
 
-
-      if(
-        !a ||
-        !b
-      )
+      if(!a || !b)
         continue;
-
 
       const A =
         worldToScreen(
@@ -5361,19 +4894,16 @@ function render(){
           a.y
         );
 
-
       const B =
         worldToScreen(
           b.x,
           b.y
         );
 
-
       svg.appendChild(
         el(
           'line',
           {
-
             class:'ghost',
 
             x1:A.x,
@@ -5381,19 +4911,15 @@ function render(){
 
             x2:B.x,
             y2:B.y
-
           }
         )
       );
-
 
       const label =
         el(
           'text',
           {
-
-            class:
-              'measure-label',
+            class:'measure-label',
 
             x:
               (A.x+B.x)/2,
@@ -5403,16 +4929,13 @@ function render(){
 
             'text-anchor':
               'middle'
-
           }
         );
 
-
       label.textContent =
         distance(a,b)
-          .toFixed(2) +
+          .toFixed(2)+
         'u';
-
 
       svg.appendChild(
         label
@@ -5422,14 +4945,9 @@ function render(){
 
   }
 
+  /* PENDING */
 
-  /* =======================================================
-     PENDING
-  ====================================================== */
-
-  if(
-    pending.length
-  ){
+  if(pending.length){
 
     for(
       let i=0;
@@ -5443,19 +4961,16 @@ function render(){
           pending[i].y
         );
 
-
       const b =
         worldToScreen(
           pending[i+1].x,
           pending[i+1].y
         );
 
-
       svg.appendChild(
         el(
           'line',
           {
-
             class:'ghost',
 
             x1:a.x,
@@ -5463,7 +4978,6 @@ function render(){
 
             x2:b.x,
             y2:b.y
-
           }
         )
       );
@@ -5472,14 +4986,9 @@ function render(){
 
   }
 
+  /* TEXT */
 
-  /* =======================================================
-     TEXT
-  ====================================================== */
-
-  for(
-    const t of texts
-  ){
+  for(const t of texts){
 
     const p =
       worldToScreen(
@@ -5487,25 +4996,19 @@ function render(){
         t.y
       );
 
-
     const textEl =
       el(
         'text',
         {
-
-          class:
-            'text-object',
+          class:'text-object',
 
           x:p.x,
           y:p.y
-
         }
       );
 
-
     textEl.textContent =
       t.text;
-
 
     svg.appendChild(
       textEl
@@ -5513,18 +5016,11 @@ function render(){
 
   }
 
+  /* POINTS */
 
-  /* =======================================================
-     POINTS
-  ====================================================== */
+  if(settings.showPoints){
 
-  if(
-    settings.showPoints
-  ){
-
-    for(
-      const p of points
-    ){
+    for(const p of points){
 
       const P =
         worldToScreen(
@@ -5532,11 +5028,9 @@ function render(){
           p.y
         );
 
-
       const hover =
         p.id === hoverId ||
         p.id === dragId;
-
 
       svg.appendChild(
         el(
@@ -5544,12 +5038,12 @@ function render(){
           {
 
             class:
-              'pt' +
+              'pt'+
               (
                 hover
                   ? ' hover'
                   : ''
-              ) +
+              )+
               (
                 p.id === dragId
                   ? ' dragging'
@@ -5568,34 +5062,26 @@ function render(){
         )
       );
 
-
-      if(
-        settings.showLabels
-      ){
+      if(settings.showLabels){
 
         const label =
           el(
             'text',
             {
-
-              class:
-                'pt-label',
+              class:'pt-label',
 
               x:
                 P.x+9,
 
               y:
                 P.y-9
-
             }
           );
-
 
         label.textContent =
           pointName(
             p.id
           );
-
 
         svg.appendChild(
           label
@@ -5607,10 +5093,7 @@ function render(){
 
   }
 
-
-  /* =======================================================
-     SNAP INDICATOR
-  ====================================================== */
+  /* SNAP INDICATOR */
 
   if(
     !isPanning &&
@@ -5625,13 +5108,11 @@ function render(){
         {
 
           class:
-            'snap-ring' +
+            'snap-ring'+
             (
               currentSnap.kind ===
               'point'
-
                 ? ' point-snap'
-
                 : ''
             ),
 
@@ -5644,9 +5125,7 @@ function render(){
           r:
             currentSnap.kind ===
             'point'
-
               ? 10
-
               : 7
 
         }
@@ -5657,777 +5136,33 @@ function render(){
 
 }
 
-
 /* =========================================================
-   KEYBOARD SHORTCUT UI
+   TRANSPARENCY UI
 ========================================================= */
 
-function keyDisplay(
-  key
-){
+function updateTransparencyUI(){
 
-  if(!key)
-    return '—';
-
-
-  if(
-    key === ' '
-  )
-    return 'SPACE';
-
-
-  return key.length === 1
-    ? key.toUpperCase()
-    : key.toUpperCase();
-
-}
-
-
-function shortcutForTool(
-  toolName
-){
-
-  for(
-    const key in shortcuts
-  ){
-
-    if(
-      shortcuts[key] ===
-      toolName
-    ){
-
-      return key;
-
-    }
-
-  }
-
-
-  return null;
-
-}
-
-
-function updateShortcutUI(){
-
-  const grid =
-    document.getElementById(
-      'shortcut-grid'
-    );
-
-
-  grid.innerHTML =
-    '';
-
-
-  modeTools.forEach(
-    toolName=>{
-
-      const item =
-        document.createElement(
-          'div'
-        );
-
-
-      item.className =
-        'shortcut-item';
-
-
-      const name =
-        document.createElement(
-          'span'
-        );
-
-
-      name.className =
-        'shortcut-name';
-
-
-      name.textContent =
-        toolNames[
-          toolName
-        ];
-
-
-      const keyButton =
-        document.createElement(
-          'button'
-        );
-
-
-      keyButton.type =
-        'button';
-
-
-      keyButton.className =
-        'shortcut-key';
-
-
-      const key =
-        shortcutForTool(
-          toolName
-        );
-
-
-      keyButton.textContent =
-        key
-          ? keyDisplay(key)
-          : '—';
-
-
-      keyButton.addEventListener(
-        'click',
-        ()=>{
-          beginShortcutCapture(
-            toolName,
-            keyButton
-          );
-        }
-      );
-
-
-      item.appendChild(
-        name
-      );
-
-      item.appendChild(
-        keyButton
-      );
-
-
-      grid.appendChild(
-        item
-      );
-
-    }
-  );
-
-
-  /*
-    Fixed shortcuts.
-  */
-
-  const fixed = [
-
-    ['Text','T'],
-
-    ['Delete','X'],
-
-    ['Undo','Ctrl+Z']
-
-  ];
-
-
-  fixed.forEach(
-    ([name,key])=>{
-
-      const item =
-        document.createElement(
-          'div'
-        );
-
-
-      item.className =
-        'shortcut-item';
-
-
-      const nameEl =
-        document.createElement(
-          'span'
-        );
-
-
-      nameEl.className =
-        'shortcut-name';
-
-
-      nameEl.textContent =
-        name;
-
-
-      const keyEl =
-        document.createElement(
-          'span'
-        );
-
-
-      keyEl.className =
-        'shortcut-fixed';
-
-
-      keyEl.textContent =
-        key;
-
-
-      item.appendChild(
-        nameEl
-      );
-
-      item.appendChild(
-        keyEl
-      );
-
-
-      grid.appendChild(
-        item
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   CUSTOM SHORTCUT CAPTURE
-========================================================= */
-
-function beginShortcutCapture(
-  toolName,
-  button
-){
-
-  /*
-    Cancel previous capture.
-  */
-
-  if(
-    listeningShortcut
-  ){
-
-    listeningShortcut.button
-      .classList.remove(
-        'listening'
-      );
-
-  }
-
-
-  listeningShortcut = {
-
-    tool:
-      toolName,
-
-    button:
-      button
-
-  };
-
-
-  button.classList.add(
-    'listening'
-  );
-
-
-  button.textContent =
-    'PRESS';
-
-
-  showToast(
-    `Press a key for ${toolNames[toolName]}`
-  );
-
-}
-
-
-function setShortcut(
-  toolName,
-  key
-){
-
-  key =
-    key.toLowerCase();
-
-
-  /*
-    Reserved shortcuts.
-  */
-
-  if(
-    key === 't' ||
-    key === 'x'
-  ){
-
-    showToast(
-      'That key is reserved'
-    );
-
-    return false;
-
-  }
-
-
-  /*
-    Modifier shortcuts are not used
-    for the 1–9 mode bindings.
-  */
-
-  if(
-    key === 'control' ||
-    key === 'shift' ||
-    key === 'alt' ||
-    key === 'meta'
-  ){
-
-    showToast(
-      'Choose a normal single key'
-    );
-
-    return false;
-
-  }
-
-
-  /*
-    If another mode already owns the key,
-    swap the existing binding away.
-
-    This guarantees ONE key = ONE mode.
-  */
-
-  const existingTool =
-    shortcuts[key];
-
-
-  if(
-    existingTool &&
-    existingTool !== toolName
-  ){
-
-    delete shortcuts[key];
-
-    showToast(
-      `${key.toUpperCase()} unbound from ${toolNames[existingTool]}`
-    );
-
-  }
-
-
-  /*
-    Remove any existing shortcut
-    from the target tool.
-  */
-
-  for(
-    const existingKey in shortcuts
-  ){
-
-    if(
-      shortcuts[existingKey] ===
-      toolName
-    ){
-
-      delete shortcuts[
-        existingKey
-      ];
-
-    }
-
-  }
-
-
-  shortcuts[key] =
-    toolName;
-
-
-  updateToolbarShortcutBadges();
-
-  updateShortcutUI();
-
-  showToast(
-    `${toolNames[toolName]} = ${key.toUpperCase()}`
-  );
-
-
-  return true;
-
-}
-
-
-function cancelShortcutCapture(){
-
-  if(
-    !listeningShortcut
-  )
+  if(!selectedPolygon)
     return;
 
-
-  listeningShortcut.button
-    .classList.remove(
-      'listening'
-    );
-
-
-  listeningShortcut =
-    null;
-
-
-  updateShortcutUI();
-
-}
-
-
-/* =========================================================
-   TOOLBAR SHORTCUT BADGES
-========================================================= */
-
-function updateToolbarShortcutBadges(){
-
-  document
-    .querySelectorAll(
-      '[data-shortcut-badge]'
-    )
-    .forEach(
-      badge=>{
-
-        const key =
-          badge.dataset.shortcutBadge;
-
-
-        /*
-          Only dynamic badges for 1–9.
-        */
-
-        const toolName =
-          shortcuts[key];
-
-
-        if(
-          toolName
-        ){
-
-          badge.textContent =
-            key.toUpperCase();
-
-        }
-
-      }
-    );
-
-
-  modeTools.forEach(
-    toolName=>{
-
-      const button =
-        document.querySelector(
-          `.tool[data-tool="${toolName}"]`
-        );
-
-
-      if(!button)
-        return;
-
-
-      const badge =
-        button.querySelector(
-          '.shortcut-badge'
-        );
-
-
-      if(!badge)
-        return;
-
-
-      const key =
-        shortcutForTool(
-          toolName
-        );
-
-
-      badge.textContent =
-        key
-          ? keyDisplay(key)
-          : '—';
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   KEYBOARD
-========================================================= */
-
-window.addEventListener(
-  'keydown',
-  e=>{
-
-    /*
-      Shortcut capture has priority.
-    */
-
-    if(
-      listeningShortcut
-    ){
-
-      if(
-        e.key === 'Escape'
-      ){
-
-        e.preventDefault();
-
-        cancelShortcutCapture();
-
-        return;
-
-      }
-
-
-      /*
-        Ignore modifier-only presses.
-      */
-
-      if(
-        [
-          'Control',
-          'Shift',
-          'Alt',
-          'Meta'
-        ].includes(
-          e.key
-        )
-      ){
-
-        return;
-
-      }
-
-
-      /*
-        We only allow a single normal key
-        for custom mode shortcuts.
-      */
-
-      if(
-        e.ctrlKey ||
-        e.altKey ||
-        e.metaKey
-      ){
-
-        showToast(
-          'Use a single key without modifiers'
-        );
-
-        return;
-
-      }
-
-
-      const key =
-        e.key.toLowerCase();
-
-
-      if(
-        key.length !== 1
-      ){
-
-        showToast(
-          'Use a single keyboard key'
-        );
-
-        return;
-
-      }
-
-
-      e.preventDefault();
-
-
-      const capturedTool =
-        listeningShortcut.tool;
-
-
-      const success =
-        setShortcut(
-          capturedTool,
-          key
-        );
-
-
-      if(success){
-
-        listeningShortcut.button
-          .classList.remove(
-            'listening'
-          );
-
-        listeningShortcut =
-          null;
-
-      }
-
-
-      return;
-
-    }
-
-
-    /*
-      Don't trigger shortcuts while typing.
-    */
-
-    const activeTag =
-      document.activeElement
-        ?.tagName;
-
-
-    if(
-      activeTag === 'INPUT' ||
-      activeTag === 'SELECT' ||
-      activeTag === 'TEXTAREA'
-    ){
-
-      return;
-
-    }
-
-
-    /*
-      Ctrl+Z
-    */
-
-    if(
-      e.ctrlKey &&
-      e.key.toLowerCase() === 'z'
-    ){
-
-      e.preventDefault();
-
-      undo();
-
-      return;
-
-    }
-
-
-    /*
-      T = TEXT
-      Fixed and NOT bindable.
-    */
-
-    if(
-      !e.ctrlKey &&
-      !e.altKey &&
-      !e.metaKey &&
-      e.key.toLowerCase() === 't'
-    ){
-
-      e.preventDefault();
-
-      setTool(
-        'text'
-      );
-
-      return;
-
-    }
-
-
-    /*
-      X = DELETE
-      Fixed and NOT bindable.
-    */
-
-    if(
-      !e.ctrlKey &&
-      !e.altKey &&
-      !e.metaKey &&
-      e.key.toLowerCase() === 'x'
-    ){
-
-      e.preventDefault();
-
-      setTool(
-        'delete'
-      );
-
-      return;
-
-    }
-
-
-    /*
-      Custom 1–9 style shortcuts.
-
-      The actual keys can now be ANY
-      normal single key.
-
-      One key can only activate one mode.
-    */
-
-    if(
-      !e.ctrlKey &&
-      !e.altKey &&
-      !e.metaKey
-    ){
-
-      const key =
-        e.key.toLowerCase();
-
-
-      const boundTool =
-        shortcuts[key];
-
-
-      if(
-        boundTool
-      ){
-
-        e.preventDefault();
-
-        setTool(
-          boundTool
-        );
-
-        return;
-
-      }
-
-    }
-
-
-    /*
-      Escape.
-    */
-
-    if(
-      e.key === 'Escape'
-    ){
-
-      pending = [];
-
-      hidePolygonMenu();
-
-      settingsOverlay.classList.remove(
-        'open'
-      );
-
-      render();
-
-      return;
-
-    }
+  if(
+    selectedPolygon.transparency ===
+    undefined
+  ){
+
+    selectedPolygon.transparency =
+      18;
 
   }
-);
 
+  transparencySlider.value =
+    selectedPolygon.transparency;
 
-/* =========================================================
-   RESIZE
-========================================================= */
+  transparencyValue.textContent =
+    selectedPolygon.transparency+
+    '%';
 
-window.addEventListener(
-  'resize',
-  ()=>{
-
-    origin = null;
-
-    render();
-
-  }
-);
-
+}
 
 /* =========================================================
    HELPERS
@@ -6444,7 +5179,6 @@ function el(
       tag
     );
 
-
   for(
     const key in attrs
   ){
@@ -6456,33 +5190,21 @@ function el(
 
   }
 
-
   return e;
-
 }
 
-
-function formatNumber(
-  n
-){
+function formatNumber(n){
 
   if(
     Math.abs(n)<.000001
   )
     n=0;
 
-
-  /*
-    Avoid ugly floating point
-    representations.
-  */
-
   return Number(
     n.toFixed(6)
   ).toString();
 
 }
-
 
 function hexToRgba(
   hex,
@@ -6495,13 +5217,11 @@ function hexToRgba(
       ''
     );
 
-
   const r =
     parseInt(
       hex.substring(0,2),
       16
     );
-
 
   const g =
     parseInt(
@@ -6509,13 +5229,11 @@ function hexToRgba(
       16
     );
 
-
   const b =
     parseInt(
       hex.substring(4,6),
       16
     );
-
 
   return `
     rgba(
@@ -6528,76 +5246,490 @@ function hexToRgba(
 
 }
 
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-let toastTimer =
-  null;
-
-
-function showToast(
-  message
-){
+function showToast(message){
 
   toast.textContent =
     message;
-
 
   toast.classList.add(
     'show'
   );
 
-
   clearTimeout(
     toastTimer
   );
 
-
   toastTimer =
     setTimeout(
       ()=>{
-
         toast.classList.remove(
           'show'
         );
-
       },
-      1700
+      1600
     );
 
 }
 
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+window.addEventListener(
+  'keydown',
+  e=>{
+
+    const tag =
+      document.activeElement?.tagName;
+
+    /*
+      Never steal keyboard input from
+      text/number/select fields.
+    */
+
+    if(
+      tag === 'INPUT' ||
+      tag === 'SELECT' ||
+      tag === 'TEXTAREA'
+    ){
+
+      return;
+
+    }
+
+    /* CTRL + Z */
+
+    if(
+      e.ctrlKey &&
+      !e.shiftKey &&
+      e.key.toLowerCase() === 'z'
+    ){
+
+      e.preventDefault();
+
+      undo();
+
+      return;
+
+    }
+
+    /* ESC */
+
+    if(
+      e.key === 'Escape'
+    ){
+
+      pending = [];
+
+      hidePolygonMenu();
+
+      settingsOverlay
+        .classList
+        .remove('open');
+
+      render();
+
+      return;
+
+    }
+
+    /*
+      T = TEXT
+      Fixed and not bindable.
+    */
+
+    if(
+      !e.ctrlKey &&
+      !e.altKey &&
+      e.key.toLowerCase() === 't'
+    ){
+
+      e.preventDefault();
+
+      setTool('text');
+
+      return;
+
+    }
+
+    /*
+      X = DELETE
+      Fixed and not bindable.
+    */
+
+    if(
+      !e.ctrlKey &&
+      !e.altKey &&
+      e.key.toLowerCase() === 'x'
+    ){
+
+      e.preventDefault();
+
+      setTool('delete');
+
+      return;
+
+    }
+
+    /*
+      CUSTOM 1-9 SHORTCUTS
+
+      One physical key can only activate
+      one mode because duplicate bindings
+      are rejected when edited.
+    */
+
+    if(
+      e.ctrlKey ||
+      e.altKey ||
+      e.metaKey
+    ){
+
+      return;
+
+    }
+
+    const key =
+      e.key.toUpperCase();
+
+    for(
+      const slot in shortcuts
+    ){
+
+      if(
+        shortcuts[slot] === key
+      ){
+
+        const mode =
+          defaultShortcuts[slot];
+
+        e.preventDefault();
+
+        setTool(mode);
+
+        return;
+
+      }
+
+    }
+
+  }
+);
+
+/* =========================================================
+   SHARE / SCREENSHOT
+========================================================= */
+
+document
+  .getElementById('share-btn')
+  .addEventListener(
+    'click',
+    shareBoard
+  );
+
+async function shareBoard(){
+
+  try{
+
+    /*
+      Serialize the SVG exactly as currently
+      displayed.
+    */
+
+    const cloneSvg =
+      svg.cloneNode(true);
+
+    /*
+      Make SVG self-contained.
+    */
+
+    cloneSvg.setAttribute(
+      'xmlns',
+      'http://www.w3.org/2000/svg'
+    );
+
+    cloneSvg.setAttribute(
+      'xmlns:xlink',
+      'http://www.w3.org/1999/xlink'
+    );
+
+    /*
+      Use the current background color.
+    */
+
+    const bg =
+      getComputedStyle(
+        document.body
+      )
+      .getPropertyValue(
+        '--bg'
+      )
+      .trim();
+
+    const rect =
+      svg.getBoundingClientRect();
+
+    const width =
+      Math.max(
+        1,
+        Math.round(rect.width)
+      );
+
+    const height =
+      Math.max(
+        1,
+        Math.round(rect.height)
+      );
+
+    cloneSvg.setAttribute(
+      'width',
+      width
+    );
+
+    cloneSvg.setAttribute(
+      'height',
+      height
+    );
+
+    /*
+      Background rectangle.
+    */
+
+    const background =
+      document.createElementNS(
+        NS,
+        'rect'
+      );
+
+    background.setAttribute(
+      'width',
+      '100%'
+    );
+
+    background.setAttribute(
+      'height',
+      '100%'
+    );
+
+    background.setAttribute(
+      'fill',
+      bg
+    );
+
+    cloneSvg.insertBefore(
+      background,
+      cloneSvg.firstChild
+    );
+
+    const serializer =
+      new XMLSerializer();
+
+    const svgString =
+      serializer.serializeToString(
+        cloneSvg
+      );
+
+    const blob =
+      new Blob(
+        [
+          svgString
+        ],
+        {
+          type:
+            'image/svg+xml;charset=utf-8'
+        }
+      );
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+    const img =
+      new Image();
+
+    img.onload =
+      ()=>{
+
+        const canvas =
+          document.createElement(
+            'canvas'
+          );
+
+        canvas.width =
+          width*2;
+
+        canvas.height =
+          height*2;
+
+        const ctx =
+          canvas.getContext(
+            '2d'
+          );
+
+        ctx.scale(
+          2,
+          2
+        );
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
+        );
+
+        URL.revokeObjectURL(
+          url
+        );
+
+        canvas.toBlob(
+          png=>{
+
+            if(!png){
+
+              showToast(
+                'Screenshot failed'
+              );
+
+              return;
+
+            }
+
+            const downloadUrl =
+              URL.createObjectURL(
+                png
+              );
+
+            const a =
+              document.createElement(
+                'a'
+              );
+
+            a.href =
+              downloadUrl;
+
+            a.download =
+              'GeoBoard.png';
+
+            document.body.appendChild(
+              a
+            );
+
+            a.click();
+
+            a.remove();
+
+            setTimeout(
+              ()=>{
+                URL.revokeObjectURL(
+                  downloadUrl
+                );
+              },
+              1000
+            );
+
+            showToast(
+              'Screenshot saved'
+            );
+
+          },
+          'image/png'
+        );
+
+      };
+
+    img.onerror =
+      ()=>{
+
+        URL.revokeObjectURL(
+          url
+        );
+
+        showToast(
+          'Screenshot failed'
+        );
+
+      };
+
+    img.src =
+      url;
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
+    showToast(
+      'Screenshot failed'
+    );
+
+  }
+
+}
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+window.addEventListener(
+  'resize',
+  ()=>{
+
+    origin = null;
+
+    render();
+
+  }
+);
+
+/* =========================================================
+   SAVE BEFORE LEAVING
+========================================================= */
+
+window.addEventListener(
+  'beforeunload',
+  ()=>{
+    saveEverything();
+  }
+);
 
 /* =========================================================
    INITIALIZE
 ========================================================= */
 
-document
-  .getElementById(
-    'dark-mode'
-  )
-  .checked = true;
+const hadSavedData =
+  loadEverything();
 
-
-document
-  .getElementById(
-    'show-tips'
-  )
-  .checked = true;
-
-
-updateToolbarShortcutBadges();
-
-updateShortcutUI();
-
-setTool(
-  'select'
+document.body.classList.toggle(
+  'light',
+  !settings.dark
 );
 
-render();
+syncSettingsUI();
 
+setTool(
+  tool || 'select'
+);
+
+if(!hadSavedData){
+
+  initializeUndoHistory();
+
+}else{
+
+  /*
+    Existing saved board becomes the first
+    undo state after loading.
+  */
+
+  initializeUndoHistory();
+
+}
+
+render();
 
 })();
 </script>
