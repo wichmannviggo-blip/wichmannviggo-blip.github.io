@@ -2,334 +2,124 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🧠 BRAINROT OVERLOAD</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧠 ULTRA BRAINROT 9000</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    user-select: none;
+*{
+    box-sizing:border-box;
+    user-select:none;
 }
 
-html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: Arial Black, Impact, sans-serif;
-    background: #000;
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Impact,Arial Black,sans-serif;
+    background:#090909;
+    color:white;
 }
 
-body {
-    animation: rainbowBG 4s linear infinite;
-    color: white;
+body{
+    transition:filter .1s;
 }
 
-/* =========================
-   BACKGROUND
-========================= */
+#bg{
+    position:fixed;
+    inset:-100px;
+    z-index:-5;
 
-@keyframes rainbowBG {
-    0%   { background: #ff0000; }
-    16%  { background: #ff00ff; }
-    33%  { background: #0000ff; }
-    50%  { background: #00ffff; }
-    66%  { background: #00ff00; }
-    83%  { background: #ffff00; }
-    100% { background: #ff0000; }
-}
-
-#background {
-    position: fixed;
-    inset: 0;
     background:
         repeating-linear-gradient(
-            45deg,
-            rgba(255,255,255,.08) 0px,
-            rgba(255,255,255,.08) 5px,
-            transparent 5px,
-            transparent 20px
+            0deg,
+            #ff0055 0 20px,
+            #00ffff 20px 40px,
+            #ffff00 40px 60px,
+            #7700ff 60px 80px
         );
-    animation: bgSpin 1s linear infinite;
-    pointer-events: none;
+
+    opacity:.35;
+    animation:bgmove 1.5s linear infinite;
 }
 
-@keyframes bgSpin {
-    from { transform: scale(1) rotate(0deg); }
-    to { transform: scale(1.4) rotate(360deg); }
+@keyframes bgmove{
+    from{transform:rotate(0deg) scale(1.3)}
+    to{transform:rotate(360deg) scale(1.3)}
 }
 
-/* =========================
-   MAIN UI
-========================= */
+#scanlines{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9000;
 
-#app {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 5px,
+            rgba(255,255,255,.035) 5px 7px
+        );
 }
 
-#title {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 20;
+#top{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:95px;
+    z-index:100;
 
-    font-size: clamp(25px, 5vw, 70px);
-    text-align: center;
-    color: white;
+    background:rgba(0,0,0,.9);
+    border-bottom:5px solid white;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-around;
+    gap:10px;
+
+    overflow:hidden;
+}
+
+#logo{
+    font-size:clamp(25px,4vw,55px);
 
     text-shadow:
-        5px 5px 0 #ff00ff,
-        -5px -5px 0 #00ffff,
-        0 0 30px white;
+        4px 4px 0 #ff00aa,
+        -4px -4px 0 #00ffff,
+        0 0 25px white;
 
-    animation: titleSpin .5s infinite alternate;
+    animation:logo .25s infinite alternate;
 }
 
-@keyframes titleSpin {
-    from { transform: translateX(-50%) rotate(-2deg) scale(1); }
-    to   { transform: translateX(-50%) rotate(2deg) scale(1.08); }
+@keyframes logo{
+    from{transform:rotate(-2deg) scale(1)}
+    to{transform:rotate(2deg) scale(1.08)}
 }
 
-/* =========================
-   COOKIE
-========================= */
-
-#cookiePanel {
-    position: absolute;
-    left: 30px;
-    top: 130px;
-    width: 280px;
-    z-index: 15;
-
-    background: rgba(0,0,0,.8);
-    border: 6px solid white;
-    border-radius: 25px;
-    padding: 15px;
-    text-align: center;
-
-    box-shadow:
-        0 0 20px #fff,
-        0 0 50px #ff00ff,
-        0 0 100px #00ffff;
+.stat{
+    padding:8px 14px;
+    border:3px solid white;
+    border-radius:12px;
+    background:#111;
+    font-size:18px;
 }
 
-#cookie {
-    width: 170px;
-    height: 170px;
-    margin: 10px auto;
-
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at 30% 30%, #ffd27d, #a95100);
-
-    border: 8px solid #572900;
-
-    font-size: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    cursor: pointer;
-
-    box-shadow:
-        inset -15px -15px 20px rgba(0,0,0,.4),
-        0 0 30px #ff8800;
-
-    transition: transform .05s;
+#brainrotBar{
+    position:absolute;
+    top:95px;
+    left:0;
+    right:0;
+    height:18px;
+    z-index:99;
+    background:#111;
 }
 
-#cookie:active {
-    transform: scale(.8) rotate(20deg);
-}
+#brainrotFill{
+    width:12%;
+    height:100%;
 
-.stat {
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    margin: 5px;
-}
-
-#cookieCount {
-    font-size: 28px;
-    color: #ffe600;
-}
-
-#combo {
-    font-size: 22px;
-    color: #00ffff;
-}
-
-/* =========================
-   TOILET
-========================= */
-
-#toilet {
-    position: absolute;
-    right: 8%;
-    top: 170px;
-
-    font-size: 120px;
-    z-index: 10;
-
-    animation:
-        toiletDance .35s infinite alternate,
-        toiletRainbow 1s linear infinite;
-
-    cursor: pointer;
-
-    filter:
-        drop-shadow(0 0 15px white)
-        drop-shadow(0 0 30px #00ffff);
-}
-
-@keyframes toiletDance {
-    from {
-        transform: rotate(-15deg) translateY(0);
-    }
-    to {
-        transform: rotate(15deg) translateY(-30px);
-    }
-}
-
-@keyframes toiletRainbow {
-    0% { filter: hue-rotate(0deg) drop-shadow(0 0 20px white); }
-    100% { filter: hue-rotate(360deg) drop-shadow(0 0 20px white); }
-}
-
-/* =========================
-   GACHA
-========================= */
-
-#gacha {
-    position: absolute;
-    right: 30px;
-    bottom: 30px;
-    z-index: 20;
-
-    width: 250px;
-    padding: 15px;
-
-    background: rgba(0,0,0,.85);
-    border: 5px solid #fff;
-    border-radius: 20px;
-
-    text-align: center;
-}
-
-button {
-    border: 4px solid white;
-    background: #ff00aa;
-    color: white;
-    font-family: Arial Black, sans-serif;
-    font-size: 17px;
-    padding: 10px 15px;
-    border-radius: 12px;
-    cursor: pointer;
-
-    box-shadow: 0 0 15px white;
-}
-
-button:hover {
-    transform: scale(1.1) rotate(-2deg);
-}
-
-button:active {
-    transform: scale(.9);
-}
-
-#gachaResult {
-    font-size: 35px;
-    min-height: 50px;
-    margin: 10px;
-}
-
-/* =========================
-   SLOPE GAME
-========================= */
-
-#slope {
-    position: absolute;
-    left: 50%;
-    bottom: 20px;
-    transform: translateX(-50%);
-
-    width: min(600px, 55vw);
-    height: 230px;
-
-    border: 5px solid white;
-    background:
-        linear-gradient(
-            135deg,
-            #111 25%,
-            #222 25%,
-            #222 50%,
-            #111 50%
-        );
-    background-size: 40px 40px;
-
-    overflow: hidden;
-    z-index: 5;
-
-    box-shadow: 0 0 30px cyan;
-}
-
-#ball {
-    position: absolute;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-
-    background: white;
-
-    left: 50%;
-    bottom: 40px;
-
-    box-shadow:
-        0 0 10px white,
-        0 0 30px cyan,
-        0 0 50px magenta;
-}
-
-.slopeObstacle {
-    position: absolute;
-    width: 35px;
-    height: 35px;
-
-    background: red;
-    border: 4px solid white;
-
-    transform: rotate(45deg);
-
-    box-shadow: 0 0 20px red;
-}
-
-/* =========================
-   COMBO
-========================= */
-
-#comboBar {
-    position: absolute;
-    left: 50%;
-    top: 110px;
-    transform: translateX(-50%);
-
-    width: 300px;
-    height: 25px;
-
-    background: black;
-    border: 3px solid white;
-
-    z-index: 20;
-}
-
-#comboFill {
-    height: 100%;
-    width: 0%;
-
-    background: linear-gradient(
+    background:linear-gradient(
         90deg,
         red,
         orange,
@@ -337,895 +127,1686 @@ button:active {
         lime,
         cyan,
         blue,
-        magenta
+        magenta,
+        red
     );
 
-    background-size: 300% 100%;
-    animation: rainbowBar .5s linear infinite;
+    background-size:400% 100%;
+    animation:bar 1s linear infinite;
 }
 
-@keyframes rainbowBar {
-    to {
-        background-position: 300% 0;
-    }
+@keyframes bar{
+    to{background-position:400% 0}
 }
 
-/* =========================
-   FLOATING TEXT
-========================= */
+.panel{
+    position:absolute;
+    background:rgba(0,0,0,.88);
+    border:4px solid white;
+    border-radius:18px;
+    box-shadow:
+        0 0 20px #00ffff,
+        0 0 50px #ff00ff;
 
-.floatText {
-    position: fixed;
-    z-index: 999;
+    padding:12px;
+}
 
-    pointer-events: none;
+button{
+    font-family:Impact,Arial Black,sans-serif;
+    color:white;
+    background:#ff0088;
+    border:3px solid white;
+    border-radius:10px;
+    padding:8px 13px;
+    cursor:pointer;
+    font-size:16px;
+    box-shadow:0 0 15px white;
+    transition:.08s;
+}
 
-    font-size: 30px;
-    color: white;
+button:hover{
+    transform:scale(1.12) rotate(-2deg);
+}
+
+button:active{
+    transform:scale(.85);
+}
+
+/* COOKIE */
+
+#cookieGame{
+    left:15px;
+    top:125px;
+    width:255px;
+    text-align:center;
+}
+
+#cookie{
+    width:145px;
+    height:145px;
+    margin:8px auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ffe09a,#a84d00);
+    border:8px solid #542500;
+
+    font-size:65px;
+    cursor:pointer;
+
+    box-shadow:
+        inset -15px -15px 20px #542500,
+        0 0 35px orange;
+
+    animation:cookie .7s infinite alternate;
+}
+
+@keyframes cookie{
+    from{transform:rotate(-3deg)}
+    to{transform:rotate(3deg) scale(1.04)}
+}
+
+#cookie:active{
+    transform:scale(.7)!important;
+}
+
+/* TOILET */
+
+#toilet{
+    position:absolute;
+    right:50px;
+    top:130px;
+
+    font-size:110px;
+    z-index:20;
+
+    cursor:pointer;
+
+    animation:
+        toilet .35s infinite alternate,
+        hue 1s linear infinite;
+}
+
+@keyframes toilet{
+    from{transform:rotate(-12deg) translateY(0)}
+    to{transform:rotate(12deg) translateY(-25px)}
+}
+
+@keyframes hue{
+    to{filter:hue-rotate(360deg)}
+}
+
+/* SLOPE */
+
+#slopeGame{
+    left:300px;
+    top:130px;
+    width:390px;
+    height:245px;
+    overflow:hidden;
+}
+
+#slope{
+    position:absolute;
+    inset:45px 10px 10px;
+
+    overflow:hidden;
+
+    background:
+        repeating-linear-gradient(
+            135deg,
+            #111 0 20px,
+            #333 20px 40px
+        );
+
+    border:3px solid white;
+}
+
+#slopeBall{
+    position:absolute;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+
+    background:white;
+
+    left:50%;
+    bottom:25px;
+
+    box-shadow:0 0 25px cyan;
+}
+
+.slopeBlock{
+    position:absolute;
+    width:32px;
+    height:32px;
+
+    background:red;
+    border:3px solid white;
+
+    transform:rotate(45deg);
+
+    box-shadow:0 0 20px red;
+}
+
+/* BRAIN CLICKER */
+
+#brainGame{
+    right:15px;
+    top:125px;
+    width:260px;
+    text-align:center;
+}
+
+#brain{
+    font-size:90px;
+    display:block;
+    cursor:pointer;
+    transition:.08s;
+    filter:drop-shadow(0 0 20px magenta);
+}
+
+#brain:active{
+    transform:scale(.5) rotate(40deg);
+}
+
+/* GAME GRID */
+
+#games{
+    position:absolute;
+    left:15px;
+    right:15px;
+    bottom:15px;
+    height:calc(100% - 410px);
+
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+
+    z-index:50;
+}
+
+.mini{
+    position:relative;
+    overflow:hidden;
+    min-width:0;
+
+    background:rgba(0,0,0,.88);
+    border:4px solid white;
+    border-radius:15px;
+
+    padding:10px;
+
+    text-align:center;
+
+    box-shadow:0 0 20px cyan;
+}
+
+.mini h2{
+    margin:2px;
+    font-size:22px;
+}
+
+.gameArea{
+    position:absolute;
+    left:8px;
+    right:8px;
+    top:50px;
+    bottom:8px;
+
+    overflow:hidden;
+    border:2px solid white;
+    background:#090909;
+}
+
+/* CHICKEN */
+
+#chicken{
+    position:absolute;
+    font-size:45px;
+    cursor:pointer;
+}
+
+.falling{
+    position:absolute;
+    font-size:28px;
+}
+
+/* TYPING */
+
+#typingWord{
+    font-size:26px;
+    margin:10px;
+    color:#00ffff;
+}
+
+#typingInput{
+    width:90%;
+    padding:10px;
+    border:3px solid white;
+    border-radius:8px;
+    font-family:Arial;
+    font-weight:bold;
+}
+
+/* MOAI */
+
+#moaiArea{
+    display:flex;
+    flex-direction:column-reverse;
+    align-items:center;
+    justify-content:flex-start;
+}
+
+.moai{
+    font-size:35px;
+    line-height:30px;
+}
+
+/* BUTTON */
+
+#evilButton{
+    margin-top:30px;
+    width:150px;
+    height:80px;
+
+    font-size:25px;
+    background:red;
+
+    animation:buttonPulse .3s infinite alternate;
+}
+
+@keyframes buttonPulse{
+    from{transform:scale(1)}
+    to{transform:scale(1.08)}
+}
+
+#buttonCounter{
+    font-size:20px;
+}
+
+/* FLOATING */
+
+.float{
+    position:fixed;
+    z-index:5000;
+    pointer-events:none;
+
+    font-size:28px;
 
     text-shadow:
         3px 3px 0 black,
-        0 0 20px cyan;
+        0 0 15px cyan;
 
-    animation: floatUp 1s forwards;
+    animation:float 1s forwards;
 }
 
-@keyframes floatUp {
-    from {
-        opacity: 1;
-        transform: scale(1) translateY(0) rotate(0deg);
+@keyframes float{
+    from{
+        opacity:1;
+        transform:scale(.7) rotate(0deg);
     }
 
-    to {
-        opacity: 0;
-        transform: scale(2) translateY(-180px) rotate(30deg);
-    }
-}
-
-/* =========================
-   EXPLOSIONS
-========================= */
-
-.explosion {
-    position: fixed;
-    pointer-events: none;
-    z-index: 900;
-
-    font-size: 70px;
-
-    animation: explode .7s forwards;
-}
-
-@keyframes explode {
-    0% {
-        transform: scale(.2) rotate(0deg);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(4) rotate(360deg);
-        opacity: 0;
+    to{
+        opacity:0;
+        transform:scale(2.5) translateY(-150px) rotate(35deg);
     }
 }
 
-/* =========================
-   RANDOM NOTIFICATIONS
-========================= */
+/* EXPLOSION */
 
-#notifications {
-    position: fixed;
-    right: 20px;
-    top: 20px;
-    z-index: 1000;
+.explosion{
+    position:fixed;
+    z-index:4000;
+    pointer-events:none;
 
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    font-size:70px;
+
+    animation:explode .65s forwards;
 }
 
-.notification {
-    padding: 15px;
+@keyframes explode{
+    from{
+        opacity:1;
+        transform:scale(.1) rotate(0);
+    }
 
-    background: rgba(0,0,0,.9);
-    border: 4px solid white;
-    border-radius: 12px;
+    to{
+        opacity:0;
+        transform:scale(4) rotate(360deg);
+    }
+}
 
-    animation: notificationIn .3s, notificationOut .5s 3s forwards;
+/* NOTIFICATIONS */
+
+#notifications{
+    position:fixed;
+    right:10px;
+    bottom:10px;
+
+    z-index:8000;
+
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+
+    width:260px;
+}
+
+.notification{
+    padding:10px;
+
+    background:#050505;
+    border:3px solid white;
+    border-radius:10px;
 
     box-shadow:
-        0 0 20px magenta,
-        0 0 40px cyan;
+        0 0 15px cyan,
+        0 0 25px magenta;
+
+    animation:notifIn .25s;
 }
 
-@keyframes notificationIn {
-    from {
-        transform: translateX(300px) rotate(20deg);
-    }
-    to {
-        transform: translateX(0) rotate(0);
-    }
+@keyframes notifIn{
+    from{transform:translateX(300px)}
+    to{transform:translateX(0)}
 }
 
-@keyframes notificationOut {
-    to {
-        transform: translateX(400px);
-        opacity: 0;
-    }
+/* ACHIEVEMENT */
+
+#achievement{
+    position:fixed;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%) scale(0);
+
+    z-index:10000;
+
+    padding:30px;
+
+    background:#000;
+    border:6px solid white;
+    border-radius:25px;
+
+    text-align:center;
+
+    box-shadow:
+        0 0 40px cyan,
+        0 0 100px magenta;
+
+    transition:.25s;
 }
 
-/* =========================
-   SCREEN CHAOS
-========================= */
-
-body.chaos #app {
-    animation: chaos .15s infinite;
+#achievement.show{
+    transform:translate(-50%,-50%) scale(1);
 }
 
-@keyframes chaos {
-    0% { transform: translate(0,0) rotate(0); }
-    25% { transform: translate(8px,-5px) rotate(1deg); }
-    50% { transform: translate(-8px,5px) rotate(-1deg); }
-    75% { transform: translate(5px,8px) rotate(1deg); }
-    100% { transform: translate(0,0); }
+#achievementTitle{
+    font-size:45px;
 }
 
-/* =========================
-   GIANT EVENT
-========================= */
-
-#event {
-    position: fixed;
-    inset: 0;
-
-    display: none;
-    justify-content: center;
-    align-items: center;
-
-    background: rgba(0,0,0,.8);
-
-    z-index: 5000;
-
-    text-align: center;
+#achievementText{
+    font-size:22px;
 }
 
-#eventText {
-    font-size: clamp(40px, 10vw, 130px);
+/* CALM */
 
-    color: white;
-
-    text-shadow:
-        5px 5px 0 red,
-        -5px -5px 0 cyan,
-        0 0 40px white;
-
-    animation: eventText .2s infinite alternate;
+#calm{
+    position:fixed;
+    right:10px;
+    top:105px;
+    z-index:1000;
 }
 
-@keyframes eventText {
-    from {
-        transform: rotate(-5deg) scale(1);
+@media(max-width:1000px){
+
+    #games{
+        grid-template-columns:repeat(2,1fr);
+        overflow:auto;
     }
-    to {
-        transform: rotate(5deg) scale(1.15);
+
+    #brainGame{
+        display:none;
     }
+
+    #slopeGame{
+        left:285px;
+    }
+
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media(max-width: 800px) {
-    #cookiePanel {
-        left: 10px;
-        top: 100px;
-        width: 220px;
-    }
-
-    #cookie {
-        width: 120px;
-        height: 120px;
-        font-size: 50px;
-    }
-
-    #toilet {
-        right: 2%;
-        font-size: 80px;
-    }
-
-    #slope {
-        width: 50vw;
-    }
-}
 </style>
 </head>
 
 <body>
 
-<div id="background"></div>
+<div id="bg"></div>
+<div id="scanlines"></div>
 
-<div id="app">
+<header id="top">
 
-    <div id="title">
-        🧠 BRAINROT OVERLOAD 🧠
+    <div id="logo">
+        🧠 ULTRA BRAINROT 9000 🧠
     </div>
 
-    <div id="comboBar">
-        <div id="comboFill"></div>
+    <div class="stat">
+        🍪 <span id="cookies">0</span>
     </div>
 
-    <!-- COOKIE CLICKER -->
-    <div id="cookiePanel">
-
-        <div>🍪 COOKIE GENERATOR 🍪</div>
-
-        <div id="cookieCount">
-            0 COOKIES
-        </div>
-
-        <div id="combo">
-            COMBO ×1
-        </div>
-
-        <div id="cookie">
-            🍪
-        </div>
-
-        <div class="stat">
-            CPS: <span id="cps">0</span>
-        </div>
-
-        <button onclick="buyUpgrade()">
-            BUY +1 CPS
-        </button>
-
-        <div>
-            Upgrade cost:
-            <span id="upgradeCost">25</span>
-        </div>
-
+    <div class="stat">
+        🔥 COMBO ×<span id="combo">1</span>
     </div>
 
-    <!-- TOILET -->
-    <div id="toilet" onclick="toiletClick()">
-        🚽
+    <div class="stat">
+        ⭐ LVL <span id="level">1</span>
     </div>
 
-    <!-- SLOPE -->
+    <div class="stat">
+        🧠 <span id="brainrotLevel">12</span>% BRAINROT
+    </div>
+
+</header>
+
+<div id="brainrotBar">
+    <div id="brainrotFill"></div>
+</div>
+
+<button id="calm" onclick="calmMode()">
+    🧘 CALM MODE
+</button>
+
+
+<!-- COOKIE -->
+
+<div id="cookieGame" class="panel">
+
+    <h2>🍪 COOKIE APOCALYPSE</h2>
+
+    <div id="cookies">0</div>
+
+    <div id="cookie">
+        🍪
+    </div>
+
+    <div>
+        CPS:
+        <span id="cps">0</span>
+    </div>
+
+    <button onclick="upgrade()">
+        BUY CPS
+    </button>
+
+    <div>
+        Cost:
+        <span id="cost">25</span>
+    </div>
+
+</div>
+
+
+<!-- TOILET -->
+
+<div id="toilet" onclick="toiletClick()">
+    🚽
+</div>
+
+
+<!-- SLOPE -->
+
+<div id="slopeGame" class="panel">
+
+    <h2>🟢 SLOPE OF DOOM</h2>
+
     <div id="slope">
 
-        <div id="ball"></div>
-
-    </div>
-
-    <!-- GACHA -->
-    <div id="gacha">
-
-        🎰 BRAINROT GACHA
-
-        <div id="gachaResult">
-            ❓
-        </div>
-
-        <button onclick="spinGacha()">
-            SPIN
-        </button>
+        <div id="slopeBall"></div>
 
     </div>
 
 </div>
 
+
+<!-- BRAIN CLICKER -->
+
+<div id="brainGame" class="panel">
+
+    <h2>🧠 HIT THE BRAIN</h2>
+
+    <div id="brain">
+        🧠
+    </div>
+
+    <div>
+        Hits:
+        <span id="brainHits">0</span>
+    </div>
+
+</div>
+
+
+<!-- FIVE NEW GAMES -->
+
+<div id="games">
+
+    <!-- GAME 1 -->
+
+    <div class="mini">
+
+        <h2>🐔 CHICKEN DODGER</h2>
+
+        <div>
+            Score:
+            <span id="chickenScore">0</span>
+        </div>
+
+        <div id="chickenArea" class="gameArea">
+
+            <div id="chicken">
+                🐔
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- GAME 2 -->
+
+    <div class="mini">
+
+        <h2>🧠 BRAIN TYPER</h2>
+
+        <div id="typingWord">
+            SKIBIDI
+        </div>
+
+        <input
+            id="typingInput"
+            autocomplete="off"
+            placeholder="TYPE IT..."
+        >
+
+        <div>
+            Score:
+            <span id="typingScore">0</span>
+        </div>
+
+    </div>
+
+
+    <!-- GAME 3 -->
+
+    <div class="mini">
+
+        <h2>🗿 MOAI STACKER</h2>
+
+        <div>
+            Stack:
+            <span id="moaiScore">0</span>
+        </div>
+
+        <div
+            id="moaiArea"
+            class="gameArea"
+        ></div>
+
+        <button onclick="addMoai()">
+            ADD 🗿
+        </button>
+
+    </div>
+
+
+    <!-- GAME 4 -->
+
+    <div class="mini">
+
+        <h2>💣 DON'T PRESS</h2>
+
+        <div id="buttonCounter">
+            Presses: 0
+        </div>
+
+        <button
+            id="evilButton"
+            onclick="evilPress()"
+        >
+            DON'T
+        </button>
+
+    </div>
+
+
+    <!-- GAME 5 -->
+
+    <div class="mini">
+
+        <h2>🌈 COLOR PANIC</h2>
+
+        <div>
+            Find the
+            <b id="targetColor">
+                RED
+            </b>
+        </div>
+
+        <div
+            id="colorGrid"
+            class="gameArea"
+        ></div>
+
+        <div>
+            Score:
+            <span id="colorScore">
+                0
+            </span>
+        </div>
+
+    </div>
+
+</div>
+
+
 <div id="notifications"></div>
 
-<div id="event">
-    <div id="eventText">
-        WHAT THE FUCK IS HAPPENING
+
+<div id="achievement">
+
+    <div id="achievementTitle">
+        🏆 ACHIEVEMENT
     </div>
+
+    <div id="achievementText">
+        BRAINROT DETECTED
+    </div>
+
 </div>
 
 
 <script>
 
-/* =====================================
-   GLOBAL VARIABLES
-===================================== */
+/* ==========================================
+   CORE
+========================================== */
 
 let cookies = 0;
 let cps = 0;
-let upgradeCost = 25;
+let cost = 25;
 
 let combo = 1;
-let comboProgress = 0;
+let xp = 0;
+let level = 1;
 
-let toiletHits = 0;
+let brainrot = 12;
 
-let ballX = 50;
-let ballY = 40;
+let calm = false;
 
-let ballVX = 0;
-let ballVY = 0;
-
-let obstacles = [];
-
-const brainrotWords = [
+const words = [
     "SKIBIDI",
-    "RIZZ",
-    "GYATT",
     "SIGMA",
+    "RIZZ",
     "OHIO",
+    "GYATT",
+    "GOON",
+    "BRAINROT",
+    "SUS",
+    "NPC",
+    "MOAI",
+    "TOILET",
+    "KABOOM",
     "WHAT",
     "BRO",
-    "🗿",
-    "💀",
-    "🔥",
-    "KABOOM",
     "SHEESH",
-    "NO WAY",
-    "BRAINROT",
-    "69",
-    "420",
-    "999",
-    "MAXIMUM OVERLOAD"
+    "YEET",
+    "GRIDDY",
+    "FORTNITE",
+    "ROBLOX",
+    "MOG",
+    "W",
+    "L",
+    "💀",
+    "🗿",
+    "🔥",
+    "🤯",
+    "😭",
+    "🧠"
 ];
 
-const gachaItems = [
-    "🗿 MOAI",
-    "🚽 TOILET",
-    "🐸 SILLY FROG",
-    "🧍 NPC",
-    "🍪 COOKIE",
-    "💎 ULTRA GEM",
-    "🔥 SIGMA FLAME",
-    "🌈 RAINBOW BRAIN",
-    "👽 ALIEN",
-    "🦆 UNSTOPPABLE DUCK",
-    "💀 SKULL OF CONFUSION",
-    "🧠 BRAINROT GOD"
+const emojis = [
+    "💀","🗿","🔥","🚽","🍪","🧠",
+    "🐔","🌈","💥","✨","🤯","😭",
+    "🤑","👽","⭐","💎","🦆"
 ];
 
+function update(){
 
-/* =====================================
-   COOKIE CLICKER
-===================================== */
+    document.querySelectorAll("#cookies")
+        .forEach(e=>e.textContent=Math.floor(cookies));
 
-const cookie = document.getElementById("cookie");
+    document.getElementById("cps").textContent=cps;
+    document.getElementById("cost").textContent=cost;
 
-cookie.addEventListener("click", () => {
+    document.getElementById("combo").textContent=combo;
 
-    let gain = combo;
+    document.getElementById("level").textContent=level;
 
-    cookies += gain;
+    document.getElementById("brainrotLevel").textContent=
+        Math.floor(brainrot);
 
-    comboProgress += 8;
+    document.getElementById("brainrotFill").style.width=
+        Math.min(brainrot,100)+"%";
+}
 
-    if(comboProgress >= 100) {
+
+/* ==========================================
+   COOKIE
+========================================== */
+
+document.getElementById("cookie").onclick=()=>{
+
+    cookies += combo;
+
+    xp += 2;
+    brainrot += .15;
+
+    if(Math.random()<.15){
+
         combo++;
-        comboProgress = 0;
 
-        notify("🔥 COMBO UPGRADED → ×" + combo);
-        explosion(window.innerWidth / 2, window.innerHeight / 2);
+        notify(
+            "🔥 COMBO ×"+combo+"!!!"
+        );
+
     }
 
-    updateUI();
-
-    floatText(
-        "+" + gain + " 🍪",
-        cookie.getBoundingClientRect().left + 50,
-        cookie.getBoundingClientRect().top
+    float(
+        "+"+combo+" 🍪",
+        Math.random()*innerWidth,
+        Math.random()*innerHeight
     );
 
-    if(Math.random() < .25) {
-        explosion(
-            Math.random() * window.innerWidth,
-            Math.random() * window.innerHeight
+    if(Math.random()<.3)
+        explode(
+            Math.random()*innerWidth,
+            Math.random()*innerHeight
         );
-    }
 
-});
+    checkLevel();
+
+    update();
+
+};
 
 
-function buyUpgrade() {
+function upgrade(){
 
-    if(cookies >= upgradeCost) {
+    if(cookies >= cost){
 
-        cookies -= upgradeCost;
-
+        cookies -= cost;
         cps++;
 
-        upgradeCost = Math.floor(upgradeCost * 1.6);
+        cost=Math.floor(cost*1.6);
 
-        notify("💰 CPS UPGRADED → " + cps);
+        notify(
+            "💰 CPS UPGRADED"
+        );
 
-        updateUI();
+        update();
 
-    } else {
+    }else{
 
-        notify("💀 BROKE DETECTED");
+        notify(
+            "💀 BROKE DETECTED"
+        );
 
     }
 
 }
 
 
-setInterval(() => {
+setInterval(()=>{
 
     cookies += cps;
 
-    updateUI();
+    xp += cps;
 
-}, 1000);
+    brainrot += cps*.02;
+
+    checkLevel();
+
+    update();
+
+},1000);
 
 
-function updateUI() {
+/* ==========================================
+   LEVEL
+========================================== */
 
-    document.getElementById("cookieCount").textContent =
-        Math.floor(cookies) + " COOKIES";
+function checkLevel(){
 
-    document.getElementById("cps").textContent =
-        cps;
+    const newLevel=
+        Math.floor(xp/100)+1;
 
-    document.getElementById("upgradeCost").textContent =
-        upgradeCost;
+    if(newLevel>level){
 
-    document.getElementById("combo").textContent =
-        "COMBO ×" + combo;
+        level=newLevel;
 
-    document.getElementById("comboFill").style.width =
-        comboProgress + "%";
+        combo++;
+
+        achievement(
+            "LEVEL UP",
+            "🧠 BRAINROT LEVEL "+level
+        );
+
+    }
 
 }
 
 
-/* =====================================
+/* ==========================================
    TOILET
-===================================== */
+========================================== */
 
-function toiletClick() {
+function toiletClick(){
 
-    toiletHits++;
+    cookies+=50*combo;
+    brainrot+=2;
 
-    cookies += 10 * combo;
+    combo++;
 
-    comboProgress += 5;
-
-    floatText(
-        "🚽 +10",
-        window.innerWidth * .8,
+    explode(
+        innerWidth-100,
         200
     );
 
-    explosion(
-        window.innerWidth * .8,
-        220
-    );
-
-    if(toiletHits % 10 === 0) {
-
-        notify("🚽 TOILET COMBO x" + toiletHits);
-
-    }
-
-    updateUI();
-
-}
-
-
-/* =====================================
-   FLOATING TEXT
-===================================== */
-
-function floatText(text, x, y) {
-
-    const el = document.createElement("div");
-
-    el.className = "floatText";
-
-    el.textContent = text;
-
-    el.style.left = x + "px";
-    el.style.top = y + "px";
-
-    el.style.transform =
-        `rotate(${Math.random()*40-20}deg)`;
-
-    document.body.appendChild(el);
-
-    setTimeout(() => el.remove(), 1000);
-
-}
-
-
-/* =====================================
-   EXPLOSIONS
-===================================== */
-
-function explosion(x, y) {
-
-    const el = document.createElement("div");
-
-    el.className = "explosion";
-
-    el.textContent =
-        ["💥","✨","🌈","🔥","💀","🤑","🤯","⭐"][Math.floor(Math.random()*8)];
-
-    el.style.left = x + "px";
-    el.style.top = y + "px";
-
-    document.body.appendChild(el);
-
-    setTimeout(() => el.remove(), 700);
-
-}
-
-
-/* =====================================
-   NOTIFICATIONS
-===================================== */
-
-function notify(message) {
-
-    const box = document.createElement("div");
-
-    box.className = "notification";
-
-    box.textContent = message;
-
-    document.getElementById("notifications")
-        .appendChild(box);
-
-    setTimeout(() => box.remove(), 3600);
-
-}
-
-
-/* =====================================
-   RANDOM BRAINROT
-===================================== */
-
-setInterval(() => {
-
-    const word =
-        brainrotWords[
-            Math.floor(Math.random() * brainrotWords.length)
-        ];
-
-    floatText(
-        word,
-        Math.random() * window.innerWidth,
-        Math.random() * window.innerHeight
-    );
-
-}, 700);
-
-
-/* =====================================
-   RANDOM EXPLOSIONS
-===================================== */
-
-setInterval(() => {
-
-    explosion(
-        Math.random() * window.innerWidth,
-        Math.random() * window.innerHeight
-    );
-
-}, 900);
-
-
-/* =====================================
-   RANDOM NOTIFICATIONS
-===================================== */
-
-const notifications = [
-    "🚨 YOUR BRAIN HAS BEEN DETECTED",
-    "🔥 MAXIMUM RIZZ ACHIEVED",
-    "🚽 TOILET APPROACHING",
-    "🍪 COOKIE STONKS",
-    "🗿 MOAI HAS JOINED",
-    "💀 BRO WHAT",
-    "🌈 RGB OVERLOAD",
-    "🧠 BRAINROT LEVEL: ILLEGAL",
-    "⚠️ TOO MUCH SILLY",
-    "📈 STONKS",
-    "🦆 DUCK DETECTED",
-    "💥 EXPLOSION INCOMING",
-    "🤯 CRITICAL BRAINROT",
-    "⭐ YOU ARE NOW 4% MORE SIGMA"
-];
-
-setInterval(() => {
-
     notify(
-        notifications[
-            Math.floor(Math.random()*notifications.length)
-        ]
+        "🚽 TOILET POWER +"+(50*combo)
     );
 
-}, 2500);
+    update();
+
+}
 
 
-/* =====================================
-   GACHA
-===================================== */
+/* ==========================================
+   BRAIN
+========================================== */
 
-function spinGacha() {
+let brainHits=0;
 
-    const result =
-        gachaItems[
-            Math.floor(Math.random()*gachaItems.length)
-        ];
+document.getElementById("brain").onclick=()=>{
 
-    const resultEl =
-        document.getElementById("gachaResult");
+    brainHits++;
 
-    resultEl.style.transform = "scale(2) rotate(720deg)";
+    cookies+=20;
 
-    resultEl.textContent = "???";
+    brainrot+=1;
 
-    setTimeout(() => {
+    document.getElementById("brainHits")
+        .textContent=brainHits;
 
-        resultEl.textContent = result;
+    const b=
+        document.getElementById("brain");
 
-        resultEl.style.transform =
-            "scale(1) rotate(0deg)";
+    b.style.transform=
+        `translate(
+            ${Math.random()*100-50}px,
+            ${Math.random()*100-50}px
+        )`;
 
-        cookies += 100;
+    float(
+        "🧠 "+words[Math.floor(Math.random()*words.length)],
+        Math.random()*innerWidth,
+        Math.random()*innerHeight
+    );
 
-        explosion(
-            window.innerWidth * .85,
-            window.innerHeight * .8
+    if(brainHits%10===0){
+
+        achievement(
+            "BRAIN BONK",
+            "You hit the brain "+brainHits+" times."
         );
 
-        notify("🎰 YOU GOT: " + result);
-
-        updateUI();
-
-    }, 600);
-
-}
-
-
-/* =====================================
-   CHAOS EVENTS
-===================================== */
-
-function chaosEvent() {
-
-    document.body.classList.add("chaos");
-
-    const events = [
-        "🌈 RGB DIMENSION",
-        "🚽 TOILET INVASION",
-        "🍪 COOKIE APOCALYPSE",
-        "🧠 BRAINROT OVERDRIVE",
-        "💥 KABOOM MODE",
-        "🗿 MOAI DIMENSION",
-        "🔥 MAXIMUM CHAOS"
-    ];
-
-    document.getElementById("eventText").textContent =
-        events[Math.floor(Math.random()*events.length)];
-
-    document.getElementById("event").style.display =
-        "flex";
-
-    for(let i = 0; i < 25; i++) {
-
-        setTimeout(() => {
-
-            explosion(
-                Math.random()*window.innerWidth,
-                Math.random()*window.innerHeight
-            );
-
-        }, i * 50);
-
     }
 
-    setTimeout(() => {
+    update();
 
-        document.getElementById("event").style.display =
-            "none";
-
-        document.body.classList.remove("chaos");
-
-    }, 1400);
-
-}
+};
 
 
-setInterval(() => {
+/* ==========================================
+   GAME 1 — CHICKEN
+========================================== */
 
-    if(Math.random() < .5) {
-        chaosEvent();
-    }
+let chickenScore=0;
 
-}, 9000);
+const chicken=
+    document.getElementById("chicken");
 
+const chickenArea=
+    document.getElementById("chickenArea");
 
-/* =====================================
-   SLOPE GAME
-===================================== */
+chicken.addEventListener("click",()=>{
 
-const slope = document.getElementById("slope");
-const ball = document.getElementById("ball");
+    chickenScore++;
 
-let leftPressed = false;
-let rightPressed = false;
+    cookies+=5;
 
-document.addEventListener("keydown", e => {
+    document.getElementById("chickenScore")
+        .textContent=chickenScore;
 
-    if(e.key === "ArrowLeft" || e.key === "a")
-        leftPressed = true;
+    chicken.style.left=
+        Math.random()*85+"%";
 
-    if(e.key === "ArrowRight" || e.key === "d")
-        rightPressed = true;
+    chicken.style.top=
+        Math.random()*75+"%";
 
-});
+    explode(
+        chicken.getBoundingClientRect().left,
+        chicken.getBoundingClientRect().top
+    );
 
-document.addEventListener("keyup", e => {
-
-    if(e.key === "ArrowLeft" || e.key === "a")
-        leftPressed = false;
-
-    if(e.key === "ArrowRight" || e.key === "d")
-        rightPressed = false;
+    update();
 
 });
 
 
-function spawnObstacle() {
+setInterval(()=>{
 
-    const obstacle =
-        document.createElement("div");
+    if(calm)return;
 
-    obstacle.className =
-        "slopeObstacle";
+    const bad=document.createElement("div");
 
-    obstacle.style.left =
-        Math.random()*90 + "%";
+    bad.className="falling";
 
-    obstacle.style.top =
-        "-50px";
+    bad.textContent=
+        emojis[
+            Math.floor(Math.random()*emojis.length)
+        ];
 
-    slope.appendChild(obstacle);
+    bad.style.left=
+        Math.random()*90+"%";
 
-    obstacles.push({
-        element: obstacle,
-        x: parseFloat(obstacle.style.left),
-        y: -50
-    });
+    bad.style.top="-40px";
 
-}
+    chickenArea.appendChild(bad);
 
+    let y=-40;
 
-setInterval(spawnObstacle, 700);
+    const timer=setInterval(()=>{
 
+        y+=5;
 
-function slopeLoop() {
+        bad.style.top=y+"px";
 
-    if(leftPressed)
-        ballX -= 1.2;
+        if(y>chickenArea.clientHeight){
 
-    if(rightPressed)
-        ballX += 1.2;
-
-    ballX = Math.max(2, Math.min(94, ballX));
-
-    ball.style.left = ballX + "%";
-
-    for(let i = obstacles.length - 1; i >= 0; i--) {
-
-        const o = obstacles[i];
-
-        o.y += 4;
-
-        o.element.style.top =
-            o.y + "px";
-
-        const ox =
-            parseFloat(o.element.style.left);
-
-        if(
-            Math.abs(ox - ballX) < 7 &&
-            Math.abs(o.y - 170) < 30
-        ) {
-
-            notify("💀 SLOPE BONK");
-
-            cookies += 50;
-
-            o.element.remove();
-
-            obstacles.splice(i,1);
-
-            explosion(
-                window.innerWidth/2,
-                window.innerHeight-100
-            );
-
-            updateUI();
+            bad.remove();
+            clearInterval(timer);
 
         }
 
-        if(o.y > 260) {
+    },30);
 
-            o.element.remove();
+},300);
 
-            obstacles.splice(i,1);
 
-        }
+/* ==========================================
+   GAME 2 — TYPING
+========================================== */
 
-    }
+let currentWord="SKIBIDI";
+let typingScore=0;
 
-    requestAnimationFrame(slopeLoop);
+const input=
+    document.getElementById("typingInput");
+
+function newWord(){
+
+    currentWord=
+        words[
+            Math.floor(Math.random()*words.length)
+        ].replace(/[^\w]/g,"");
+
+    if(!currentWord)
+        currentWord="SKIBIDI";
+
+    document.getElementById("typingWord")
+        .textContent=currentWord;
 
 }
 
-slopeLoop();
-
-
-/* =====================================
-   RANDOM SCREEN COLOR
-===================================== */
-
-setInterval(() => {
-
-    document.body.style.filter =
-        `hue-rotate(${Math.random()*360}deg)`;
-
-}, 350);
-
-
-/* =====================================
-   CLICK ANYWHERE
-===================================== */
-
-document.addEventListener("click", e => {
+input.addEventListener("input",()=>{
 
     if(
-        e.target.tagName !== "BUTTON" &&
-        e.target.id !== "cookie" &&
-        e.target.id !== "toilet"
-    ) {
+        input.value.toUpperCase()
+        ===currentWord.toUpperCase()
+    ){
 
-        if(Math.random() < .25) {
+        typingScore++;
 
-            floatText(
-                "BRO CLICKED AIR 💀",
-                e.clientX,
-                e.clientY
-            );
+        cookies+=15;
 
-        }
+        combo++;
+
+        brainrot+=1;
+
+        document.getElementById("typingScore")
+            .textContent=typingScore;
+
+        input.value="";
+
+        newWord();
+
+        notify("⌨️ WPM BRAINROT");
+
+        explode(
+            Math.random()*innerWidth,
+            Math.random()*innerHeight
+        );
+
+        update();
 
     }
 
 });
 
 
-/* =====================================
+/* ==========================================
+   GAME 3 — MOAI
+========================================== */
+
+let moaiScore=0;
+
+function addMoai(){
+
+    moaiScore++;
+
+    cookies+=10;
+
+    const m=
+        document.createElement("div");
+
+    m.className="moai";
+
+    m.textContent="🗿";
+
+    document.getElementById("moaiArea")
+        .appendChild(m);
+
+    document.getElementById("moaiScore")
+        .textContent=moaiScore;
+
+    brainrot+=.5;
+
+    if(moaiScore%10===0){
+
+        achievement(
+            "MOAI TOWER",
+            "🗿 "+moaiScore+" MOAI"
+        );
+
+    }
+
+    update();
+
+}
+
+
+/* ==========================================
+   GAME 4 — EVIL BUTTON
+========================================== */
+
+let buttonPresses=0;
+
+function evilPress(){
+
+    buttonPresses++;
+
+    cookies+=buttonPresses;
+
+    brainrot+=1;
+
+    document.getElementById("buttonCounter")
+        .textContent=
+        "Presses: "+buttonPresses;
+
+    const b=
+        document.getElementById("evilButton");
+
+    b.textContent=
+        [
+            "WHY",
+            "STOP",
+            "BRO",
+            "NO",
+            "💀",
+            "AGAIN",
+            "REALLY?",
+            "KABOOM"
+        ][Math.floor(Math.random()*8)];
+
+    b.style.position="relative";
+
+    b.style.left=
+        Math.random()*40-20+"px";
+
+    b.style.top=
+        Math.random()*40-20+"px";
+
+    explode(
+        Math.random()*innerWidth,
+        Math.random()*innerHeight
+    );
+
+    if(buttonPresses%20===0){
+
+        chaosEvent();
+
+    }
+
+    update();
+
+}
+
+
+/* ==========================================
+   GAME 5 — COLOR PANIC
+========================================== */
+
+let colorScore=0;
+
+const colors=[
+    "RED",
+    "BLUE",
+    "GREEN",
+    "YELLOW",
+    "PURPLE"
+];
+
+const colorCSS={
+    RED:"#ff0000",
+    BLUE:"#0066ff",
+    GREEN:"#00ff00",
+    YELLOW:"#ffff00",
+    PURPLE:"#aa00ff"
+};
+
+function makeColorGame(){
+
+    const grid=
+        document.getElementById("colorGrid");
+
+    grid.innerHTML="";
+
+    const target=
+        colors[Math.floor(Math.random()*colors.length)];
+
+    document.getElementById("targetColor")
+        .textContent=target;
+
+    for(let i=0;i<12;i++){
+
+        const b=
+            document.createElement("button");
+
+        const color=
+            colors[Math.floor(Math.random()*colors.length)];
+
+        b.style.position="absolute";
+
+        b.style.left=
+            Math.random()*85+"%";
+
+        b.style.top=
+            Math.random()*80+"%";
+
+        b.style.background=
+            colorCSS[color];
+
+        b.textContent="";
+
+        b.onclick=()=>{
+
+            if(color===target){
+
+                colorScore++;
+
+                cookies+=20;
+
+                combo++;
+
+                document.getElementById("colorScore")
+                    .textContent=colorScore;
+
+                makeColorGame();
+
+                explode(
+                    Math.random()*innerWidth,
+                    Math.random()*innerHeight
+                );
+
+                update();
+
+            }
+
+        };
+
+        grid.appendChild(b);
+
+    }
+
+}
+
+makeColorGame();
+
+
+/* ==========================================
+   FLOATING CHAOS
+========================================== */
+
+function float(text,x,y){
+
+    if(calm)return;
+
+    const e=
+        document.createElement("div");
+
+    e.className="float";
+
+    e.textContent=text;
+
+    e.style.left=x+"px";
+    e.style.top=y+"px";
+
+    document.body.appendChild(e);
+
+    setTimeout(
+        ()=>e.remove(),
+        1000
+    );
+
+}
+
+
+setInterval(()=>{
+
+    if(calm)return;
+
+    float(
+        words[
+            Math.floor(Math.random()*words.length)
+        ],
+        Math.random()*innerWidth,
+        Math.random()*innerHeight
+    );
+
+},250);
+
+
+/* ==========================================
+   EXPLOSIONS
+========================================== */
+
+function explode(x,y){
+
+    if(calm)return;
+
+    const e=
+        document.createElement("div");
+
+    e.className="explosion";
+
+    e.textContent=
+        emojis[
+            Math.floor(Math.random()*emojis.length)
+        ];
+
+    e.style.left=x+"px";
+    e.style.top=y+"px";
+
+    document.body.appendChild(e);
+
+    setTimeout(
+        ()=>e.remove(),
+        650
+    );
+
+}
+
+
+setInterval(()=>{
+
+    if(calm)return;
+
+    explode(
+        Math.random()*innerWidth,
+        Math.random()*innerHeight
+    );
+
+},450);
+
+
+/* ==========================================
+   NOTIFICATIONS
+========================================== */
+
+const notifications=[
+    "🧠 BRAINROT DETECTED",
+    "🚽 TOILET APPROACHING",
+    "💀 BRO WHAT",
+    "🗿 MOAI HAS SPAWNED",
+    "🍪 COOKIE STONKS",
+    "🔥 ABSOLUTE CINEMA",
+    "🌈 RGB INCIDENT",
+    "🤯 BRAIN DAMAGE +1",
+    "🐔 CHICKEN INCOMING",
+    "💥 KABOOOOOM",
+    "📈 STONKS",
+    "😭 WHY ARE YOU STILL HERE",
+    "🧠 THINKING...",
+    "⚠️ TOO MUCH SILLY",
+    "💀 SKIBIDI EVENT",
+    "🗿 MOAI EVENT",
+    "🚨 SIGMA DETECTED",
+    "🌈 COLOR PANIC",
+    "💣 BUTTON HAS BEEN PRESSED",
+    "🍪 COOKIE GOD APPROVES"
+];
+
+function notify(text){
+
+    const n=
+        document.createElement("div");
+
+    n.className="notification";
+
+    n.textContent=text;
+
+    document.getElementById("notifications")
+        .appendChild(n);
+
+    setTimeout(
+        ()=>n.remove(),
+        3000
+    );
+
+}
+
+
+setInterval(()=>{
+
+    if(!calm){
+
+        notify(
+            notifications[
+                Math.floor(
+                    Math.random()*notifications.length
+                )
+            ]
+        );
+
+    }
+
+},1200);
+
+
+/* ==========================================
+   ACHIEVEMENTS
+========================================== */
+
+function achievement(title,text){
+
+    const a=
+        document.getElementById("achievement");
+
+    document.getElementById("achievementTitle")
+        .textContent="🏆 "+title;
+
+    document.getElementById("achievementText")
+        .textContent=text;
+
+    a.classList.add("show");
+
+    setTimeout(
+        ()=>a.classList.remove("show"),
+        2500
+    );
+
+}
+
+
+/* ==========================================
+   CHAOS EVENT
+========================================== */
+
+function chaosEvent(){
+
+    if(calm)return;
+
+    brainrot+=10;
+
+    combo+=3;
+
+    notify("🚨🚨🚨 MEGA BRAINROT EVENT 🚨🚨🚨");
+
+    for(let i=0;i<40;i++){
+
+        setTimeout(()=>{
+
+            explode(
+                Math.random()*innerWidth,
+                Math.random()*innerHeight
+            );
+
+            float(
+                words[
+                    Math.floor(Math.random()*words.length)
+                ],
+                Math.random()*innerWidth,
+                Math.random()*innerHeight
+            );
+
+        },i*35);
+
+    }
+
+    update();
+
+}
+
+
+setInterval(()=>{
+
+    if(Math.random()<.45)
+        chaosEvent();
+
+},5000);
+
+
+/* ==========================================
+   RANDOM HUE
+========================================== */
+
+setInterval(()=>{
+
+    if(!calm){
+
+        document.body.style.filter=
+            `hue-rotate(${Math.random()*360}deg)`;
+
+    }
+
+},700);
+
+
+/* ==========================================
+   BRAINROT AUTOMATICALLY GROWS
+========================================== */
+
+setInterval(()=>{
+
+    if(!calm){
+
+        brainrot+=.5;
+
+        if(brainrot>100)
+            brainrot=100;
+
+        update();
+
+    }
+
+},500);
+
+
+/* ==========================================
+   SLOPE
+========================================== */
+
+let slopeX=50;
+
+const ball=
+    document.getElementById("slopeBall");
+
+const slope=
+    document.getElementById("slope");
+
+let left=false;
+let right=false;
+
+document.addEventListener("keydown",e=>{
+
+    if(e.key==="ArrowLeft"||e.key==="a")
+        left=true;
+
+    if(e.key==="ArrowRight"||e.key==="d")
+        right=true;
+
+});
+
+document.addEventListener("keyup",e=>{
+
+    if(e.key==="ArrowLeft"||e.key==="a")
+        left=false;
+
+    if(e.key==="ArrowRight"||e.key==="d")
+        right=false;
+
+});
+
+
+setInterval(()=>{
+
+    if(left)slopeX-=2;
+    if(right)slopeX+=2;
+
+    slopeX=Math.max(5,Math.min(92,slopeX));
+
+    ball.style.left=slopeX+"%";
+
+},30);
+
+
+setInterval(()=>{
+
+    const b=
+        document.createElement("div");
+
+    b.className="slopeBlock";
+
+    b.style.left=
+        Math.random()*90+"%";
+
+    b.style.top="-40px";
+
+    slope.appendChild(b);
+
+    let y=-40;
+
+    const t=setInterval(()=>{
+
+        y+=6;
+
+        b.style.top=y+"px";
+
+        if(y>230){
+
+            b.remove();
+            clearInterval(t);
+
+        }
+
+    },30);
+
+},500);
+
+
+/* ==========================================
+   CALM MODE
+========================================== */
+
+function calmMode(){
+
+    calm=!calm;
+
+    document.getElementById("calm")
+        .textContent=
+        calm
+        ? "🔥 BRAINROT MODE"
+        : "🧘 CALM MODE";
+
+    if(calm){
+
+        document.body.style.filter="none";
+
+        document.querySelectorAll(".float,.explosion")
+            .forEach(e=>e.remove());
+
+        notify("🧘 CALM MODE ENABLED");
+
+    }else{
+
+        notify("🧠 BRAINROT RESTORED");
+
+    }
+
+}
+
+
+/* ==========================================
    STARTUP
-===================================== */
+========================================== */
 
-setTimeout(() => {
+setTimeout(
+    ()=>notify("🧠 WELCOME TO ULTRA BRAINROT"),
+    300
+);
 
-    notify("🧠 WELCOME TO THE BRAINROT ZONE");
+setTimeout(
+    ()=>notify("🚽 THE TOILET KNOWS WHERE YOU LIVE"),
+    900
+);
 
-}, 500);
+setTimeout(
+    ()=>notify("🍪 CLICK THE COOKIE"),
+    1500
+);
 
-setTimeout(() => {
+setTimeout(
+    ()=>achievement(
+        "BRAINROT BEGINNER",
+        "You have entered the forbidden website."
+    ),
+    2500
+);
 
-    notify("⚠️ THERE IS NO ESCAPE");
-
-}, 1500);
-
-setTimeout(() => {
-
-    notify("🍪 CLICK THE COOKIE");
-
-}, 2500);
-
-updateUI();
+update();
 
 </script>
 
