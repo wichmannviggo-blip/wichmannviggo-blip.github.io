@@ -2,5736 +2,1231 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GeoGebra — Idiot Sikker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 BRAINROT OVERLOAD</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
-
-:root{
-  --bg:#17181b;
-  --bg2:#111214;
-  --panel:#1e2024;
-  --panel2:#24262b;
-  --panel3:#292c32;
-  --border:#30333a;
-  --grid:#292c31;
-  --axis:#50545d;
-  --text:#e8e9ec;
-  --dim:#8b909a;
-  --blue:#5b9bff;
-  --blue2:#3b6fbf;
-  --cyan:#7fd9c4;
-  --red:#e2685a;
-  --green:#65c18c;
-  --shadow:0 24px 80px rgba(0,0,0,.48);
-}
-
-body.light{
-  --bg:#f4f5f7;
-  --bg2:#e7e9ed;
-  --panel:#ffffff;
-  --panel2:#f0f1f4;
-  --panel3:#e5e7eb;
-  --border:#d5d8de;
-  --grid:#dfe2e7;
-  --axis:#aeb3bc;
-  --text:#202226;
-  --dim:#686d76;
-  --blue:#3478ed;
-  --blue2:#2458b2;
-  --cyan:#279b82;
-  --red:#d64e40;
-  --green:#3a9d68;
-  --shadow:0 24px 80px rgba(0,0,0,.18);
-}
-
-*{
-  box-sizing:border-box;
-}
-
-html,
-body{
-  width:100%;
-  height:100%;
-  margin:0;
-  overflow:hidden;
-  font-family:Inter,sans-serif;
-  background:var(--bg2);
-  color:var(--text);
-  user-select:none;
-}
-
-button,
-input,
-select{
-  font:inherit;
-}
-
-button{
-  -webkit-tap-highlight-color:transparent;
-}
-
-#app{
-  width:100vw;
-  height:100vh;
-  display:flex;
-}
-
-/* =========================================================
-   TOOLBAR
-========================================================= */
-
-#toolbar{
-  width:82px;
-  height:100%;
-  background:var(--panel);
-  border-right:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:12px 0;
-  gap:5px;
-  z-index:20;
-  overflow-y:auto;
-  scrollbar-width:none;
-}
-
-#toolbar::-webkit-scrollbar{
-  display:none;
-}
-
-.brand{
-  font-size:8px;
-  color:var(--dim);
-  letter-spacing:.15em;
-  text-align:center;
-  line-height:1.3;
-  margin:3px 0 12px;
+* {
+    box-sizing: border-box;
+    user-select: none;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial Black, Impact, sans-serif;
+    background: #000;
 }
+
+body {
+    animation: rainbowBG 4s linear infinite;
+    color: white;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
 
-.brand b{
-  display:block;
-  color:var(--text);
-  font-size:13px;
-  letter-spacing:0;
-  margin-bottom:2px;
+@keyframes rainbowBG {
+    0%   { background: #ff0000; }
+    16%  { background: #ff00ff; }
+    33%  { background: #0000ff; }
+    50%  { background: #00ffff; }
+    66%  { background: #00ff00; }
+    83%  { background: #ffff00; }
+    100% { background: #ff0000; }
 }
 
-.tool{
-  width:62px;
-  min-height:48px;
-  border:1px solid transparent;
-  border-radius:9px;
-  background:transparent;
-  color:var(--dim);
-  cursor:pointer;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:3px;
-  transition:
-    background .16s ease,
-    color .16s ease,
-    border-color .16s ease,
-    transform .12s ease,
-    box-shadow .16s ease;
+#background {
+    position: fixed;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,.08) 0px,
+            rgba(255,255,255,.08) 5px,
+            transparent 5px,
+            transparent 20px
+        );
+    animation: bgSpin 1s linear infinite;
+    pointer-events: none;
 }
 
-.tool:hover{
-  background:rgba(91,155,255,.08);
-  color:var(--text);
-  transform:translateY(-1px);
+@keyframes bgSpin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1.4) rotate(360deg); }
 }
 
-.tool:active{
-  transform:scale(.96);
-}
+/* =========================
+   MAIN UI
+========================= */
 
-.tool.active{
-  background:rgba(91,155,255,.14);
-  border-color:var(--blue2);
-  color:var(--blue);
-  box-shadow:0 0 0 1px rgba(91,155,255,.05),
-             0 5px 18px rgba(91,155,255,.08);
+#app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
-.tool svg{
-  width:19px;
-  height:19px;
-}
+#title {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
 
-.tool span{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:8px;
-}
+    font-size: clamp(25px, 5vw, 70px);
+    text-align: center;
+    color: white;
 
-.tool-divider{
-  width:44px;
-  height:1px;
-  background:var(--border);
-  margin:5px 0;
+    text-shadow:
+        5px 5px 0 #ff00ff,
+        -5px -5px 0 #00ffff,
+        0 0 30px white;
+
+    animation: titleSpin .5s infinite alternate;
 }
 
-#settings-btn{
-  margin-top:auto;
+@keyframes titleSpin {
+    from { transform: translateX(-50%) rotate(-2deg) scale(1); }
+    to   { transform: translateX(-50%) rotate(2deg) scale(1.08); }
 }
 
-/* =========================================================
-   CANVAS
-========================================================= */
+/* =========================
+   COOKIE
+========================= */
 
-#canvas-wrap{
-  flex:1;
-  position:relative;
-  overflow:hidden;
-  background:var(--bg);
-}
+#cookiePanel {
+    position: absolute;
+    left: 30px;
+    top: 130px;
+    width: 280px;
+    z-index: 15;
 
-#board{
-  width:100%;
-  height:100%;
-  display:block;
-  cursor:crosshair;
-}
+    background: rgba(0,0,0,.8);
+    border: 6px solid white;
+    border-radius: 25px;
+    padding: 15px;
+    text-align: center;
 
-#board.panning{
-  cursor:grabbing;
+    box-shadow:
+        0 0 20px #fff,
+        0 0 50px #ff00ff,
+        0 0 100px #00ffff;
 }
 
-.grid-line{
-  stroke:var(--grid);
-  stroke-width:1;
-  vector-effect:non-scaling-stroke;
-}
+#cookie {
+    width: 170px;
+    height: 170px;
+    margin: 10px auto;
 
-.axis-line{
-  stroke:var(--axis);
-  stroke-width:1.5;
-  vector-effect:non-scaling-stroke;
-}
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 30%, #ffd27d, #a95100);
 
-.axis-label{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  fill:var(--dim);
-  pointer-events:none;
-}
+    border: 8px solid #572900;
 
-.pt{
-  fill:var(--text);
-  stroke:var(--bg2);
-  stroke-width:1.5;
-  cursor:grab;
-  transition:fill .12s ease,r .12s ease;
-}
+    font-size: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-.pt.hover{
-  fill:var(--blue);
-}
+    cursor: pointer;
 
-.pt.dragging{
-  fill:var(--blue);
-  cursor:grabbing;
-}
+    box-shadow:
+        inset -15px -15px 20px rgba(0,0,0,.4),
+        0 0 30px #ff8800;
 
-.pt-label{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
-  fill:var(--cyan);
-  pointer-events:none;
+    transition: transform .05s;
 }
 
-.seg{
-  stroke:var(--text);
-  stroke-width:2;
-  vector-effect:non-scaling-stroke;
+#cookie:active {
+    transform: scale(.8) rotate(20deg);
 }
 
-.circ{
-  fill:none;
-  stroke:var(--cyan);
-  stroke-width:2;
-  vector-effect:non-scaling-stroke;
+.stat {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    margin: 5px;
 }
 
-.poly{
-  stroke-width:2;
-  vector-effect:non-scaling-stroke;
-  transition:
-    opacity .15s ease,
-    stroke-width .15s ease;
+#cookieCount {
+    font-size: 28px;
+    color: #ffe600;
 }
 
-.poly.selected{
-  stroke:var(--blue);
-  stroke-width:3;
+#combo {
+    font-size: 22px;
+    color: #00ffff;
 }
 
-.ghost{
-  stroke:var(--dim);
-  stroke-dasharray:4 4;
-  stroke-width:1.5;
-  fill:none;
-  vector-effect:non-scaling-stroke;
-}
+/* =========================
+   TOILET
+========================= */
 
-.measure-label{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  fill:var(--dim);
-  pointer-events:none;
-}
+#toilet {
+    position: absolute;
+    right: 8%;
+    top: 170px;
 
-.angle-arc{
-  fill:none;
-  stroke:var(--blue);
-  stroke-width:2;
-  vector-effect:non-scaling-stroke;
-}
+    font-size: 120px;
+    z-index: 10;
 
-.angle-label{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:13px;
-  fill:var(--blue);
-  font-weight:600;
-  pointer-events:none;
-}
+    animation:
+        toiletDance .35s infinite alternate,
+        toiletRainbow 1s linear infinite;
 
-.snap-ring{
-  fill:none;
-  stroke:var(--blue);
-  stroke-width:1.5;
-  opacity:.9;
-  vector-effect:non-scaling-stroke;
-}
+    cursor: pointer;
 
-.snap-ring.point-snap{
-  stroke:var(--cyan);
+    filter:
+        drop-shadow(0 0 15px white)
+        drop-shadow(0 0 30px #00ffff);
 }
 
-.text-object{
-  font-family:Inter,sans-serif;
-  font-size:14px;
-  fill:var(--text);
+@keyframes toiletDance {
+    from {
+        transform: rotate(-15deg) translateY(0);
+    }
+    to {
+        transform: rotate(15deg) translateY(-30px);
+    }
 }
 
-/* =========================================================
-   HUD
-========================================================= */
-
-.hud{
-  position:absolute;
-  top:14px;
-  left:14px;
-  background:color-mix(in srgb,var(--panel) 90%,transparent);
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:8px 12px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  color:var(--dim);
-  pointer-events:none;
-  backdrop-filter:blur(10px);
-  box-shadow:0 8px 30px rgba(0,0,0,.12);
+@keyframes toiletRainbow {
+    0% { filter: hue-rotate(0deg) drop-shadow(0 0 20px white); }
+    100% { filter: hue-rotate(360deg) drop-shadow(0 0 20px white); }
 }
 
-.hud b{
-  color:var(--text);
-}
+/* =========================
+   GACHA
+========================= */
 
-#coord{
-  position:absolute;
-  bottom:14px;
-  right:14px;
-  background:color-mix(in srgb,var(--panel) 90%,transparent);
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:7px 12px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  color:var(--cyan);
-  pointer-events:none;
-  backdrop-filter:blur(10px);
-}
+#gacha {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    z-index: 20;
 
-#hint{
-  position:absolute;
-  bottom:14px;
-  left:14px;
-  max-width:470px;
-  background:color-mix(in srgb,var(--panel) 90%,transparent);
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:8px 13px;
-  font-size:11px;
-  color:var(--dim);
-  pointer-events:none;
-  backdrop-filter:blur(10px);
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-}
+    width: 250px;
+    padding: 15px;
 
-#hint.hidden{
-  opacity:0;
-  transform:translateY(8px);
+    background: rgba(0,0,0,.85);
+    border: 5px solid #fff;
+    border-radius: 20px;
+
+    text-align: center;
 }
 
-/* =========================================================
-   TOP ACTIONS
-========================================================= */
+button {
+    border: 4px solid white;
+    background: #ff00aa;
+    color: white;
+    font-family: Arial Black, sans-serif;
+    font-size: 17px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    cursor: pointer;
 
-#top-actions{
-  position:absolute;
-  top:14px;
-  right:14px;
-  display:flex;
-  gap:7px;
-  z-index:10;
+    box-shadow: 0 0 15px white;
 }
 
-.top-action{
-  height:34px;
-  padding:0 12px;
-  border:1px solid var(--border);
-  border-radius:9px;
-  background:color-mix(in srgb,var(--panel) 90%,transparent);
-  color:var(--dim);
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:7px;
-  font-size:10px;
-  backdrop-filter:blur(10px);
-  transition:
-    background .16s ease,
-    color .16s ease,
-    border-color .16s ease,
-    transform .12s ease;
+button:hover {
+    transform: scale(1.1) rotate(-2deg);
 }
 
-.top-action:hover{
-  color:var(--text);
-  border-color:var(--blue2);
-  background:var(--panel2);
-  transform:translateY(-1px);
+button:active {
+    transform: scale(.9);
 }
 
-.top-action svg{
-  width:15px;
-  height:15px;
+#gachaResult {
+    font-size: 35px;
+    min-height: 50px;
+    margin: 10px;
 }
 
-/* =========================================================
-   SETTINGS OVERLAY
-========================================================= */
+/* =========================
+   SLOPE GAME
+========================= */
 
-#settings-overlay{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.42);
-  backdrop-filter:blur(5px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .22s ease;
-}
+#slope {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
 
-#settings-overlay.open{
-  opacity:1;
-  pointer-events:auto;
-}
+    width: min(600px, 55vw);
+    height: 230px;
 
-#settings{
-  width:760px;
-  max-width:calc(100vw - 30px);
-  max-height:calc(100vh - 40px);
-  overflow:auto;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:16px;
-  box-shadow:var(--shadow);
-  transform:translateY(15px) scale(.97);
-  transition:
-    transform .24s cubic-bezier(.2,.8,.2,1);
-}
+    border: 5px solid white;
+    background:
+        linear-gradient(
+            135deg,
+            #111 25%,
+            #222 25%,
+            #222 50%,
+            #111 50%
+        );
+    background-size: 40px 40px;
 
-#settings-overlay.open #settings{
-  transform:translateY(0) scale(1);
-}
+    overflow: hidden;
+    z-index: 5;
 
-.settings-header{
-  padding:18px 20px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+    box-shadow: 0 0 30px cyan;
 }
 
-.settings-header h2{
-  margin:0;
-  font-size:17px;
-}
+#ball {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
 
-.settings-header small{
-  display:block;
-  margin-top:3px;
-  color:var(--dim);
-  font-size:10px;
-}
+    background: white;
 
-.close-settings{
-  width:32px;
-  height:32px;
-  border:0;
-  border-radius:8px;
-  background:var(--panel2);
-  color:var(--dim);
-  cursor:pointer;
-  font-size:18px;
-  transition:.16s ease;
-}
+    left: 50%;
+    bottom: 40px;
 
-.close-settings:hover{
-  color:var(--text);
-  transform:rotate(4deg);
+    box-shadow:
+        0 0 10px white,
+        0 0 30px cyan,
+        0 0 50px magenta;
 }
 
-/* Wide settings grid */
+.slopeObstacle {
+    position: absolute;
+    width: 35px;
+    height: 35px;
 
-.settings-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0;
-}
+    background: red;
+    border: 4px solid white;
 
-.settings-section{
-  padding:18px 20px;
-  border-bottom:1px solid var(--border);
-}
+    transform: rotate(45deg);
 
-.settings-section:nth-child(odd){
-  border-right:1px solid var(--border);
+    box-shadow: 0 0 20px red;
 }
 
-.settings-section:last-child{
-  border-bottom:0;
-}
+/* =========================
+   COMBO
+========================= */
 
-.settings-title{
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-  color:var(--dim);
-  margin-bottom:13px;
-}
+#comboBar {
+    position: absolute;
+    left: 50%;
+    top: 110px;
+    transform: translateX(-50%);
 
-.setting-row{
-  min-height:38px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  font-size:12px;
-}
+    width: 300px;
+    height: 25px;
 
-.setting-row + .setting-row{
-  margin-top:8px;
-}
+    background: black;
+    border: 3px solid white;
 
-.setting-description{
-  color:var(--text);
+    z-index: 20;
 }
 
-.setting-description small{
-  display:block;
-  color:var(--dim);
-  font-size:10px;
-  margin-top:2px;
-}
+#comboFill {
+    height: 100%;
+    width: 0%;
 
-/* Inputs */
+    background: linear-gradient(
+        90deg,
+        red,
+        orange,
+        yellow,
+        lime,
+        cyan,
+        blue,
+        magenta
+    );
 
-select,
-input[type="number"]{
-  background:var(--panel2);
-  color:var(--text);
-  border:1px solid var(--border);
-  border-radius:7px;
-  padding:7px 9px;
-  outline:none;
+    background-size: 300% 100%;
+    animation: rainbowBar .5s linear infinite;
 }
 
-select:focus,
-input[type="number"]:focus{
-  border-color:var(--blue);
+@keyframes rainbowBar {
+    to {
+        background-position: 300% 0;
+    }
 }
 
-input[type="number"]{
-  width:95px;
-}
+/* =========================
+   FLOATING TEXT
+========================= */
 
-/* Switch */
+.floatText {
+    position: fixed;
+    z-index: 999;
 
-.switch{
-  position:relative;
-  width:40px;
-  height:22px;
-  flex-shrink:0;
-}
+    pointer-events: none;
 
-.switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
+    font-size: 30px;
+    color: white;
 
-.slider{
-  position:absolute;
-  inset:0;
-  background:var(--panel2);
-  border:1px solid var(--border);
-  border-radius:20px;
-  cursor:pointer;
-  transition:.18s;
-}
+    text-shadow:
+        3px 3px 0 black,
+        0 0 20px cyan;
 
-.slider:before{
-  content:"";
-  position:absolute;
-  width:16px;
-  height:16px;
-  left:2px;
-  top:2px;
-  border-radius:50%;
-  background:var(--dim);
-  transition:.18s;
+    animation: floatUp 1s forwards;
 }
 
-.switch input:checked + .slider{
-  background:var(--blue2);
-  border-color:var(--blue);
-}
+@keyframes floatUp {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0) rotate(0deg);
+    }
 
-.switch input:checked + .slider:before{
-  transform:translateX(18px);
-  background:white;
+    to {
+        opacity: 0;
+        transform: scale(2) translateY(-180px) rotate(30deg);
+    }
 }
 
-/* Shortcut editor */
+/* =========================
+   EXPLOSIONS
+========================= */
 
-.shortcut-list{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
+.explosion {
+    position: fixed;
+    pointer-events: none;
+    z-index: 900;
 
-.shortcut-row{
-  display:grid;
-  grid-template-columns:28px 1fr 90px;
-  align-items:center;
-  gap:8px;
-  padding:6px;
-  background:var(--panel2);
-  border:1px solid var(--border);
-  border-radius:8px;
-  transition:.16s ease;
-}
+    font-size: 70px;
 
-.shortcut-row:hover{
-  border-color:var(--blue2);
+    animation: explode .7s forwards;
 }
 
-.shortcut-number{
-  width:28px;
-  height:28px;
-  display:grid;
-  place-items:center;
-  border-radius:7px;
-  background:var(--panel3);
-  color:var(--blue);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-}
+@keyframes explode {
+    0% {
+        transform: scale(.2) rotate(0deg);
+        opacity: 1;
+    }
 
-.shortcut-mode{
-  font-size:11px;
-  color:var(--text);
+    100% {
+        transform: scale(4) rotate(360deg);
+        opacity: 0;
+    }
 }
 
-.shortcut-mode small{
-  display:block;
-  color:var(--dim);
-  font-size:9px;
-  margin-top:2px;
-}
+/* =========================
+   RANDOM NOTIFICATIONS
+========================= */
 
-.shortcut-input{
-  height:30px;
-  width:100%;
-  text-align:center;
-  text-transform:uppercase;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  background:var(--panel3);
-  color:var(--text);
-  border:1px solid var(--border);
-  border-radius:7px;
-  outline:none;
-}
+#notifications {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    z-index: 1000;
 
-.shortcut-input:focus{
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(91,155,255,.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.shortcut-fixed{
-  padding:8px 10px;
-  background:var(--panel2);
-  border:1px solid var(--border);
-  border-radius:8px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;
-  color:var(--dim);
-  line-height:1.7;
-}
+.notification {
+    padding: 15px;
 
-/* =========================================================
-   POLYGON MENU
-========================================================= */
+    background: rgba(0,0,0,.9);
+    border: 4px solid white;
+    border-radius: 12px;
 
-#polygon-menu{
-  position:absolute;
-  z-index:50;
-  display:none;
-  width:238px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:11px;
-  box-shadow:var(--shadow);
-  padding:10px;
-  animation:menuIn .15s ease;
-}
+    animation: notificationIn .3s, notificationOut .5s 3s forwards;
 
-@keyframes menuIn{
-  from{
-    opacity:0;
-    transform:translateY(4px) scale(.96);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
+    box-shadow:
+        0 0 20px magenta,
+        0 0 40px cyan;
 }
 
-.menu-title{
-  font-size:10px;
-  color:var(--dim);
-  margin:4px 6px 8px;
+@keyframes notificationIn {
+    from {
+        transform: translateX(300px) rotate(20deg);
+    }
+    to {
+        transform: translateX(0) rotate(0);
+    }
 }
 
-.color-row{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
+@keyframes notificationOut {
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
 }
 
-.color-choice{
-  width:25px;
-  height:25px;
-  border-radius:6px;
-  border:2px solid transparent;
-  cursor:pointer;
-  transition:
-    transform .12s ease,
-    border-color .12s ease;
-}
+/* =========================
+   SCREEN CHAOS
+========================= */
 
-.color-choice:hover{
-  border-color:var(--text);
-  transform:scale(1.1);
+body.chaos #app {
+    animation: chaos .15s infinite;
 }
 
-.transparency-row{
-  margin-top:13px;
-  padding-top:10px;
-  border-top:1px solid var(--border);
+@keyframes chaos {
+    0% { transform: translate(0,0) rotate(0); }
+    25% { transform: translate(8px,-5px) rotate(1deg); }
+    50% { transform: translate(-8px,5px) rotate(-1deg); }
+    75% { transform: translate(5px,8px) rotate(1deg); }
+    100% { transform: translate(0,0); }
 }
 
-.transparency-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:0 6px 7px;
-}
+/* =========================
+   GIANT EVENT
+========================= */
 
-.transparency-label{
-  font-size:10px;
-  color:var(--dim);
-}
+#event {
+    position: fixed;
+    inset: 0;
 
-#polygon-transparency-value{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  color:var(--cyan);
-}
+    display: none;
+    justify-content: center;
+    align-items: center;
 
-#polygon-transparency{
-  width:100%;
-  cursor:pointer;
-  accent-color:var(--blue);
+    background: rgba(0,0,0,.8);
+
+    z-index: 5000;
+
+    text-align: center;
 }
+
+#eventText {
+    font-size: clamp(40px, 10vw, 130px);
+
+    color: white;
 
-/* =========================================================
-   TOAST
-========================================================= */
+    text-shadow:
+        5px 5px 0 red,
+        -5px -5px 0 cyan,
+        0 0 40px white;
 
-#toast{
-  position:absolute;
-  left:50%;
-  bottom:25px;
-  transform:translate(-50%,15px) scale(.97);
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:9px 14px;
-  font-size:11px;
-  color:var(--text);
-  opacity:0;
-  pointer-events:none;
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-  z-index:200;
-  box-shadow:0 12px 40px rgba(0,0,0,.25);
+    animation: eventText .2s infinite alternate;
 }
 
-#toast.show{
-  opacity:1;
-  transform:translate(-50%,0) scale(1);
+@keyframes eventText {
+    from {
+        transform: rotate(-5deg) scale(1);
+    }
+    to {
+        transform: rotate(5deg) scale(1.15);
+    }
 }
 
-/* =========================================================
+/* =========================
    RESPONSIVE
-========================================================= */
+========================= */
 
-@media(max-width:700px){
-  .settings-grid{
-    grid-template-columns:1fr;
-  }
+@media(max-width: 800px) {
+    #cookiePanel {
+        left: 10px;
+        top: 100px;
+        width: 220px;
+    }
 
-  .settings-section:nth-child(odd){
-    border-right:0;
-  }
+    #cookie {
+        width: 120px;
+        height: 120px;
+        font-size: 50px;
+    }
 
-  #settings{
-    width:calc(100vw - 20px);
-  }
+    #toilet {
+        right: 2%;
+        font-size: 80px;
+    }
 
-  #top-actions{
-    right:8px;
-    top:8px;
-  }
-
-  .top-action span{
-    display:none;
-  }
+    #slope {
+        width: 50vw;
+    }
 }
 </style>
 </head>
 
 <body>
 
+<div id="background"></div>
+
 <div id="app">
 
-  <!-- =====================================================
-       TOOLBAR
-  ====================================================== -->
-
-  <div id="toolbar">
-
-    <div class="brand">
-      <b>GeoGebra</b>
-      IDIOT SIKKER
+    <div id="title">
+        🧠 BRAINROT OVERLOAD 🧠
     </div>
 
-    <button class="tool active"
-            data-tool="select"
-            title="Select / Move">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <path d="M5 3l14 8-6 2-2 6-6-16z"/>
-      </svg>
-      <span>SELECT</span>
-    </button>
-
-    <button class="tool"
-            data-tool="point"
-            title="Point">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <circle cx="12" cy="12" r="3" fill="currentColor"/>
-      </svg>
-      <span>POINT</span>
-    </button>
-
-    <button class="tool"
-            data-tool="line"
-            title="Segment">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <line x1="4" y1="20" x2="20" y2="4"/>
-        <circle cx="4" cy="20" r="2"/>
-        <circle cx="20" cy="4" r="2"/>
-      </svg>
-      <span>LINE</span>
-    </button>
-
-    <button class="tool"
-            data-tool="circle"
-            title="Circle">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <circle cx="12" cy="12" r="8"/>
-        <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-      </svg>
-      <span>CIRCLE</span>
-    </button>
-
-    <button class="tool"
-            data-tool="polygon"
-            title="Polygon">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <polygon points="12,3 21,9 18,20 6,20 3,9"/>
-      </svg>
-      <span>POLY</span>
-    </button>
-
-    <button class="tool"
-            data-tool="angle"
-            title="Angle">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <path d="M4 20h16"/>
-        <path d="M4 20L18 6"/>
-        <path d="M8 20a8 8 0 0 1 2-5.5"/>
-      </svg>
-      <span>ANGLE</span>
-    </button>
-
-    <div class="tool-divider"></div>
-
-    <button class="tool"
-            data-tool="midpoint"
-            title="Midpoint">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <circle cx="5" cy="12" r="2"/>
-        <circle cx="19" cy="12" r="2"/>
-        <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
-        <line x1="7" y1="12" x2="17" y2="12"/>
-      </svg>
-      <span>MIDPOINT</span>
-    </button>
-
-    <button class="tool"
-            data-tool="perpendicular"
-            title="Perpendicular">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <line x1="4" y1="18" x2="20" y2="6"/>
-        <line x1="12" y1="12" x2="12" y2="22"/>
-      </svg>
-      <span>PERP</span>
-    </button>
-
-    <button class="tool"
-            data-tool="distance"
-            title="Distance">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <line x1="4" y1="12" x2="20" y2="12"/>
-        <path d="M7 8l-3 4 3 4"/>
-        <path d="M17 8l3 4-3 4"/>
-      </svg>
-      <span>DISTANCE</span>
-    </button>
-
-    <button class="tool"
-            data-tool="text"
-            title="Text — T">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <path d="M5 5h14"/>
-        <path d="M12 5v14"/>
-        <path d="M8 19h8"/>
-      </svg>
-      <span>TEXT</span>
-    </button>
-
-    <button class="tool"
-            data-tool="delete"
-            title="Delete — X">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <path d="M5 7h14"/>
-        <path d="M9 7V4h6v3"/>
-        <path d="M7 7l1 14h8l1-14"/>
-      </svg>
-      <span>DELETE</span>
-    </button>
-
-    <div class="tool-divider"></div>
-
-    <button class="tool"
-            id="undo-btn"
-            title="Undo — Ctrl+Z">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <path d="M9 14l-5-5 5-5"/>
-        <path d="M4 9h10a6 6 0 0 1 0 12h-2"/>
-      </svg>
-      <span>UNDO</span>
-    </button>
-
-    <button class="tool"
-            id="clear-btn"
-            title="Clear board">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <path d="M3 6h18"/>
-        <path d="M8 6V4h8v2"/>
-        <path d="M6 6l1 14h10l1-14"/>
-      </svg>
-      <span>CLEAR</span>
-    </button>
-
-    <button class="tool"
-            id="settings-btn"
-            title="Settings">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.9 1.9-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1 1.55V22h-2.7v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-1.9-1.9.06-.06A1.7 1.7 0 0 0 7.6 15a1.7 1.7 0 0 0-1.55-1H6V11.3h.05a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.88L7.2 8.36l1.9-1.9.06.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.9 1.9-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1H22V14h-.09a1.7 1.7 0 0 0-1.51 1z"/>
-      </svg>
-      <span>SETTINGS</span>
-    </button>
-
-  </div>
-
-  <!-- =====================================================
-       CANVAS
-  ====================================================== -->
-
-  <div id="canvas-wrap">
-
-    <svg id="board"></svg>
-
-    <div class="hud">
-      MODE: <b id="hud-mode">SELECT</b>
+    <div id="comboBar">
+        <div id="comboFill"></div>
     </div>
 
-    <div id="top-actions">
+    <!-- COOKIE CLICKER -->
+    <div id="cookiePanel">
 
-      <button class="top-action" id="share-btn">
-        <svg viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="1.8">
-          <path d="M12 16V4"/>
-          <path d="M7 9l5-5 5 5"/>
-          <path d="M5 14v5h14v-5"/>
-        </svg>
-        <span>SHARE</span>
-      </button>
+        <div>🍪 COOKIE GENERATOR 🍪</div>
 
-    </div>
-
-    <div id="coord">
-      x: 0 &nbsp; y: 0
-    </div>
-
-    <div id="hint">
-      Hold RMB and drag to move the camera. Drag points to move them.
-    </div>
-
-    <!-- ===================================================
-         POLYGON MENU
-    ==================================================== -->
-
-    <div id="polygon-menu">
-
-      <div class="menu-title">
-        POLYGON COLOR
-      </div>
-
-      <div class="color-row">
-
-        <div class="color-choice"
-             data-color="#5B9BFF"
-             style="background:#5B9BFF"></div>
-
-        <div class="color-choice"
-             data-color="#E2685A"
-             style="background:#E2685A"></div>
-
-        <div class="color-choice"
-             data-color="#7FD9C4"
-             style="background:#7FD9C4"></div>
-
-        <div class="color-choice"
-             data-color="#E8A33D"
-             style="background:#E8A33D"></div>
-
-        <div class="color-choice"
-             data-color="#A778E8"
-             style="background:#A778E8"></div>
-
-        <div class="color-choice"
-             data-color="#E86FA3"
-             style="background:#E86FA3"></div>
-
-        <div class="color-choice"
-             data-color="#FFFFFF"
-             style="background:#FFFFFF"></div>
-
-        <div class="color-choice"
-             data-color="#555555"
-             style="background:#555555"></div>
-
-      </div>
-
-      <div class="transparency-row">
-
-        <div class="transparency-header">
-          <span class="transparency-label">
-            TRANSPARENCY
-          </span>
-
-          <span id="polygon-transparency-value">
-            18%
-          </span>
+        <div id="cookieCount">
+            0 COOKIES
         </div>
 
-        <input
-          id="polygon-transparency"
-          type="range"
-          min="0"
-          max="100"
-          value="18"
-        >
+        <div id="combo">
+            COMBO ×1
+        </div>
 
-      </div>
+        <div id="cookie">
+            🍪
+        </div>
+
+        <div class="stat">
+            CPS: <span id="cps">0</span>
+        </div>
+
+        <button onclick="buyUpgrade()">
+            BUY +1 CPS
+        </button>
+
+        <div>
+            Upgrade cost:
+            <span id="upgradeCost">25</span>
+        </div>
 
     </div>
 
-    <div id="toast"></div>
-
-    <!-- ===================================================
-         SETTINGS
-    ==================================================== -->
-
-    <div id="settings-overlay">
-
-      <div id="settings">
-
-        <div class="settings-header">
-
-          <div>
-            <h2>Settings</h2>
-            <small>GeoGebra workspace preferences</small>
-          </div>
-
-          <button
-            class="close-settings"
-            id="close-settings">
-            ×
-          </button>
-
-        </div>
-
-        <div class="settings-grid">
-
-          <!-- APPEARANCE -->
-
-          <div class="settings-section">
-
-            <div class="settings-title">
-              Appearance
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Dark mode
-                <small>Use the dark GeoBoard theme</small>
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="dark-mode"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Show tips
-                <small>Display the bottom help message</small>
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="show-tips"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-          </div>
-
-          <!-- CAMERA -->
-
-          <div class="settings-section">
-
-            <div class="settings-title">
-              Camera
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Zoom speed
-                <small>How quickly the wheel zooms</small>
-              </div>
-
-              <input
-                id="zoom-speed"
-                type="number"
-                min="1"
-                max="20"
-                step="1"
-                value="6"
-              >
-
-            </div>
-
-          </div>
-
-          <!-- GRID -->
-
-          <div class="settings-section">
-
-            <div class="settings-title">
-              Grid
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Grid spacing
-                <small>Distance between grid squares</small>
-              </div>
-
-              <select id="grid-spacing">
-                <option value="0.1">0.1</option>
-                <option value="0.2">0.2</option>
-                <option value="0.3">0.3</option>
-                <option value="0.4">0.4</option>
-                <option value="0.5">0.5</option>
-                <option value="0.6">0.6</option>
-                <option value="0.7">0.7</option>
-                <option value="0.8">0.8</option>
-                <option value="0.9">0.9</option>
-                <option value="1" selected>1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
-              </select>
-
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Show grid
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="show-grid"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Show axes
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="show-axes"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Snap to grid
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="snap-grid"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Snap to points
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="snap-points"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-          </div>
-
-          <!-- OBJECTS -->
-
-          <div class="settings-section">
-
-            <div class="settings-title">
-              Objects
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Show points
-                <small>Hide point markers</small>
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="show-points"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Show point numbers
-                <small>Show A, B, C, D...</small>
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="show-labels"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-            <div class="setting-row">
-
-              <div class="setting-description">
-                Show measurements
-                <small>Distances and radii</small>
-              </div>
-
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="show-measurements"
-                  checked
-                >
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-          </div>
-
-          <!-- SHORTCUTS -->
-
-          <div class="settings-section">
-
-            <div class="settings-title">
-              Mode shortcuts
-            </div>
-
-            <div class="shortcut-list">
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">1</div>
-                <div class="shortcut-mode">
-                  Select
-                  <small>Move / select</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="1"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">2</div>
-                <div class="shortcut-mode">
-                  Point
-                  <small>Create points</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="2"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">3</div>
-                <div class="shortcut-mode">
-                  Line
-                  <small>Create segments</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="3"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">4</div>
-                <div class="shortcut-mode">
-                  Circle
-                  <small>Create circles</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="4"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">5</div>
-                <div class="shortcut-mode">
-                  Polygon
-                  <small>Create polygons</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="5"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">6</div>
-                <div class="shortcut-mode">
-                  Angle
-                  <small>Measure angles</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="6"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">7</div>
-                <div class="shortcut-mode">
-                  Midpoint
-                  <small>Create midpoints</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="7"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">8</div>
-                <div class="shortcut-mode">
-                  Perpendicular
-                  <small>Create perpendiculars</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="8"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-              <div class="shortcut-row">
-                <div class="shortcut-number">9</div>
-                <div class="shortcut-mode">
-                  Distance
-                  <small>Measure distances</small>
-                </div>
-                <input class="shortcut-input"
-                       data-slot="9"
-                       maxlength="1"
-                       autocomplete="off">
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- FIXED -->
-
-          <div class="settings-section">
-
-            <div class="settings-title">
-              Fixed shortcuts
-            </div>
-
-            <div class="shortcut-fixed">
-              T — Text<br>
-              X — Delete<br>
-              Ctrl + Z — Undo<br>
-              Esc — Cancel
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
+    <!-- TOILET -->
+    <div id="toilet" onclick="toiletClick()">
+        🚽
+    </div>
+
+    <!-- SLOPE -->
+    <div id="slope">
+
+        <div id="ball"></div>
 
     </div>
 
-  </div>
+    <!-- GACHA -->
+    <div id="gacha">
+
+        🎰 BRAINROT GACHA
+
+        <div id="gachaResult">
+            ❓
+        </div>
+
+        <button onclick="spinGacha()">
+            SPIN
+        </button>
+
+    </div>
 
 </div>
 
+<div id="notifications"></div>
+
+<div id="event">
+    <div id="eventText">
+        WHAT THE FUCK IS HAPPENING
+    </div>
+</div>
+
+
 <script>
-(function(){
 
-'use strict';
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const svg = document.getElementById('board');
-const NS = 'http://www.w3.org/2000/svg';
-
-const hudMode =
-  document.getElementById('hud-mode');
-
-const coordEl =
-  document.getElementById('coord');
-
-const hintBox =
-  document.getElementById('hint');
-
-const settingsOverlay =
-  document.getElementById('settings-overlay');
-
-const polygonMenu =
-  document.getElementById('polygon-menu');
-
-const toast =
-  document.getElementById('toast');
-
-const transparencySlider =
-  document.getElementById('polygon-transparency');
-
-const transparencyValue =
-  document.getElementById('polygon-transparency-value');
-
-/* =========================================================
-   STORAGE
-========================================================= */
-
-const STORAGE_KEY =
-  'geoboard_idiot_sikker_v5';
-
-/* =========================================================
-   DATA
-========================================================= */
-
-let points = [];
-let shapes = [];
-let texts = [];
-
-let nextId = 1;
-
-let tool = 'select';
-let pending = [];
-
-let dragId = null;
-let hoverId = null;
-
-let origin = null;
-
-let camera = {
-  x:0,
-  y:0,
-  zoom:1
-};
-
-let isPanning = false;
-let panStart = null;
-
-let selectedPolygon = null;
-
-let currentSnap = null;
-let mouseInside = false;
-
-let toastTimer = null;
-
-let isRestoring = false;
-
-/*
-  Board undo history.
-
-  Every board-changing action stores a complete
-  snapshot. Settings, camera and mode are NOT
-  included.
-*/
-
-let undoHistory = [];
-let undoIndex = -1;
-
-const MAX_UNDO = 100;
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-let settings = {
-
-  dark:true,
-
-  zoomSpeed:6,
-
-  gridSpacing:1,
-
-  showGrid:true,
-  showAxes:true,
-
-  snapGrid:true,
-  snapPoints:true,
-
-  showPoints:true,
-  showLabels:true,
-  showMeasurements:true,
-
-  showTips:true
-
-};
-
-/* =========================================================
-   MODES
-========================================================= */
-
-const modeNames = {
-  select:'Select',
-  point:'Point',
-  line:'Line',
-  circle:'Circle',
-  polygon:'Polygon',
-  angle:'Angle',
-  midpoint:'Midpoint',
-  perpendicular:'Perpendicular',
-  distance:'Distance'
-};
-
-const defaultShortcuts = {
-  '1':'select',
-  '2':'point',
-  '3':'line',
-  '4':'circle',
-  '5':'polygon',
-  '6':'angle',
-  '7':'midpoint',
-  '8':'perpendicular',
-  '9':'distance'
-};
-
-let shortcuts = {
-  '1':'1',
-  '2':'2',
-  '3':'3',
-  '4':'4',
-  '5':'5',
-  '6':'6',
-  '7':'7',
-  '8':'8',
-  '9':'9'
-};
-
-/* =========================================================
-   HINTS
-========================================================= */
-
-const hints = {
-
-  select:
-    'Hold RMB and drag to move the camera. Drag points to move them. Click polygons to edit them.',
-
-  point:
-    'Click anywhere to place a point.',
-
-  line:
-    'Click two points to create a segment.',
-
-  circle:
-    'Click the center, then click a second point to set the radius.',
-
-  polygon:
-    'Click each vertex. Click the first point again to close the polygon.',
-
-  angle:
-    'Click three points. The second point is the vertex.',
-
-  midpoint:
-    'Click two points to create their midpoint.',
-
-  perpendicular:
-    'Click two points to define a line, then click where the perpendicular should pass.',
-
-  distance:
-    'Click two points to measure the distance between them.',
-
-  text:
-    'Click somewhere and enter text.',
-
-  delete:
-    'Click a point or object to delete it.'
-};
-
-/* =========================================================
-   SERIALIZATION
-========================================================= */
-
-function clone(value){
-  return JSON.parse(
-    JSON.stringify(value)
-  );
-}
-
-function boardState(){
-
-  return {
-    points:clone(points),
-    shapes:clone(shapes),
-    texts:clone(texts),
-    nextId:nextId
-  };
-}
-
-function restoreBoardState(state){
-
-  points =
-    clone(state.points || []);
-
-  shapes =
-    clone(state.shapes || []);
-
-  texts =
-    clone(state.texts || []);
-
-  nextId =
-    Number(state.nextId) || 1;
-
-  selectedPolygon = null;
-  pending = [];
-
-  render();
-}
-
-/* =========================================================
-   PERSISTENCE
-========================================================= */
-
-function saveEverything(){
-
-  if(isRestoring)
-    return;
-
-  try{
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-
-        points,
-        shapes,
-        texts,
-
-        nextId,
-
-        tool,
-
-        camera,
-
-        settings,
-
-        shortcuts
-
-      })
+/* =====================================
+   GLOBAL VARIABLES
+===================================== */
+
+let cookies = 0;
+let cps = 0;
+let upgradeCost = 25;
+
+let combo = 1;
+let comboProgress = 0;
+
+let toiletHits = 0;
+
+let ballX = 50;
+let ballY = 40;
+
+let ballVX = 0;
+let ballVY = 0;
+
+let obstacles = [];
+
+const brainrotWords = [
+    "SKIBIDI",
+    "RIZZ",
+    "GYATT",
+    "SIGMA",
+    "OHIO",
+    "WHAT",
+    "BRO",
+    "🗿",
+    "💀",
+    "🔥",
+    "KABOOM",
+    "SHEESH",
+    "NO WAY",
+    "BRAINROT",
+    "69",
+    "420",
+    "999",
+    "MAXIMUM OVERLOAD"
+];
+
+const gachaItems = [
+    "🗿 MOAI",
+    "🚽 TOILET",
+    "🐸 SILLY FROG",
+    "🧍 NPC",
+    "🍪 COOKIE",
+    "💎 ULTRA GEM",
+    "🔥 SIGMA FLAME",
+    "🌈 RAINBOW BRAIN",
+    "👽 ALIEN",
+    "🦆 UNSTOPPABLE DUCK",
+    "💀 SKULL OF CONFUSION",
+    "🧠 BRAINROT GOD"
+];
+
+
+/* =====================================
+   COOKIE CLICKER
+===================================== */
+
+const cookie = document.getElementById("cookie");
+
+cookie.addEventListener("click", () => {
+
+    let gain = combo;
+
+    cookies += gain;
+
+    comboProgress += 8;
+
+    if(comboProgress >= 100) {
+        combo++;
+        comboProgress = 0;
+
+        notify("🔥 COMBO UPGRADED → ×" + combo);
+        explosion(window.innerWidth / 2, window.innerHeight / 2);
+    }
+
+    updateUI();
+
+    floatText(
+        "+" + gain + " 🍪",
+        cookie.getBoundingClientRect().left + 50,
+        cookie.getBoundingClientRect().top
     );
 
-  }catch(error){
-
-    console.warn(
-      'GeoBoard could not save:',
-      error
-    );
-
-  }
-}
-
-function loadEverything(){
-
-  try{
-
-    const raw =
-      localStorage.getItem(
-        STORAGE_KEY
-      );
-
-    if(!raw)
-      return false;
-
-    const data =
-      JSON.parse(raw);
-
-    if(data.points)
-      points = data.points;
-
-    if(data.shapes)
-      shapes = data.shapes;
-
-    if(data.texts)
-      texts = data.texts;
-
-    if(data.nextId)
-      nextId = data.nextId;
-
-    if(data.settings){
-
-      settings = {
-        ...settings,
-        ...data.settings
-      };
-
-    }
-
-    if(data.shortcuts){
-
-      shortcuts = {
-        ...shortcuts,
-        ...data.shortcuts
-      };
-
-    }
-
-    if(data.camera){
-
-      camera = {
-        ...camera,
-        ...data.camera
-      };
-
-    }
-
-    if(
-      data.tool &&
-      (
-        data.tool === 'select' ||
-        data.tool === 'point' ||
-        data.tool === 'line' ||
-        data.tool === 'circle' ||
-        data.tool === 'polygon' ||
-        data.tool === 'angle' ||
-        data.tool === 'midpoint' ||
-        data.tool === 'perpendicular' ||
-        data.tool === 'distance' ||
-        data.tool === 'text' ||
-        data.tool === 'delete'
-      )
-    ){
-
-      tool = data.tool;
-
-    }
-
-    return true;
-
-  }catch(error){
-
-    console.warn(
-      'GeoBoard save was invalid:',
-      error
-    );
-
-    return false;
-  }
-}
-
-/* =========================================================
-   UNDO SYSTEM
-========================================================= */
-
-function recordBoardState(){
-
-  if(isRestoring)
-    return;
-
-  const snapshot =
-    boardState();
-
-  /*
-    If we undid something and then make a new
-    change, remove the abandoned future.
-  */
-
-  if(undoIndex <
-     undoHistory.length-1){
-
-    undoHistory =
-      undoHistory.slice(
-        0,
-        undoIndex+1
-      );
-
-  }
-
-  /*
-    Don't create duplicate snapshots.
-  */
-
-  const current =
-    JSON.stringify(
-      undoHistory[undoIndex]
-    );
-
-  const next =
-    JSON.stringify(snapshot);
-
-  if(current === next)
-    return;
-
-  undoHistory.push(snapshot);
-
-  if(
-    undoHistory.length >
-    MAX_UNDO
-  ){
-
-    undoHistory.shift();
-
-  }
-
-  undoIndex =
-    undoHistory.length-1;
-}
-
-function initializeUndoHistory(){
-
-  undoHistory = [
-    boardState()
-  ];
-
-  undoIndex = 0;
-}
-
-function undo(){
-
-  if(undoIndex <= 0){
-
-    showToast(
-      'Nothing to undo'
-    );
-
-    return;
-  }
-
-  undoIndex--;
-
-  restoreBoardState(
-    undoHistory[undoIndex]
-  );
-
-  saveEverything();
-
-  showToast(
-    'Undo'
-  );
-}
-
-/* =========================================================
-   TOOL
-========================================================= */
-
-function setTool(t){
-
-  tool = t;
-
-  pending = [];
-
-  document
-    .querySelectorAll(
-      '.tool[data-tool]'
-    )
-    .forEach(button=>{
-
-      button.classList.toggle(
-        'active',
-        button.dataset.tool === t
-      );
-
-    });
-
-  hudMode.textContent =
-    t.toUpperCase();
-
-  hintBox.textContent =
-    hints[t] || '';
-
-  hintBox.classList.toggle(
-    'hidden',
-    !settings.showTips
-  );
-
-  hidePolygonMenu();
-
-  saveEverything();
-
-  render();
-}
-
-/* =========================================================
-   SETTINGS UI
-========================================================= */
-
-function syncSettingsUI(){
-
-  document.getElementById(
-    'dark-mode'
-  ).checked =
-    settings.dark;
-
-  document.getElementById(
-    'show-tips'
-  ).checked =
-    settings.showTips;
-
-  document.getElementById(
-    'zoom-speed'
-  ).value =
-    settings.zoomSpeed;
-
-  document.getElementById(
-    'grid-spacing'
-  ).value =
-    String(settings.gridSpacing);
-
-  document.getElementById(
-    'show-grid'
-  ).checked =
-    settings.showGrid;
-
-  document.getElementById(
-    'show-axes'
-  ).checked =
-    settings.showAxes;
-
-  document.getElementById(
-    'snap-grid'
-  ).checked =
-    settings.snapGrid;
-
-  document.getElementById(
-    'snap-points'
-  ).checked =
-    settings.snapPoints;
-
-  document.getElementById(
-    'show-points'
-  ).checked =
-    settings.showPoints;
-
-  document.getElementById(
-    'show-labels'
-  ).checked =
-    settings.showLabels;
-
-  document.getElementById(
-    'show-measurements'
-  ).checked =
-    settings.showMeasurements;
-
-  document.body.classList.toggle(
-    'light',
-    !settings.dark
-  );
-
-  hintBox.classList.toggle(
-    'hidden',
-    !settings.showTips
-  );
-
-  syncShortcutUI();
-}
-
-function syncShortcutUI(){
-
-  document
-    .querySelectorAll(
-      '.shortcut-input'
-    )
-    .forEach(input=>{
-
-      const slot =
-        input.dataset.slot;
-
-      input.value =
-        shortcuts[slot] || '';
-
-    });
-}
-
-/* =========================================================
-   SETTINGS EVENTS
-========================================================= */
-
-document
-  .getElementById('settings-btn')
-  .addEventListener(
-    'click',
-    ()=>{
-
-      syncSettingsUI();
-
-      settingsOverlay
-        .classList
-        .add('open');
-
-    }
-  );
-
-document
-  .getElementById('close-settings')
-  .addEventListener(
-    'click',
-    ()=>{
-
-      settingsOverlay
-        .classList
-        .remove('open');
-
-    }
-  );
-
-settingsOverlay.addEventListener(
-  'mousedown',
-  e=>{
-
-    if(
-      e.target ===
-      settingsOverlay
-    ){
-
-      settingsOverlay
-        .classList
-        .remove('open');
-
-    }
-
-  }
-);
-
-document
-  .getElementById('dark-mode')
-  .addEventListener(
-    'change',
-    e=>{
-
-      settings.dark =
-        e.target.checked;
-
-      document.body.classList.toggle(
-        'light',
-        !settings.dark
-      );
-
-      saveEverything();
-
-      render();
-
-    }
-  );
-
-document
-  .getElementById('show-tips')
-  .addEventListener(
-    'change',
-    e=>{
-
-      settings.showTips =
-        e.target.checked;
-
-      hintBox.classList.toggle(
-        'hidden',
-        !settings.showTips
-      );
-
-      saveEverything();
-
-    }
-  );
-
-document
-  .getElementById('zoom-speed')
-  .addEventListener(
-    'change',
-    e=>{
-
-      settings.zoomSpeed =
-        Math.max(
-          1,
-          Math.min(
-            20,
-            Number(e.target.value) || 6
-          )
+    if(Math.random() < .25) {
+        explosion(
+            Math.random() * window.innerWidth,
+            Math.random() * window.innerHeight
         );
-
-      e.target.value =
-        settings.zoomSpeed;
-
-      saveEverything();
-
     }
-  );
-
-document
-  .getElementById('grid-spacing')
-  .addEventListener(
-    'change',
-    e=>{
-
-      settings.gridSpacing =
-        Number(e.target.value);
-
-      saveEverything();
-
-      render();
-
-    }
-  );
-
-[
-  ['show-grid','showGrid'],
-  ['show-axes','showAxes'],
-  ['snap-grid','snapGrid'],
-  ['snap-points','snapPoints'],
-  ['show-points','showPoints'],
-  ['show-labels','showLabels'],
-  ['show-measurements','showMeasurements']
-]
-.forEach(([id,key])=>{
-
-  document
-    .getElementById(id)
-    .addEventListener(
-      'change',
-      e=>{
-
-        settings[key] =
-          e.target.checked;
-
-        saveEverything();
-
-        render();
-
-      }
-    );
 
 });
 
-/* =========================================================
-   CUSTOM SHORTCUTS
-========================================================= */
 
-document
-  .querySelectorAll(
-    '.shortcut-input'
-  )
-  .forEach(input=>{
+function buyUpgrade() {
 
-    input.addEventListener(
-      'keydown',
-      e=>{
+    if(cookies >= upgradeCost) {
 
-        e.preventDefault();
+        cookies -= upgradeCost;
 
-        /*
-          Only single printable keys are allowed.
-        */
+        cps++;
+
+        upgradeCost = Math.floor(upgradeCost * 1.6);
+
+        notify("💰 CPS UPGRADED → " + cps);
+
+        updateUI();
+
+    } else {
+
+        notify("💀 BROKE DETECTED");
+
+    }
+
+}
+
+
+setInterval(() => {
+
+    cookies += cps;
+
+    updateUI();
+
+}, 1000);
+
+
+function updateUI() {
+
+    document.getElementById("cookieCount").textContent =
+        Math.floor(cookies) + " COOKIES";
+
+    document.getElementById("cps").textContent =
+        cps;
+
+    document.getElementById("upgradeCost").textContent =
+        upgradeCost;
+
+    document.getElementById("combo").textContent =
+        "COMBO ×" + combo;
+
+    document.getElementById("comboFill").style.width =
+        comboProgress + "%";
+
+}
+
+
+/* =====================================
+   TOILET
+===================================== */
+
+function toiletClick() {
+
+    toiletHits++;
+
+    cookies += 10 * combo;
+
+    comboProgress += 5;
+
+    floatText(
+        "🚽 +10",
+        window.innerWidth * .8,
+        200
+    );
+
+    explosion(
+        window.innerWidth * .8,
+        220
+    );
+
+    if(toiletHits % 10 === 0) {
+
+        notify("🚽 TOILET COMBO x" + toiletHits);
+
+    }
+
+    updateUI();
+
+}
+
+
+/* =====================================
+   FLOATING TEXT
+===================================== */
+
+function floatText(text, x, y) {
+
+    const el = document.createElement("div");
+
+    el.className = "floatText";
+
+    el.textContent = text;
+
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+
+    el.style.transform =
+        `rotate(${Math.random()*40-20}deg)`;
+
+    document.body.appendChild(el);
+
+    setTimeout(() => el.remove(), 1000);
+
+}
+
+
+/* =====================================
+   EXPLOSIONS
+===================================== */
+
+function explosion(x, y) {
+
+    const el = document.createElement("div");
+
+    el.className = "explosion";
+
+    el.textContent =
+        ["💥","✨","🌈","🔥","💀","🤑","🤯","⭐"][Math.floor(Math.random()*8)];
+
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+
+    document.body.appendChild(el);
+
+    setTimeout(() => el.remove(), 700);
+
+}
+
+
+/* =====================================
+   NOTIFICATIONS
+===================================== */
+
+function notify(message) {
+
+    const box = document.createElement("div");
+
+    box.className = "notification";
+
+    box.textContent = message;
+
+    document.getElementById("notifications")
+        .appendChild(box);
+
+    setTimeout(() => box.remove(), 3600);
+
+}
+
+
+/* =====================================
+   RANDOM BRAINROT
+===================================== */
+
+setInterval(() => {
+
+    const word =
+        brainrotWords[
+            Math.floor(Math.random() * brainrotWords.length)
+        ];
+
+    floatText(
+        word,
+        Math.random() * window.innerWidth,
+        Math.random() * window.innerHeight
+    );
+
+}, 700);
+
+
+/* =====================================
+   RANDOM EXPLOSIONS
+===================================== */
+
+setInterval(() => {
+
+    explosion(
+        Math.random() * window.innerWidth,
+        Math.random() * window.innerHeight
+    );
+
+}, 900);
+
+
+/* =====================================
+   RANDOM NOTIFICATIONS
+===================================== */
+
+const notifications = [
+    "🚨 YOUR BRAIN HAS BEEN DETECTED",
+    "🔥 MAXIMUM RIZZ ACHIEVED",
+    "🚽 TOILET APPROACHING",
+    "🍪 COOKIE STONKS",
+    "🗿 MOAI HAS JOINED",
+    "💀 BRO WHAT",
+    "🌈 RGB OVERLOAD",
+    "🧠 BRAINROT LEVEL: ILLEGAL",
+    "⚠️ TOO MUCH SILLY",
+    "📈 STONKS",
+    "🦆 DUCK DETECTED",
+    "💥 EXPLOSION INCOMING",
+    "🤯 CRITICAL BRAINROT",
+    "⭐ YOU ARE NOW 4% MORE SIGMA"
+];
+
+setInterval(() => {
+
+    notify(
+        notifications[
+            Math.floor(Math.random()*notifications.length)
+        ]
+    );
+
+}, 2500);
+
+
+/* =====================================
+   GACHA
+===================================== */
+
+function spinGacha() {
+
+    const result =
+        gachaItems[
+            Math.floor(Math.random()*gachaItems.length)
+        ];
+
+    const resultEl =
+        document.getElementById("gachaResult");
+
+    resultEl.style.transform = "scale(2) rotate(720deg)";
+
+    resultEl.textContent = "???";
+
+    setTimeout(() => {
+
+        resultEl.textContent = result;
+
+        resultEl.style.transform =
+            "scale(1) rotate(0deg)";
+
+        cookies += 100;
+
+        explosion(
+            window.innerWidth * .85,
+            window.innerHeight * .8
+        );
+
+        notify("🎰 YOU GOT: " + result);
+
+        updateUI();
+
+    }, 600);
+
+}
+
+
+/* =====================================
+   CHAOS EVENTS
+===================================== */
+
+function chaosEvent() {
+
+    document.body.classList.add("chaos");
+
+    const events = [
+        "🌈 RGB DIMENSION",
+        "🚽 TOILET INVASION",
+        "🍪 COOKIE APOCALYPSE",
+        "🧠 BRAINROT OVERDRIVE",
+        "💥 KABOOM MODE",
+        "🗿 MOAI DIMENSION",
+        "🔥 MAXIMUM CHAOS"
+    ];
+
+    document.getElementById("eventText").textContent =
+        events[Math.floor(Math.random()*events.length)];
+
+    document.getElementById("event").style.display =
+        "flex";
+
+    for(let i = 0; i < 25; i++) {
+
+        setTimeout(() => {
+
+            explosion(
+                Math.random()*window.innerWidth,
+                Math.random()*window.innerHeight
+            );
+
+        }, i * 50);
+
+    }
+
+    setTimeout(() => {
+
+        document.getElementById("event").style.display =
+            "none";
+
+        document.body.classList.remove("chaos");
+
+    }, 1400);
+
+}
+
+
+setInterval(() => {
+
+    if(Math.random() < .5) {
+        chaosEvent();
+    }
+
+}, 9000);
+
+
+/* =====================================
+   SLOPE GAME
+===================================== */
+
+const slope = document.getElementById("slope");
+const ball = document.getElementById("ball");
+
+let leftPressed = false;
+let rightPressed = false;
+
+document.addEventListener("keydown", e => {
+
+    if(e.key === "ArrowLeft" || e.key === "a")
+        leftPressed = true;
+
+    if(e.key === "ArrowRight" || e.key === "d")
+        rightPressed = true;
+
+});
+
+document.addEventListener("keyup", e => {
+
+    if(e.key === "ArrowLeft" || e.key === "a")
+        leftPressed = false;
+
+    if(e.key === "ArrowRight" || e.key === "d")
+        rightPressed = false;
+
+});
+
+
+function spawnObstacle() {
+
+    const obstacle =
+        document.createElement("div");
+
+    obstacle.className =
+        "slopeObstacle";
+
+    obstacle.style.left =
+        Math.random()*90 + "%";
+
+    obstacle.style.top =
+        "-50px";
+
+    slope.appendChild(obstacle);
+
+    obstacles.push({
+        element: obstacle,
+        x: parseFloat(obstacle.style.left),
+        y: -50
+    });
+
+}
+
+
+setInterval(spawnObstacle, 700);
+
+
+function slopeLoop() {
+
+    if(leftPressed)
+        ballX -= 1.2;
+
+    if(rightPressed)
+        ballX += 1.2;
+
+    ballX = Math.max(2, Math.min(94, ballX));
+
+    ball.style.left = ballX + "%";
+
+    for(let i = obstacles.length - 1; i >= 0; i--) {
+
+        const o = obstacles[i];
+
+        o.y += 4;
+
+        o.element.style.top =
+            o.y + "px";
+
+        const ox =
+            parseFloat(o.element.style.left);
 
         if(
-          e.key === 'Escape' ||
-          e.key === 'Tab' ||
-          e.key === 'Enter'
-        ){
+            Math.abs(ox - ballX) < 7 &&
+            Math.abs(o.y - 170) < 30
+        ) {
 
-          return;
+            notify("💀 SLOPE BONK");
 
-        }
+            cookies += 50;
 
-        const key =
-          e.key.length === 1
-            ? e.key.toUpperCase()
-            : '';
+            o.element.remove();
 
-        if(!key)
-          return;
+            obstacles.splice(i,1);
 
-        const slot =
-          input.dataset.slot;
-
-        /*
-          Prevent the same key from being
-          assigned to another mode.
-        */
-
-        for(
-          const otherSlot in shortcuts
-        ){
-
-          if(
-            otherSlot !== slot &&
-            shortcuts[otherSlot] === key
-          ){
-
-            showToast(
-              `"${key}" is already bound to mode ${otherSlot}`
+            explosion(
+                window.innerWidth/2,
+                window.innerHeight-100
             );
 
-            syncShortcutUI();
-
-            return;
-          }
+            updateUI();
 
         }
 
-        /*
-          T and X are fixed shortcuts.
-        */
+        if(o.y > 260) {
 
-        if(
-          key === 'T' ||
-          key === 'X'
-        ){
+            o.element.remove();
 
-          showToast(
-            `"${key}" is reserved`
-          );
+            obstacles.splice(i,1);
 
-          syncShortcutUI();
-
-          return;
         }
 
-        shortcuts[slot] =
-          key;
-
-        syncShortcutUI();
-
-        saveEverything();
-
-        showToast(
-          `Shortcut ${slot} → ${key}`
-        );
-
-      }
-    );
-
-  });
-
-/* =========================================================
-   TOOLS
-========================================================= */
-
-document
-  .querySelectorAll(
-    '.tool[data-tool]'
-  )
-  .forEach(button=>{
-
-    button.addEventListener(
-      'click',
-      ()=>{
-
-        setTool(
-          button.dataset.tool
-        );
-
-      }
-    );
-
-  });
-
-/* =========================================================
-   CLEAR
-========================================================= */
-
-document
-  .getElementById('clear-btn')
-  .addEventListener(
-    'click',
-    ()=>{
-
-      if(
-        !confirm(
-          'Clear the entire board? This cannot be undone.'
-        )
-      ){
-
-        return;
-
-      }
-
-      /*
-        IMPORTANT:
-        Clear is deliberately NOT recorded
-        in undo history.
-      */
-
-      points = [];
-      shapes = [];
-      texts = [];
-
-      pending = [];
-
-      nextId = 1;
-
-      camera = {
-        x:0,
-        y:0,
-        zoom:1
-      };
-
-      origin = null;
-
-      selectedPolygon = null;
-
-      initializeUndoHistory();
-
-      saveEverything();
-
-      render();
-
-      showToast(
-        'Board cleared'
-      );
-
     }
-  );
 
-/* =========================================================
-   UNDO BUTTON
-========================================================= */
-
-document
-  .getElementById('undo-btn')
-  .addEventListener(
-    'click',
-    undo
-  );
-
-/* =========================================================
-   COORDINATES
-========================================================= */
-
-function ensureOrigin(){
-
-  const rect =
-    svg.getBoundingClientRect();
-
-  if(!origin){
-
-    origin = {
-      x:rect.width/2,
-      y:rect.height/2
-    };
-
-  }
-
-  return rect;
-}
-
-function worldToScreen(wx,wy){
-
-  return {
-
-    x:
-      origin.x +
-      (wx-camera.x) *
-      40 *
-      camera.zoom,
-
-    y:
-      origin.y -
-      (wy-camera.y) *
-      40 *
-      camera.zoom
-
-  };
+    requestAnimationFrame(slopeLoop);
 
 }
 
-function screenToWorld(sx,sy){
+slopeLoop();
 
-  return {
 
-    x:
-      camera.x +
-      (sx-origin.x) /
-      (40*camera.zoom),
+/* =====================================
+   RANDOM SCREEN COLOR
+===================================== */
 
-    y:
-      camera.y -
-      (sy-origin.y) /
-      (40*camera.zoom)
+setInterval(() => {
 
-  };
+    document.body.style.filter =
+        `hue-rotate(${Math.random()*360}deg)`;
 
-}
+}, 350);
 
-function svgPoint(e){
 
-  const rect =
-    svg.getBoundingClientRect();
+/* =====================================
+   CLICK ANYWHERE
+===================================== */
 
-  return {
-
-    x:
-      e.clientX -
-      rect.left,
-
-    y:
-      e.clientY -
-      rect.top
-
-  };
-
-}
-
-/* =========================================================
-   SNAP
-========================================================= */
-
-function findNearPoint(
-  x,
-  y,
-  threshold,
-  exclude
-){
-
-  let best = null;
-  let bestDistance = threshold;
-
-  for(const p of points){
+document.addEventListener("click", e => {
 
     if(
-      p.id === exclude
-    )
-      continue;
-
-    const s =
-      worldToScreen(
-        p.x,
-        p.y
-      );
-
-    const d =
-      Math.hypot(
-        s.x-x,
-        s.y-y
-      );
-
-    if(
-      d < bestDistance
-    ){
-
-      best = p;
-      bestDistance = d;
-
-    }
-
-  }
-
-  return best;
-}
-
-function resolveSnap(
-  sx,
-  sy,
-  exclude=null
-){
-
-  if(settings.snapPoints){
-
-    const near =
-      findNearPoint(
-        sx,
-        sy,
-        14,
-        exclude
-      );
-
-    if(near){
-
-      const s =
-        worldToScreen(
-          near.x,
-          near.y
-        );
-
-      return {
-
-        x:s.x,
-        y:s.y,
-
-        snappedTo:
-          near.id,
-
-        kind:'point'
-
-      };
-
-    }
-
-  }
-
-  const w =
-    screenToWorld(
-      sx,
-      sy
-    );
-
-  if(settings.snapGrid){
-
-    const spacing =
-      settings.gridSpacing;
-
-    const gx =
-      Math.round(
-        w.x/spacing
-      ) *
-      spacing;
-
-    const gy =
-      Math.round(
-        w.y/spacing
-      ) *
-      spacing;
-
-    const s =
-      worldToScreen(
-        gx,
-        gy
-      );
-
-    return {
-
-      x:s.x,
-      y:s.y,
-
-      worldX:gx,
-      worldY:gy,
-
-      snappedTo:null,
-
-      kind:'grid'
-
-    };
-
-  }
-
-  return {
-
-    x:sx,
-    y:sy,
-
-    worldX:w.x,
-    worldY:w.y,
-
-    snappedTo:null,
-
-    kind:'free'
-
-  };
-
-}
-
-/* =========================================================
-   POINTS
-========================================================= */
-
-function addPointWorld(x,y){
-
-  const p = {
-
-    id:nextId++,
-    x,
-    y
-
-  };
-
-  points.push(p);
-
-  return p;
-}
-
-function getOrCreatePoint(snap){
-
-  if(
-    snap.snappedTo !== null &&
-    snap.snappedTo !== undefined
-  ){
-
-    return byId(
-      snap.snappedTo
-    );
-
-  }
-
-  const w =
-    screenToWorld(
-      snap.x,
-      snap.y
-    );
-
-  return addPointWorld(
-
-    snap.worldX ??
-    w.x,
-
-    snap.worldY ??
-    w.y
-
-  );
-
-}
-
-function byId(id){
-
-  return points.find(
-    p=>p.id === id
-  );
-
-}
-
-function pointName(id){
-
-  const index =
-    points.findIndex(
-      p=>p.id === id
-    );
-
-  if(index < 0)
-    return '';
-
-  let n = index;
-  let name = '';
-
-  do{
-
-    name =
-      String.fromCharCode(
-        65+(n%26)
-      )+
-      name;
-
-    n =
-      Math.floor(n/26)-1;
-
-  }
-  while(n>=0);
-
-  return name;
-}
-
-/* =========================================================
-   MATH
-========================================================= */
-
-function distance(a,b){
-
-  return Math.hypot(
-    a.x-b.x,
-    a.y-b.y
-  );
-
-}
-
-function angleBetween(a,v,c){
-
-  const v1 = {
-
-    x:a.x-v.x,
-    y:a.y-v.y
-
-  };
-
-  const v2 = {
-
-    x:c.x-v.x,
-    y:c.y-v.y
-
-  };
-
-  let angle =
-    Math.atan2(
-      v2.y,
-      v2.x
-    ) -
-    Math.atan2(
-      v1.y,
-      v1.x
-    );
-
-  let deg =
-    angle *
-    180 /
-    Math.PI;
-
-  deg =
-    ((deg%360)+360)%360;
-
-  if(deg>180)
-    deg=360-deg;
-
-  return deg;
-}
-
-/* =========================================================
-   RIGHT MOUSE PAN
-========================================================= */
-
-svg.addEventListener(
-  'contextmenu',
-  e=>{
-
-    e.preventDefault();
-
-  }
-);
-
-svg.addEventListener(
-  'mousedown',
-  e=>{
-
-    if(e.button !== 2)
-      return;
-
-    e.preventDefault();
-
-    isPanning = true;
-
-    panStart = {
-
-      mouseX:e.clientX,
-      mouseY:e.clientY,
-
-      cameraX:camera.x,
-      cameraY:camera.y
-
-    };
-
-    svg.classList.add(
-      'panning'
-    );
-
-  }
-);
-
-window.addEventListener(
-  'mousemove',
-  e=>{
-
-    if(!isPanning)
-      return;
-
-    const dx =
-      (e.clientX-panStart.mouseX) /
-      (40*camera.zoom);
-
-    const dy =
-      (e.clientY-panStart.mouseY) /
-      (40*camera.zoom);
-
-    camera.x =
-      panStart.cameraX-dx;
-
-    camera.y =
-      panStart.cameraY+dy;
-
-    saveEverything();
-
-    render();
-
-  }
-);
-
-window.addEventListener(
-  'mouseup',
-  e=>{
-
-    if(e.button !== 2)
-      return;
-
-    isPanning = false;
-
-    svg.classList.remove(
-      'panning'
-    );
-
-    panStart = null;
-
-    saveEverything();
-
-  }
-);
-
-/* =========================================================
-   MOUSE MOVE
-========================================================= */
-
-svg.addEventListener(
-  'mousemove',
-  e=>{
-
-    ensureOrigin();
-
-    if(isPanning)
-      return;
-
-    const raw =
-      svgPoint(e);
-
-    const snap =
-      resolveSnap(
-        raw.x,
-        raw.y,
-        dragId
-      );
-
-    currentSnap =
-      snap;
-
-    const w =
-      screenToWorld(
-        snap.x,
-        snap.y
-      );
-
-    coordEl.textContent =
-      `x: ${formatNumber(w.x)}   y: ${formatNumber(w.y)}`;
-
-    /*
-      Dragging a point is a board change.
-      We record the original state once when
-      dragging starts, not every mousemove.
-    */
-
-    if(dragId !== null){
-
-      const p =
-        byId(dragId);
-
-      if(p){
-
-        p.x = w.x;
-        p.y = w.y;
-
-        render();
-
-      }
-
-      return;
-
-    }
-
-    const newHover =
-      snap.snappedTo;
-
-    if(
-      newHover !== hoverId
-    ){
-
-      hoverId =
-        newHover;
-
-      render();
-
-    }
-
-  }
-);
-
-/* =========================================================
-   MOUSE ENTER / LEAVE
-========================================================= */
-
-svg.addEventListener(
-  'mouseenter',
-  ()=>{
-
-    mouseInside = true;
-
-  }
-);
-
-svg.addEventListener(
-  'mouseleave',
-  ()=>{
-
-    mouseInside = false;
-
-    if(!isPanning){
-
-      hoverId = null;
-
-      render();
-
-    }
-
-  }
-);
-
-/* =========================================================
-   MAIN LEFT MOUSE DOWN
-========================================================= */
-
-svg.addEventListener(
-  'mousedown',
-  e=>{
-
-    if(e.button !== 0)
-      return;
-
-    ensureOrigin();
-
-    const raw =
-      svgPoint(e);
-
-    /* SELECT */
-
-    if(tool === 'select'){
-
-      const near =
-        findNearPoint(
-          raw.x,
-          raw.y,
-          14,
-          null
-        );
-
-      if(near){
-
-        /*
-          Record BEFORE movement.
-        */
-
-        recordBoardState();
-
-        dragId =
-          near.id;
-
-        render();
-
-        return;
-
-      }
-
-      const polygon =
-        findPolygonAt(
-          raw.x,
-          raw.y
-        );
-
-      if(polygon){
-
-        selectedPolygon =
-          polygon;
-
-        showPolygonMenu(
-          e.clientX,
-          e.clientY
-        );
-
-        updateTransparencyUI();
-
-        render();
-
-        return;
-
-      }
-
-      hidePolygonMenu();
-
-      return;
-
-    }
-
-    /* DELETE */
-
-    if(tool === 'delete'){
-
-      /*
-        deleteAt itself records the board state
-        only if something is actually deleted.
-      */
-
-      deleteAt(
-        raw.x,
-        raw.y
-      );
-
-      return;
-
-    }
-
-    const snap =
-      resolveSnap(
-        raw.x,
-        raw.y
-      );
-
-    /* POINT */
-
-    if(tool === 'point'){
-
-      recordBoardState();
-
-      getOrCreatePoint(
-        snap
-      );
-
-      saveEverything();
-
-      render();
-
-      return;
-
-    }
-
-    /* LINE */
-
-    if(tool === 'line'){
-
-      const p =
-        getOrCreatePoint(
-          snap
-        );
-
-      pending.push(p);
-
-      if(pending.length === 2){
-
-        recordBoardState();
-
-        shapes.push({
-
-          type:'line',
-
-          a:pending[0].id,
-          b:pending[1].id
-
-        });
-
-        pending = [];
-
-        saveEverything();
-
-      }
-
-      render();
-
-      return;
-
-    }
-
-    /* CIRCLE */
-
-    if(tool === 'circle'){
-
-      const p =
-        getOrCreatePoint(
-          snap
-        );
-
-      pending.push(p);
-
-      if(pending.length === 2){
-
-        recordBoardState();
-
-        shapes.push({
-
-          type:'circle',
-
-          center:
-            pending[0].id,
-
-          edge:
-            pending[1].id
-
-        });
-
-        pending = [];
-
-        saveEverything();
-
-      }
-
-      render();
-
-      return;
-
-    }
-
-    /* POLYGON */
-
-    if(tool === 'polygon'){
-
-      const p =
-        getOrCreatePoint(
-          snap
-        );
-
-      if(
-        pending.length >= 3 &&
-        p.id ===
-        pending[0].id
-      ){
-
-        recordBoardState();
-
-        shapes.push({
-
-          type:'polygon',
-
-          pts:
-            pending.map(
-              pt=>pt.id
-            ),
-
-          color:'#5B9BFF',
-
-          transparency:18
-
-        });
-
-        pending = [];
-
-        saveEverything();
-
-      }
-      else{
-
-        pending.push(p);
-
-      }
-
-      render();
-
-      return;
-
-    }
-
-    /* ANGLE */
-
-    if(tool === 'angle'){
-
-      const p =
-        getOrCreatePoint(
-          snap
-        );
-
-      pending.push(p);
-
-      if(pending.length === 3){
-
-        recordBoardState();
-
-        shapes.push({
-
-          type:'angle',
-
-          a:
-            pending[0].id,
-
-          vertex:
-            pending[1].id,
-
-          c:
-            pending[2].id
-
-        });
-
-        pending = [];
-
-        saveEverything();
-
-      }
-
-      render();
-
-      return;
-
-    }
-
-    /* MIDPOINT */
-
-    if(tool === 'midpoint'){
-
-      const p =
-        getOrCreatePoint(
-          snap
-        );
-
-      pending.push(p);
-
-      if(pending.length === 2){
-
-        recordBoardState();
-
-        const a =
-          pending[0];
-
-        const b =
-          pending[1];
-
-        const mid =
-          addPointWorld(
-
-            (a.x+b.x)/2,
-
-            (a.y+b.y)/2
-
-          );
-
-        shapes.push({
-
-          type:'midpoint',
-
-          point:
-            mid.id
-
-        });
-
-        pending = [];
-
-        saveEverything();
-
-      }
-
-      render();
-
-      return;
-
-    }
-
-    /* PERPENDICULAR */
-
-    if(tool === 'perpendicular'){
-
-      const p =
-        getOrCreatePoint(
-          snap
-        );
-
-      pending.push(p);
-
-      if(pending.length === 3){
-
-        recordBoardState();
-
-        shapes.push({
-
-          type:'perpendicular',
-
-          a:
-            pending[0].id,
-
-          b:
-            pending[1].id,
-
-          through:
-            pending[2].id
-
-        });
-
-        pending = [];
-
-        saveEverything();
-
-      }
-
-      render();
-
-      return;
-
-    }
-
-    /* DISTANCE */
-
-    if(tool === 'distance'){
-
-      const p =
-        getOrCreatePoint(
-          snap
-        );
-
-      pending.push(p);
-
-      if(pending.length === 2){
-
-        recordBoardState();
-
-        shapes.push({
-
-          type:'distance',
-
-          a:
-            pending[0].id,
-
-          b:
-            pending[1].id
-
-        });
-
-        pending = [];
-
-        saveEverything();
-
-      }
-
-      render();
-
-      return;
-
-    }
-
-    /* TEXT */
-
-    if(tool === 'text'){
-
-      const w =
-        screenToWorld(
-          raw.x,
-          raw.y
-        );
-
-      const text =
-        prompt(
-          'Enter text:'
-        );
-
-      if(text){
-
-        recordBoardState();
-
-        texts.push({
-
-          x:w.x,
-          y:w.y,
-          text:text
-
-        });
-
-        saveEverything();
-
-      }
-
-      render();
-
-    }
-
-  }
-);
-
-/* =========================================================
-   LEFT MOUSE UP
-========================================================= */
-
-window.addEventListener(
-  'mouseup',
-  e=>{
-
-    if(e.button !== 0)
-      return;
-
-    if(dragId !== null){
-
-      /*
-        We already recorded the BEFORE state
-        on mouse down.
-      */
-
-      saveEverything();
-
-    }
-
-    dragId = null;
-
-    render();
-
-  }
-);
-
-/* =========================================================
-   ZOOM
-========================================================= */
-
-svg.addEventListener(
-  'wheel',
-  e=>{
-
-    e.preventDefault();
-
-    ensureOrigin();
-
-    const mouse =
-      svgPoint(e);
-
-    const before =
-      screenToWorld(
-        mouse.x,
-        mouse.y
-      );
-
-    const speed =
-      settings.zoomSpeed /
-      100;
-
-    const factor =
-      e.deltaY < 0
-        ? 1+speed
-        : 1/(1+speed);
-
-    camera.zoom *=
-      factor;
-
-    camera.zoom =
-      Math.max(
-        .05,
-        Math.min(
-          50,
-          camera.zoom
-        )
-      );
-
-    const after =
-      screenToWorld(
-        mouse.x,
-        mouse.y
-      );
-
-    camera.x +=
-      before.x-after.x;
-
-    camera.y +=
-      before.y-after.y;
-
-    saveEverything();
-
-    render();
-
-  },
-  {
-    passive:false
-  }
-);
-
-/* =========================================================
-   POLYGON EDITING
-========================================================= */
-
-function findPolygonAt(x,y){
-
-  for(
-    let i=shapes.length-1;
-    i>=0;
-    i--
-  ){
-
-    const s =
-      shapes[i];
-
-    if(
-      s.type !== 'polygon'
-    )
-      continue;
-
-    const pts =
-      s.pts
-        .map(byId)
-        .filter(Boolean);
-
-    if(
-      pointInPolygon(
-        x,
-        y,
-        pts
-      )
-    ){
-
-      return s;
-
-    }
-
-  }
-
-  return null;
-}
-
-function pointInPolygon(
-  x,
-  y,
-  pts
-){
-
-  let inside = false;
-
-  for(
-    let i=0,
-        j=pts.length-1;
-
-    i<pts.length;
-
-    j=i++
-  ){
-
-    const a =
-      worldToScreen(
-        pts[i].x,
-        pts[i].y
-      );
-
-    const b =
-      worldToScreen(
-        pts[j].x,
-        pts[j].y
-      );
-
-    const intersect =
-      ((a.y>y)!=(b.y>y)) &&
-      (
-        x <
-        (b.x-a.x) *
-        (y-a.y) /
-        (b.y-a.y) +
-        a.x
-      );
-
-    if(intersect)
-      inside=!inside;
-
-  }
-
-  return inside;
-}
-
-function showPolygonMenu(x,y){
-
-  const wrap =
-    document.getElementById(
-      'canvas-wrap'
-    );
-
-  const rect =
-    wrap.getBoundingClientRect();
-
-  polygonMenu.style.left =
-    (x-rect.left+8)+'px';
-
-  polygonMenu.style.top =
-    (y-rect.top+8)+'px';
-
-  polygonMenu.style.display =
-    'block';
-
-}
-
-function hidePolygonMenu(){
-
-  polygonMenu.style.display =
-    'none';
-
-  selectedPolygon =
-    null;
-
-}
-
-function updateTransparencyUI(){
-
-  if(!selectedPolygon)
-    return;
-
-  if(
-    selectedPolygon.transparency ===
-    undefined
-  ){
-
-    selectedPolygon.transparency =
-      18;
-
-  }
-
-  transparencySlider.value =
-    selectedPolygon.transparency;
-
-  transparencyValue.textContent =
-    selectedPolygon.transparency +
-    '%';
-
-}
-
-/* =========================================================
-   POLYGON COLOR
-========================================================= */
-
-document
-  .querySelectorAll(
-    '.color-choice'
-  )
-  .forEach(choice=>{
-
-    choice.addEventListener(
-      'click',
-      ()=>{
-
-        if(!selectedPolygon)
-          return;
-
-        /*
-          Record BEFORE changing color.
-        */
-
-        recordBoardState();
-
-        selectedPolygon.color =
-          choice.dataset.color;
-
-        saveEverything();
-
-        render();
-
-        showToast(
-          'Polygon color changed'
-        );
-
-        /*
-          Keep menu open so multiple edits
-          can be made naturally.
-        */
-
-        updateTransparencyUI();
-
-      }
-    );
-
-  });
-
-/* =========================================================
-   POLYGON TRANSPARENCY
-========================================================= */
-
-let transparencyUndoStarted = false;
-
-transparencySlider.addEventListener(
-  'pointerdown',
-  ()=>{
-
-    transparencyUndoStarted = false;
-
-  }
-);
-
-transparencySlider.addEventListener(
-  'input',
-  ()=>{
-
-    if(!selectedPolygon)
-      return;
-
-    if(!transparencyUndoStarted){
-
-      recordBoardState();
-
-      transparencyUndoStarted = true;
-
-    }
-
-    selectedPolygon.transparency =
-      Number(
-        transparencySlider.value
-      );
-
-    transparencyValue.textContent =
-      selectedPolygon.transparency +
-      '%';
-
-    saveEverything();
-
-    render();
-
-  }
-);
-
-transparencySlider.addEventListener(
-  'change',
-  ()=>{
-
-    transparencyUndoStarted = false;
-
-  }
-);
-
-/* =========================================================
-   DELETE
-========================================================= */
-
-function shapeUsesPoint(
-  shape,
-  id
-){
-
-  const ids = [];
-
-  if(shape.a !== undefined)
-    ids.push(shape.a);
-
-  if(shape.b !== undefined)
-    ids.push(shape.b);
-
-  if(shape.c !== undefined)
-    ids.push(shape.c);
-
-  if(shape.vertex !== undefined)
-    ids.push(shape.vertex);
-
-  if(shape.center !== undefined)
-    ids.push(shape.center);
-
-  if(shape.edge !== undefined)
-    ids.push(shape.edge);
-
-  if(shape.through !== undefined)
-    ids.push(shape.through);
-
-  if(shape.point !== undefined)
-    ids.push(shape.point);
-
-  if(shape.pts)
-    ids.push(...shape.pts);
-
-  return ids.includes(id);
-}
-
-function deleteAt(x,y){
-
-  const p =
-    findNearPoint(
-      x,
-      y,
-      12,
-      null
-    );
-
-  if(p){
-
-    recordBoardState();
-
-    shapes =
-      shapes.filter(
-        s=>
-          !shapeUsesPoint(
-            s,
-            p.id
-          )
-      );
-
-    points =
-      points.filter(
-        q=>
-          q.id !== p.id
-      );
-
-    hoverId = null;
-
-    selectedPolygon = null;
-
-    saveEverything();
-
-    render();
-
-    showToast(
-      'Object deleted'
-    );
-
-    return;
-
-  }
-
-  const polygon =
-    findPolygonAt(
-      x,
-      y
-    );
-
-  if(polygon){
-
-    recordBoardState();
-
-    shapes =
-      shapes.filter(
-        s=>s !== polygon
-      );
-
-    selectedPolygon = null;
-
-    hidePolygonMenu();
-
-    saveEverything();
-
-    render();
-
-    showToast(
-      'Polygon deleted'
-    );
-
-    return;
-
-  }
-
-  showToast(
-    'Nothing to delete here'
-  );
-
-}
-
-/* =========================================================
-   GRID
-========================================================= */
-
-function getAxisLabelStep(){
-
-  const pixelsPerUnit =
-    40 * camera.zoom;
-
-  const desiredPixels =
-    55;
-
-  const rawStep =
-    desiredPixels /
-    pixelsPerUnit;
-
-  if(rawStep <= 1)
-    return 1;
-
-  const exponent =
-    Math.floor(
-      Math.log10(rawStep)
-    );
-
-  const base =
-    Math.pow(
-      10,
-      exponent
-    );
-
-  const normalized =
-    rawStep/base;
-
-  let nice;
-
-  if(normalized <= 1)
-    nice = 1;
-
-  else if(normalized <= 2)
-    nice = 2;
-
-  else if(normalized <= 5)
-    nice = 5;
-
-  else
-    nice = 10;
-
-  return nice * base;
-}
-
-function drawGridAndAxes(){
-
-  const rect =
-    svg.getBoundingClientRect();
-
-  const group =
-    el('g',{});
-
-  if(
-    !settings.showGrid &&
-    !settings.showAxes
-  ){
-
-    return group;
-
-  }
-
-  const topLeft =
-    screenToWorld(
-      0,
-      0
-    );
-
-  const bottomRight =
-    screenToWorld(
-      rect.width,
-      rect.height
-    );
-
-  const spacing =
-    settings.gridSpacing;
-
-  /* GRID */
-
-  if(settings.showGrid){
-
-    const minX =
-      Math.floor(
-        topLeft.x/spacing
-      )-1;
-
-    const maxX =
-      Math.ceil(
-        bottomRight.x/spacing
-      )+1;
-
-    const minY =
-      Math.floor(
-        bottomRight.y/spacing
-      )-1;
-
-    const maxY =
-      Math.ceil(
-        topLeft.y/spacing
-      )+1;
-
-    for(
-      let i=minX;
-      i<=maxX;
-      i++
-    ){
-
-      const wx =
-        i*spacing;
-
-      const s =
-        worldToScreen(
-          wx,
-          0
-        );
-
-      const isAxis =
-        Math.abs(wx) <
-        spacing/100;
-
-      group.appendChild(
-        el(
-          'line',
-          {
-            x1:s.x,
-            y1:0,
-            x2:s.x,
-            y2:rect.height,
-            class:
-              isAxis &&
-              settings.showAxes
-                ? 'axis-line'
-                : 'grid-line'
-          }
-        )
-      );
-
-    }
-
-    for(
-      let i=minY;
-      i<=maxY;
-      i++
-    ){
-
-      const wy =
-        i*spacing;
-
-      const s =
-        worldToScreen(
-          0,
-          wy
-        );
-
-      const isAxis =
-        Math.abs(wy) <
-        spacing/100;
-
-      group.appendChild(
-        el(
-          'line',
-          {
-            x1:0,
-            y1:s.y,
-            x2:rect.width,
-            y2:s.y,
-            class:
-              isAxis &&
-              settings.showAxes
-                ? 'axis-line'
-                : 'grid-line'
-          }
-        )
-      );
-
-    }
-
-  }
-
-  /* AXIS LABELS */
-
-  if(settings.showAxes){
-
-    const labelStep =
-      getAxisLabelStep();
-
-    const minX =
-      Math.floor(
-        topLeft.x/labelStep
-      ) *
-      labelStep;
-
-    const maxX =
-      Math.ceil(
-        bottomRight.x/labelStep
-      ) *
-      labelStep;
-
-    const minY =
-      Math.floor(
-        bottomRight.y/labelStep
-      ) *
-      labelStep;
-
-    const maxY =
-      Math.ceil(
-        topLeft.y/labelStep
-      ) *
-      labelStep;
-
-    /* X */
-
-    for(
-      let x=minX;
-      x<=maxX;
-      x+=labelStep
-    ){
-
-      if(
-        Math.abs(x) <
-        labelStep/100000
-      )
-        continue;
-
-      const s =
-        worldToScreen(
-          x,
-          0
-        );
-
-      if(
-        s.x<0 ||
-        s.x>rect.width
-      )
-        continue;
-
-      const t =
-        el(
-          'text',
-          {
-            class:'axis-label',
-
-            x:s.x,
-
-            y:
-              Math.min(
-                Math.max(
-                  worldToScreen(
-                    0,
-                    0
-                  ).y+14,
-                  12
-                ),
-                rect.height-4
-              ),
-
-            'text-anchor':
-              'middle'
-          }
-        );
-
-      t.textContent =
-        formatNumber(x);
-
-      group.appendChild(t);
-
-    }
-
-    /* Y */
-
-    for(
-      let y=minY;
-      y<=maxY;
-      y+=labelStep
-    ){
-
-      if(
-        Math.abs(y) <
-        labelStep/100000
-      )
-        continue;
-
-      const s =
-        worldToScreen(
-          0,
-          y
-        );
-
-      if(
-        s.y<0 ||
-        s.y>rect.height
-      )
-        continue;
-
-      const t =
-        el(
-          'text',
-          {
-            class:'axis-label',
-
-            x:
-              Math.min(
-                Math.max(
-                  worldToScreen(
-                    0,
-                    0
-                  ).x-8,
-                  20
-                ),
-                rect.width-4
-              ),
-
-            y:s.y+4,
-
-            'text-anchor':
-              'end'
-          }
-        );
-
-      t.textContent =
-        formatNumber(y);
-
-      group.appendChild(t);
-
-    }
-
-    const zero =
-      worldToScreen(
-        0,
-        0
-      );
-
-    const o =
-      el(
-        'text',
-        {
-          class:'axis-label',
-          x:zero.x-8,
-          y:zero.y+14,
-          'text-anchor':'end'
-        }
-      );
-
-    o.textContent =
-      '0';
-
-    group.appendChild(o);
-
-  }
-
-  return group;
-}
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function render(){
-
-  const rect =
-    ensureOrigin();
-
-  svg.innerHTML = '';
-
-  svg.appendChild(
-    drawGridAndAxes()
-  );
-
-  /* SHAPES */
-
-  for(const s of shapes){
-
-    /* LINE */
-
-    if(s.type === 'line'){
-
-      const a =
-        byId(s.a);
-
-      const b =
-        byId(s.b);
-
-      if(!a || !b)
-        continue;
-
-      const A =
-        worldToScreen(
-          a.x,
-          a.y
-        );
-
-      const B =
-        worldToScreen(
-          b.x,
-          b.y
-        );
-
-      svg.appendChild(
-        el(
-          'line',
-          {
-            class:'seg',
-            x1:A.x,
-            y1:A.y,
-            x2:B.x,
-            y2:B.y
-          }
-        )
-      );
-
-      if(settings.showMeasurements){
-
-        const label =
-          el(
-            'text',
-            {
-              class:'measure-label',
-
-              x:
-                (A.x+B.x)/2+8,
-
-              y:
-                (A.y+B.y)/2-8
-            }
-          );
-
-        label.textContent =
-          distance(a,b)
-            .toFixed(2)+
-          'u';
-
-        svg.appendChild(
-          label
-        );
-
-      }
-
-    }
-
-    /* CIRCLE */
-
-    else if(
-      s.type === 'circle'
-    ){
-
-      const c =
-        byId(s.center);
-
-      const edge =
-        byId(s.edge);
-
-      if(!c || !edge)
-        continue;
-
-      const C =
-        worldToScreen(
-          c.x,
-          c.y
-        );
-
-      const E =
-        worldToScreen(
-          edge.x,
-          edge.y
-        );
-
-      const radius =
-        Math.hypot(
-          C.x-E.x,
-          C.y-E.y
-        );
-
-      svg.appendChild(
-        el(
-          'circle',
-          {
-            class:'circ',
-
-            cx:C.x,
-            cy:C.y,
-            r:radius
-          }
-        )
-      );
-
-      svg.appendChild(
-        el(
-          'line',
-          {
-            class:'ghost',
-
-            x1:C.x,
-            y1:C.y,
-
-            x2:E.x,
-            y2:E.y
-          }
-        )
-      );
-
-      if(settings.showMeasurements){
-
-        const label =
-          el(
-            'text',
-            {
-              class:'measure-label',
-
-              x:C.x+8,
-
-              y:
-                C.y-radius-8
-            }
-          );
-
-        label.textContent =
-          'r = '+
-          distance(c,edge)
-            .toFixed(2)+
-          'u';
-
-        svg.appendChild(
-          label
-        );
-
-      }
-
-    }
-
-    /* POLYGON */
-
-    else if(
-      s.type === 'polygon'
-    ){
-
-      const pts =
-        s.pts
-          .map(byId)
-          .filter(Boolean);
-
-      if(pts.length<2)
-        continue;
-
-      const attr =
-        pts
-          .map(p=>{
-
-            const P =
-              worldToScreen(
-                p.x,
-                p.y
-              );
-
-            return `${P.x},${P.y}`;
-
-          })
-          .join(' ');
-
-      const transparency =
-        s.transparency ===
-        undefined
-          ? 18
-          : s.transparency;
-
-      const fillAlpha =
-        1 -
-        transparency/100;
-
-      svg.appendChild(
-        el(
-          'polygon',
-          {
-
-            class:
-              'poly'+
-              (
-                selectedPolygon === s
-                  ? ' selected'
-                  : ''
-              ),
-
-            points:attr,
-
-            fill:
-              hexToRgba(
-                s.color ||
-                '#5B9BFF',
-
-                fillAlpha
-              ),
-
-            stroke:
-              s.color ||
-              'var(--text)'
-
-          }
-        )
-      );
-
-    }
-
-    /* ANGLE */
-
-    else if(
-      s.type === 'angle'
-    ){
-
-      const a =
-        byId(s.a);
-
-      const v =
-        byId(s.vertex);
-
-      const c =
-        byId(s.c);
-
-      if(!a || !v || !c)
-        continue;
-
-      const A =
-        worldToScreen(
-          a.x,
-          a.y
-        );
-
-      const V =
-        worldToScreen(
-          v.x,
-          v.y
-        );
-
-      const C =
-        worldToScreen(
-          c.x,
-          c.y
-        );
-
-      svg.appendChild(
-        el(
-          'line',
-          {
-            class:'ghost',
-
-            x1:V.x,
-            y1:V.y,
-
-            x2:A.x,
-            y2:A.y
-          }
-        )
-      );
-
-      svg.appendChild(
-        el(
-          'line',
-          {
-            class:'ghost',
-
-            x1:V.x,
-            y1:V.y,
-
-            x2:C.x,
-            y2:C.y
-          }
-        )
-      );
-
-      const deg =
-        angleBetween(
-          a,
-          v,
-          c
-        );
-
-      const r = 28;
-
-      const start =
-        Math.atan2(
-          A.y-V.y,
-          A.x-V.x
-        );
-
-      const end =
-        Math.atan2(
-          C.y-V.y,
-          C.x-V.x
-        );
-
-      let sweep =
-        end-start;
-
-      while(
-        sweep<0
-      )
-        sweep +=
-          Math.PI*2;
-
-      const large =
-        sweep>Math.PI
-          ? 1
-          : 0;
-
-      const sx =
-        V.x+
-        r*Math.cos(start);
-
-      const sy =
-        V.y+
-        r*Math.sin(start);
-
-      const ex =
-        V.x+
-        r*Math.cos(end);
-
-      const ey =
-        V.y+
-        r*Math.sin(end);
-
-      svg.appendChild(
-        el(
-          'path',
-          {
-            class:'angle-arc',
-
-            d:
-              `M ${sx} ${sy}
-               A ${r} ${r}
-               0 ${large} 1
-               ${ex} ${ey}`
-          }
-        )
-      );
-
-      const mid =
-        start+
-        sweep/2;
-
-      const label =
-        el(
-          'text',
-          {
-            class:'angle-label',
-
-            x:
-              V.x+
-              (r+18)*
-              Math.cos(mid),
-
-            y:
-              V.y+
-              (r+18)*
-              Math.sin(mid),
-
-            'text-anchor':
-              'middle'
-          }
-        );
-
-      label.textContent =
-        deg.toFixed(1)+
-        '°';
-
-      svg.appendChild(
-        label
-      );
-
-    }
-
-    /* MIDPOINT */
-
-    else if(
-      s.type === 'midpoint'
-    ){
-
-      const p =
-        byId(s.point);
-
-      if(!p)
-        continue;
-
-      const P =
-        worldToScreen(
-          p.x,
-          p.y
-        );
-
-      svg.appendChild(
-        el(
-          'circle',
-          {
-            class:'snap-ring',
-
-            cx:P.x,
-            cy:P.y,
-            r:8
-          }
-        )
-      );
-
-    }
-
-    /* PERPENDICULAR */
-
-    else if(
-      s.type === 'perpendicular'
-    ){
-
-      const a =
-        byId(s.a);
-
-      const b =
-        byId(s.b);
-
-      const through =
-        byId(s.through);
-
-      if(
-        !a ||
-        !b ||
-        !through
-      )
-        continue;
-
-      const dx =
-        b.x-a.x;
-
-      const dy =
-        b.y-a.y;
-
-      const len =
-        Math.hypot(
-          dx,
-          dy
-        );
-
-      if(len===0)
-        continue;
-
-      const px =
-        -dy/len;
-
-      const py =
-        dx/len;
-
-      const length =
-        100;
-
-      const p1 = {
-
-        x:
-          through.x+
-          px*length,
-
-        y:
-          through.y+
-          py*length
-
-      };
-
-      const p2 = {
-
-        x:
-          through.x-
-          px*length,
-
-        y:
-          through.y-
-          py*length
-
-      };
-
-      const A =
-        worldToScreen(
-          p1.x,
-          p1.y
-        );
-
-      const B =
-        worldToScreen(
-          p2.x,
-          p2.y
-        );
-
-      svg.appendChild(
-        el(
-          'line',
-          {
-            class:'seg',
-
-            x1:A.x,
-            y1:A.y,
-
-            x2:B.x,
-            y2:B.y
-          }
-        )
-      );
-
-    }
-
-    /* DISTANCE */
-
-    else if(
-      s.type === 'distance'
-    ){
-
-      const a =
-        byId(s.a);
-
-      const b =
-        byId(s.b);
-
-      if(!a || !b)
-        continue;
-
-      const A =
-        worldToScreen(
-          a.x,
-          a.y
-        );
-
-      const B =
-        worldToScreen(
-          b.x,
-          b.y
-        );
-
-      svg.appendChild(
-        el(
-          'line',
-          {
-            class:'ghost',
-
-            x1:A.x,
-            y1:A.y,
-
-            x2:B.x,
-            y2:B.y
-          }
-        )
-      );
-
-      const label =
-        el(
-          'text',
-          {
-            class:'measure-label',
-
-            x:
-              (A.x+B.x)/2,
-
-            y:
-              (A.y+B.y)/2-9,
-
-            'text-anchor':
-              'middle'
-          }
-        );
-
-      label.textContent =
-        distance(a,b)
-          .toFixed(2)+
-        'u';
-
-      svg.appendChild(
-        label
-      );
-
-    }
-
-  }
-
-  /* PENDING */
-
-  if(pending.length){
-
-    for(
-      let i=0;
-      i<pending.length-1;
-      i++
-    ){
-
-      const a =
-        worldToScreen(
-          pending[i].x,
-          pending[i].y
-        );
-
-      const b =
-        worldToScreen(
-          pending[i+1].x,
-          pending[i+1].y
-        );
-
-      svg.appendChild(
-        el(
-          'line',
-          {
-            class:'ghost',
-
-            x1:a.x,
-            y1:a.y,
-
-            x2:b.x,
-            y2:b.y
-          }
-        )
-      );
-
-    }
-
-  }
-
-  /* TEXT */
-
-  for(const t of texts){
-
-    const p =
-      worldToScreen(
-        t.x,
-        t.y
-      );
-
-    const textEl =
-      el(
-        'text',
-        {
-          class:'text-object',
-
-          x:p.x,
-          y:p.y
-        }
-      );
-
-    textEl.textContent =
-      t.text;
-
-    svg.appendChild(
-      textEl
-    );
-
-  }
-
-  /* POINTS */
-
-  if(settings.showPoints){
-
-    for(const p of points){
-
-      const P =
-        worldToScreen(
-          p.x,
-          p.y
-        );
-
-      const hover =
-        p.id === hoverId ||
-        p.id === dragId;
-
-      svg.appendChild(
-        el(
-          'circle',
-          {
-
-            class:
-              'pt'+
-              (
-                hover
-                  ? ' hover'
-                  : ''
-              )+
-              (
-                p.id === dragId
-                  ? ' dragging'
-                  : ''
-              ),
-
-            cx:P.x,
-            cy:P.y,
-
-            r:
-              hover
-                ? 6
-                : 5
-
-          }
-        )
-      );
-
-      if(settings.showLabels){
-
-        const label =
-          el(
-            'text',
-            {
-              class:'pt-label',
-
-              x:
-                P.x+9,
-
-              y:
-                P.y-9
-            }
-          );
-
-        label.textContent =
-          pointName(
-            p.id
-          );
-
-        svg.appendChild(
-          label
-        );
-
-      }
-
-    }
-
-  }
-
-  /* SNAP INDICATOR */
-
-  if(
-    !isPanning &&
-    mouseInside &&
-    currentSnap &&
-    tool !== 'select'
-  ){
-
-    svg.appendChild(
-      el(
-        'circle',
-        {
-
-          class:
-            'snap-ring'+
-            (
-              currentSnap.kind ===
-              'point'
-                ? ' point-snap'
-                : ''
-            ),
-
-          cx:
-            currentSnap.x,
-
-          cy:
-            currentSnap.y,
-
-          r:
-            currentSnap.kind ===
-            'point'
-              ? 10
-              : 7
-
-        }
-      )
-    );
-
-  }
-
-}
-
-/* =========================================================
-   TRANSPARENCY UI
-========================================================= */
-
-function updateTransparencyUI(){
-
-  if(!selectedPolygon)
-    return;
-
-  if(
-    selectedPolygon.transparency ===
-    undefined
-  ){
-
-    selectedPolygon.transparency =
-      18;
-
-  }
-
-  transparencySlider.value =
-    selectedPolygon.transparency;
-
-  transparencyValue.textContent =
-    selectedPolygon.transparency+
-    '%';
-
-}
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function el(
-  tag,
-  attrs
-){
-
-  const e =
-    document.createElementNS(
-      NS,
-      tag
-    );
-
-  for(
-    const key in attrs
-  ){
-
-    e.setAttribute(
-      key,
-      attrs[key]
-    );
-
-  }
-
-  return e;
-}
-
-function formatNumber(n){
-
-  if(
-    Math.abs(n)<.000001
-  )
-    n=0;
-
-  return Number(
-    n.toFixed(6)
-  ).toString();
-
-}
-
-function hexToRgba(
-  hex,
-  alpha
-){
-
-  hex =
-    hex.replace(
-      '#',
-      ''
-    );
-
-  const r =
-    parseInt(
-      hex.substring(0,2),
-      16
-    );
-
-  const g =
-    parseInt(
-      hex.substring(2,4),
-      16
-    );
-
-  const b =
-    parseInt(
-      hex.substring(4,6),
-      16
-    );
-
-  return `
-    rgba(
-      ${r},
-      ${g},
-      ${b},
-      ${alpha}
-    )
-  `;
-
-}
-
-function showToast(message){
-
-  toast.textContent =
-    message;
-
-  toast.classList.add(
-    'show'
-  );
-
-  clearTimeout(
-    toastTimer
-  );
-
-  toastTimer =
-    setTimeout(
-      ()=>{
-        toast.classList.remove(
-          'show'
-        );
-      },
-      1600
-    );
-
-}
-
-/* =========================================================
-   KEYBOARD
-========================================================= */
-
-window.addEventListener(
-  'keydown',
-  e=>{
-
-    const tag =
-      document.activeElement?.tagName;
-
-    /*
-      Never steal keyboard input from
-      text/number/select fields.
-    */
-
-    if(
-      tag === 'INPUT' ||
-      tag === 'SELECT' ||
-      tag === 'TEXTAREA'
-    ){
-
-      return;
-
-    }
-
-    /* CTRL + Z */
-
-    if(
-      e.ctrlKey &&
-      !e.shiftKey &&
-      e.key.toLowerCase() === 'z'
-    ){
-
-      e.preventDefault();
-
-      undo();
-
-      return;
-
-    }
-
-    /* ESC */
-
-    if(
-      e.key === 'Escape'
-    ){
-
-      pending = [];
-
-      hidePolygonMenu();
-
-      settingsOverlay
-        .classList
-        .remove('open');
-
-      render();
-
-      return;
-
-    }
-
-    /*
-      T = TEXT
-      Fixed and not bindable.
-    */
-
-    if(
-      !e.ctrlKey &&
-      !e.altKey &&
-      e.key.toLowerCase() === 't'
-    ){
-
-      e.preventDefault();
-
-      setTool('text');
-
-      return;
-
-    }
-
-    /*
-      X = DELETE
-      Fixed and not bindable.
-    */
-
-    if(
-      !e.ctrlKey &&
-      !e.altKey &&
-      e.key.toLowerCase() === 'x'
-    ){
-
-      e.preventDefault();
-
-      setTool('delete');
-
-      return;
-
-    }
-
-    /*
-      CUSTOM 1-9 SHORTCUTS
-
-      One physical key can only activate
-      one mode because duplicate bindings
-      are rejected when edited.
-    */
-
-    if(
-      e.ctrlKey ||
-      e.altKey ||
-      e.metaKey
-    ){
-
-      return;
-
-    }
-
-    const key =
-      e.key.toUpperCase();
-
-    for(
-      const slot in shortcuts
-    ){
-
-      if(
-        shortcuts[slot] === key
-      ){
-
-        const mode =
-          defaultShortcuts[slot];
-
-        e.preventDefault();
-
-        setTool(mode);
-
-        return;
-
-      }
-
-    }
-
-  }
-);
-
-/* =========================================================
-   SHARE / SCREENSHOT
-========================================================= */
-
-document
-  .getElementById('share-btn')
-  .addEventListener(
-    'click',
-    shareBoard
-  );
-
-async function shareBoard(){
-
-  try{
-
-    /*
-      Serialize the SVG exactly as currently
-      displayed.
-    */
-
-    const cloneSvg =
-      svg.cloneNode(true);
-
-    /*
-      Make SVG self-contained.
-    */
-
-    cloneSvg.setAttribute(
-      'xmlns',
-      'http://www.w3.org/2000/svg'
-    );
-
-    cloneSvg.setAttribute(
-      'xmlns:xlink',
-      'http://www.w3.org/1999/xlink'
-    );
-
-    /*
-      Use the current background color.
-    */
-
-    const bg =
-      getComputedStyle(
-        document.body
-      )
-      .getPropertyValue(
-        '--bg'
-      )
-      .trim();
-
-    const rect =
-      svg.getBoundingClientRect();
-
-    const width =
-      Math.max(
-        1,
-        Math.round(rect.width)
-      );
-
-    const height =
-      Math.max(
-        1,
-        Math.round(rect.height)
-      );
-
-    cloneSvg.setAttribute(
-      'width',
-      width
-    );
-
-    cloneSvg.setAttribute(
-      'height',
-      height
-    );
-
-    /*
-      Background rectangle.
-    */
-
-    const background =
-      document.createElementNS(
-        NS,
-        'rect'
-      );
-
-    background.setAttribute(
-      'width',
-      '100%'
-    );
-
-    background.setAttribute(
-      'height',
-      '100%'
-    );
-
-    background.setAttribute(
-      'fill',
-      bg
-    );
-
-    cloneSvg.insertBefore(
-      background,
-      cloneSvg.firstChild
-    );
-
-    const serializer =
-      new XMLSerializer();
-
-    const svgString =
-      serializer.serializeToString(
-        cloneSvg
-      );
-
-    const blob =
-      new Blob(
-        [
-          svgString
-        ],
-        {
-          type:
-            'image/svg+xml;charset=utf-8'
-        }
-      );
-
-    const url =
-      URL.createObjectURL(
-        blob
-      );
-
-    const img =
-      new Image();
-
-    img.onload =
-      ()=>{
-
-        const canvas =
-          document.createElement(
-            'canvas'
-          );
-
-        canvas.width =
-          width*2;
-
-        canvas.height =
-          height*2;
-
-        const ctx =
-          canvas.getContext(
-            '2d'
-          );
-
-        ctx.scale(
-          2,
-          2
-        );
-
-        ctx.drawImage(
-          img,
-          0,
-          0,
-          width,
-          height
-        );
-
-        URL.revokeObjectURL(
-          url
-        );
-
-        canvas.toBlob(
-          png=>{
-
-            if(!png){
-
-              showToast(
-                'Screenshot failed'
-              );
-
-              return;
-
-            }
-
-            const downloadUrl =
-              URL.createObjectURL(
-                png
-              );
-
-            const a =
-              document.createElement(
-                'a'
-              );
-
-            a.href =
-              downloadUrl;
-
-            a.download =
-              'GeoBoard.png';
-
-            document.body.appendChild(
-              a
+        e.target.tagName !== "BUTTON" &&
+        e.target.id !== "cookie" &&
+        e.target.id !== "toilet"
+    ) {
+
+        if(Math.random() < .25) {
+
+            floatText(
+                "BRO CLICKED AIR 💀",
+                e.clientX,
+                e.clientY
             );
 
-            a.click();
+        }
 
-            a.remove();
+    }
 
-            setTimeout(
-              ()=>{
-                URL.revokeObjectURL(
-                  downloadUrl
-                );
-              },
-              1000
-            );
+});
 
-            showToast(
-              'Screenshot saved'
-            );
 
-          },
-          'image/png'
-        );
+/* =====================================
+   STARTUP
+===================================== */
 
-      };
+setTimeout(() => {
 
-    img.onerror =
-      ()=>{
+    notify("🧠 WELCOME TO THE BRAINROT ZONE");
 
-        URL.revokeObjectURL(
-          url
-        );
+}, 500);
 
-        showToast(
-          'Screenshot failed'
-        );
+setTimeout(() => {
 
-      };
+    notify("⚠️ THERE IS NO ESCAPE");
 
-    img.src =
-      url;
+}, 1500);
 
-  }catch(error){
+setTimeout(() => {
 
-    console.error(
-      error
-    );
+    notify("🍪 CLICK THE COOKIE");
 
-    showToast(
-      'Screenshot failed'
-    );
+}, 2500);
 
-  }
+updateUI();
 
-}
-
-/* =========================================================
-   RESIZE
-========================================================= */
-
-window.addEventListener(
-  'resize',
-  ()=>{
-
-    origin = null;
-
-    render();
-
-  }
-);
-
-/* =========================================================
-   SAVE BEFORE LEAVING
-========================================================= */
-
-window.addEventListener(
-  'beforeunload',
-  ()=>{
-    saveEverything();
-  }
-);
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-const hadSavedData =
-  loadEverything();
-
-document.body.classList.toggle(
-  'light',
-  !settings.dark
-);
-
-syncSettingsUI();
-
-setTool(
-  tool || 'select'
-);
-
-if(!hadSavedData){
-
-  initializeUndoHistory();
-
-}else{
-
-  /*
-    Existing saved board becomes the first
-    undo state after loading.
-  */
-
-  initializeUndoHistory();
-
-}
-
-render();
-
-})();
 </script>
 
 </body>
