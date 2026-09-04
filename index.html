@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Questie — your daily quest</title>
+<title>Questie</title>
 <meta name="theme-color" content="#11131b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,6 +82,8 @@
     background:none; border:none; color:var(--lantern); font-family:inherit;
     font-size:11px; cursor:pointer; padding:2px;
   }
+  .account-links{ display:flex; align-items:center; gap:12px; }
+  .account-links button.muted{ color: var(--parchment-dim); }
 
   /* ---------- login card ---------- */
   .login-card{
@@ -123,6 +125,48 @@
   .login-toggle button{
     background:none; border:none; color:var(--lantern); font-family:inherit;
     font-size:13px; cursor:pointer; text-decoration:underline; padding:0;
+  }
+
+  /* ---------- settings ---------- */
+  .settings-row{
+    display:flex; flex-direction:column; gap:8px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .settings-row:last-of-type{ border-bottom:none; }
+  .settings-row-top{
+    display:flex; align-items:center; justify-content:space-between;
+    gap: 10px;
+  }
+  .settings-label{ font-size:12px; color:var(--parchment-dim); }
+  .settings-value{ font-size:15px; font-weight:600; color:var(--parchment); }
+  .settings-row-top button{
+    background:none; border:none; color:var(--lantern); font-family:'IBM Plex Mono', monospace;
+    font-size:12px; cursor:pointer; padding:2px;
+  }
+  .back-link{
+    background:none; border:none; color:var(--parchment-dim); font-family:'IBM Plex Mono', monospace;
+    font-size:12px; cursor:pointer; padding:0; text-align:left;
+  }
+
+  /* ---------- leaderboard ---------- */
+  .leaderboard-list{ display:flex; flex-direction:column; }
+  .leaderboard-row{
+    display:flex; align-items:center; gap:12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .leaderboard-row:last-child{ border-bottom:none; }
+  .leaderboard-rank{
+    font-family:'IBM Plex Mono', monospace; font-size:14px; color:var(--parchment-dim);
+    width:22px; flex-shrink:0;
+  }
+  .leaderboard-row.me .leaderboard-rank,
+  .leaderboard-row.me .leaderboard-name{ color: var(--lantern); }
+  .leaderboard-name{ flex:1; font-weight:600; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .leaderboard-level{
+    font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--parchment-dim);
+    flex-shrink:0;
   }
 
   /* ---------- stat blocks ---------- */
@@ -287,11 +331,15 @@
       <h2 id="loginHeading">Log in</h2>
       <p class="sub" id="loginSub">Log in with your email to load your quests, level and streak on this device.</p>
 
-      <div class="field">
+      <div class="field" id="emailField">
         <label for="emailInput">Email</label>
         <input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com">
       </div>
-      <div class="field">
+      <div class="field hidden" id="usernameField">
+        <label for="usernameInput">Username</label>
+        <input id="usernameInput" type="text" autocomplete="off" placeholder="letters, numbers, . and _ — min 4">
+      </div>
+      <div class="field" id="passwordField">
         <label for="passwordInput">Password</label>
         <input id="passwordInput" type="password" autocomplete="current-password" placeholder="At least 6 characters">
       </div>
@@ -301,7 +349,7 @@
 
       <button class="btn" id="loginSubmitBtn">Log in</button>
 
-      <div class="login-toggle">
+      <div class="login-toggle" id="loginToggleRow">
         <span id="toggleText">No account yet?</span>
         <button id="toggleModeBtn">Create one</button>
       </div>
@@ -312,8 +360,12 @@
   <div id="appView" class="hidden">
 
     <div class="account-row">
-      <span id="accountEmail"></span>
-      <button id="signOutBtn">sign out</button>
+      <span id="accountUsername"></span>
+      <div class="account-links">
+        <button id="leaderboardBtn" class="muted">leaderboard</button>
+        <button id="settingsBtn" class="muted">settings</button>
+        <button id="signOutBtn">sign out</button>
+      </div>
     </div>
 
     <div class="stat-row">
@@ -345,6 +397,65 @@
     </div>
 
     <footer>One small quest a day.</footer>
+  </div>
+
+  <!-- ===== SETTINGS VIEW ===== -->
+  <div id="settingsView" class="hidden">
+    <div class="login-card">
+      <button class="back-link" id="settingsBackBtn">&larr; back to quest</button>
+      <h2>Account settings</h2>
+
+      <div class="settings-row">
+        <div class="settings-row-top">
+          <div>
+            <div class="settings-label">email</div>
+            <div class="settings-value" id="settingsEmail">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-row-top">
+          <div>
+            <div class="settings-label">username</div>
+            <div class="settings-value" id="settingsUsername">—</div>
+          </div>
+          <button id="settingsEditUsernameBtn">change</button>
+        </div>
+        <div id="settingsUsernameCooldown" class="mono-note" style="color:var(--parchment-dim); font-size:12px;"></div>
+
+        <div id="settingsUsernameForm" class="hidden" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="field">
+            <input id="settingsUsernameInput" type="text" autocomplete="off" placeholder="letters, numbers, . and _ — min 4">
+          </div>
+          <div class="login-error" id="settingsUsernameError"></div>
+          <button class="btn" id="settingsUsernameSaveBtn">Save username</button>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-label">change password</div>
+        <div class="field">
+          <input id="settingsNewPassword" type="password" autocomplete="new-password" placeholder="New password (min 6 characters)">
+        </div>
+        <div class="field">
+          <input id="settingsConfirmPassword" type="password" autocomplete="new-password" placeholder="Confirm new password">
+        </div>
+        <div class="login-error" id="settingsPasswordError"></div>
+        <div class="login-note" id="settingsPasswordNote"></div>
+        <button class="btn btn-ghost" id="settingsPasswordSaveBtn">Update password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEADERBOARD VIEW ===== -->
+  <div id="leaderboardView" class="hidden">
+    <div class="login-card">
+      <button class="back-link" id="leaderboardBackBtn">&larr; back to quest</button>
+      <h2>Leaderboard</h2>
+      <p class="sub">The 10 highest levels worldwide.</p>
+      <div class="leaderboard-list" id="leaderboardList"></div>
+    </div>
   </div>
 
 </div>
@@ -422,6 +533,11 @@
   }
   function pad2(n){ return String(n).padStart(2,"0"); }
 
+  /* ---------- username rules ---------- */
+  const USERNAME_RE = /^[A-Za-z0-9._]{4,20}$/;
+  function isValidUsername(u){ return USERNAME_RE.test(u); }
+  const USERNAME_COOLDOWN_DAYS = 7;
+
   /* ---------- leveling ---------- */
   function levelInfo(totalXP){
     let level = 0, remaining = totalXP, needed = 150;
@@ -437,6 +553,8 @@
   const el = {
     loginView: document.getElementById("loginView"),
     appView: document.getElementById("appView"),
+    settingsView: document.getElementById("settingsView"),
+    leaderboardView: document.getElementById("leaderboardView"),
     clock: document.getElementById("clock"),
     level: document.getElementById("levelValue"),
     streak: document.getElementById("streakValue"),
@@ -444,10 +562,17 @@
     xpToGo: document.getElementById("xpToGo"),
     xpFill: document.getElementById("xpFill"),
     card: document.getElementById("questCard"),
-    accountEmail: document.getElementById("accountEmail"),
+    accountUsername: document.getElementById("accountUsername"),
     signOutBtn: document.getElementById("signOutBtn"),
+    leaderboardBtn: document.getElementById("leaderboardBtn"),
+    settingsBtn: document.getElementById("settingsBtn"),
 
+    emailField: document.getElementById("emailField"),
+    usernameField: document.getElementById("usernameField"),
+    passwordField: document.getElementById("passwordField"),
+    loginToggleRow: document.getElementById("loginToggleRow"),
     emailInput: document.getElementById("emailInput"),
+    usernameInput: document.getElementById("usernameInput"),
     passwordInput: document.getElementById("passwordInput"),
     loginError: document.getElementById("loginError"),
     loginNote: document.getElementById("loginNote"),
@@ -456,6 +581,24 @@
     loginSub: document.getElementById("loginSub"),
     toggleText: document.getElementById("toggleText"),
     toggleModeBtn: document.getElementById("toggleModeBtn"),
+
+    settingsBackBtn: document.getElementById("settingsBackBtn"),
+    settingsEmail: document.getElementById("settingsEmail"),
+    settingsUsername: document.getElementById("settingsUsername"),
+    settingsEditUsernameBtn: document.getElementById("settingsEditUsernameBtn"),
+    settingsUsernameCooldown: document.getElementById("settingsUsernameCooldown"),
+    settingsUsernameForm: document.getElementById("settingsUsernameForm"),
+    settingsUsernameInput: document.getElementById("settingsUsernameInput"),
+    settingsUsernameError: document.getElementById("settingsUsernameError"),
+    settingsUsernameSaveBtn: document.getElementById("settingsUsernameSaveBtn"),
+    settingsNewPassword: document.getElementById("settingsNewPassword"),
+    settingsConfirmPassword: document.getElementById("settingsConfirmPassword"),
+    settingsPasswordError: document.getElementById("settingsPasswordError"),
+    settingsPasswordNote: document.getElementById("settingsPasswordNote"),
+    settingsPasswordSaveBtn: document.getElementById("settingsPasswordSaveBtn"),
+
+    leaderboardBackBtn: document.getElementById("leaderboardBackBtn"),
+    leaderboardList: document.getElementById("leaderboardList"),
   };
 
   /* ---------- stars background ---------- */
@@ -474,67 +617,144 @@
   /* =========================================================
      AUTH
      ========================================================= */
-  let mode = "signin"; // or "signup"
+  let mode = "signin"; // "signin" | "signup" | "chooseUsername"
   let currentUser = null;
-  let cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null };
+  let cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null };
+  let profileRowExists = false; // whether a quest_stats row already exists for currentUser
   let tickTimer = null;
 
   function setMode(newMode){
     mode = newMode;
     el.loginError.textContent = "";
     el.loginNote.textContent = "";
+
     if(mode === "signin"){
+      el.emailField.classList.remove("hidden");
+      el.usernameField.classList.add("hidden");
+      el.passwordField.classList.remove("hidden");
+      el.loginToggleRow.classList.remove("hidden");
       el.loginHeading.textContent = "Log in";
       el.loginSub.textContent = "Log in with your email to load your quests, level and streak on this device.";
       el.loginSubmitBtn.textContent = "Log in";
       el.toggleText.textContent = "No account yet?";
       el.toggleModeBtn.textContent = "Create one";
       el.passwordInput.setAttribute("autocomplete", "current-password");
-    } else {
+    } else if(mode === "signup"){
+      el.emailField.classList.remove("hidden");
+      el.usernameField.classList.remove("hidden");
+      el.passwordField.classList.remove("hidden");
+      el.loginToggleRow.classList.remove("hidden");
       el.loginHeading.textContent = "Create your account";
       el.loginSub.textContent = "One account, any device. Your quests, level and streak follow you.";
       el.loginSubmitBtn.textContent = "Create account";
       el.toggleText.textContent = "Already have an account?";
       el.toggleModeBtn.textContent = "Log in";
       el.passwordInput.setAttribute("autocomplete", "new-password");
+    } else if(mode === "chooseUsername"){
+      el.emailField.classList.add("hidden");
+      el.usernameField.classList.remove("hidden");
+      el.passwordField.classList.add("hidden");
+      el.loginToggleRow.classList.add("hidden");
+      el.loginHeading.textContent = "Pick a username";
+      el.loginSub.textContent = "Letters, numbers, . and _ only — at least 4 characters. This is how you'll show up on the leaderboard.";
+      el.loginSubmitBtn.textContent = "Save username";
     }
   }
   el.toggleModeBtn.addEventListener("click", () => setMode(mode === "signin" ? "signup" : "signin"));
 
   el.loginSubmitBtn.addEventListener("click", async () => {
-    const email = el.emailInput.value.trim();
-    const password = el.passwordInput.value;
     el.loginError.textContent = "";
     el.loginNote.textContent = "";
 
-    if(!email || !password){
-      el.loginError.textContent = "Enter both an email and a password.";
+    if(mode === "chooseUsername"){
+      const username = el.usernameInput.value.trim();
+      if(!isValidUsername(username)){
+        el.loginError.textContent = "Username must be 4-20 characters: letters, numbers, . or _ only.";
+        return;
+      }
+      el.loginSubmitBtn.disabled = true;
+      el.loginSubmitBtn.textContent = "Saving…";
+      const err = await claimUsername(username, !profileRowExists);
+      el.loginSubmitBtn.disabled = false;
+      el.loginSubmitBtn.textContent = "Save username";
+      if(err){
+        el.loginError.textContent = (err.code === "23505")
+          ? "That username is already taken. Try another."
+          : "Couldn't save that username. Try another.";
+        return;
+      }
+      profileRowExists = true;
+      enterApp();
       return;
     }
 
-    el.loginSubmitBtn.disabled = true;
-    el.loginSubmitBtn.textContent = "Please wait…";
+    const email = el.emailInput.value.trim();
+    const password = el.passwordInput.value;
 
-    try{
-      if(mode === "signup"){
+    if(mode === "signup"){
+      const username = el.usernameInput.value.trim();
+      if(!isValidUsername(username)){
+        el.loginError.textContent = "Username must be 4-20 characters: letters, numbers, . or _ only.";
+        return;
+      }
+      if(!email || !password){
+        el.loginError.textContent = "Enter an email and a password.";
+        return;
+      }
+
+      el.loginSubmitBtn.disabled = true;
+      el.loginSubmitBtn.textContent = "Please wait…";
+      try{
         const { data, error } = await supabase.auth.signUp({ email, password });
         if(error){ el.loginError.textContent = error.message; return; }
         if(data.session){
-          await onLoggedIn(data.user);
+          currentUser = data.user;
+          const err = await claimUsername(username, true);
+          if(err){
+            profileRowExists = false;
+            setMode("chooseUsername");
+            el.loginError.textContent = (err.code === "23505")
+              ? "That username is already taken. Try another."
+              : "Couldn't save that username. Try another.";
+            return;
+          }
+          profileRowExists = true;
+          await enterApp();
         } else {
           el.loginNote.textContent = "Account created. Check your email to confirm, then log in.";
           setMode("signin");
         }
+      } catch(err){
+        el.loginError.textContent = "Something went wrong. Try again.";
+      } finally {
+        el.loginSubmitBtn.disabled = false;
+        if(mode === "signup") setMode(mode);
+      }
+      return;
+    }
+
+    // signin
+    if(!email || !password){
+      el.loginError.textContent = "Enter both an email and a password.";
+      return;
+    }
+    el.loginSubmitBtn.disabled = true;
+    el.loginSubmitBtn.textContent = "Please wait…";
+    try{
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if(error){ el.loginError.textContent = error.message; return; }
+      currentUser = data.user;
+      await loadUserStats();
+      if(!cachedStats.username){
+        setMode("chooseUsername");
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if(error){ el.loginError.textContent = error.message; return; }
-        await onLoggedIn(data.user);
+        await enterApp();
       }
     } catch(err){
       el.loginError.textContent = "Something went wrong. Try again.";
     } finally {
       el.loginSubmitBtn.disabled = false;
-      setMode(mode);
+      if(mode === "signin") setMode(mode);
     }
   });
 
@@ -543,49 +763,62 @@
     await supabase.auth.signOut();
     currentUser = null;
     el.appView.classList.add("hidden");
+    el.settingsView.classList.add("hidden");
+    el.leaderboardView.classList.add("hidden");
     el.loginView.classList.remove("hidden");
     el.emailInput.value = "";
     el.passwordInput.value = "";
+    el.usernameInput.value = "";
     setMode("signin");
   });
 
-  async function onLoggedIn(user){
-    currentUser = user;
-    el.accountEmail.textContent = user.email;
-    await loadUserStats();
+  async function enterApp(){
+    el.accountUsername.textContent = "@" + cachedStats.username;
     el.loginView.classList.add("hidden");
+    el.settingsView.classList.add("hidden");
+    el.leaderboardView.classList.add("hidden");
     el.appView.classList.remove("hidden");
     tick();
-    tickTimer = setInterval(tick, 15000);
+    if(!tickTimer) tickTimer = setInterval(tick, 15000);
+  }
+
+  async function onLoggedIn(user){
+    currentUser = user;
+    await loadUserStats();
+    if(!cachedStats.username){
+      setMode("chooseUsername");
+      el.loginView.classList.remove("hidden");
+      el.appView.classList.add("hidden");
+      return;
+    }
+    await enterApp();
   }
 
   async function loadUserStats(){
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("total_xp, streak, last_completed_quest_day")
+      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at")
       .eq("user_id", currentUser.id)
       .maybeSingle();
 
     if(error){
       console.error(error);
-      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null };
+      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null };
+      profileRowExists = false;
       return;
     }
 
     if(!data){
-      // first login for this account: create the row
-      await supabase.from("quest_stats").insert({
-        user_id: currentUser.id,
-        total_xp: 0,
-        streak: 0,
-        last_completed_quest_day: null
-      });
-      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null };
+      profileRowExists = false;
+      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null };
     } else {
+      profileRowExists = true;
       cachedStats = {
         totalXP: data.total_xp,
         streak: data.streak,
-        lastCompletedQuestDay: data.last_completed_quest_day
+        lastCompletedQuestDay: data.last_completed_quest_day,
+        username: data.username,
+        usernameChangedAt: data.username_changed_at
       };
     }
   }
@@ -597,6 +830,33 @@
       last_completed_quest_day: cachedStats.lastCompletedQuestDay,
       updated_at: new Date().toISOString()
     }).eq("user_id", currentUser.id);
+  }
+
+  /* creates (isNewRow=true) or updates (isNewRow=false) the username.
+     returns null on success, or the Supabase error object on failure. */
+  async function claimUsername(username, isNewRow){
+    const nowIso = new Date().toISOString();
+    if(isNewRow){
+      const { error } = await supabase.from("quest_stats").insert({
+        user_id: currentUser.id,
+        total_xp: 0,
+        streak: 0,
+        last_completed_quest_day: null,
+        username: username,
+        username_changed_at: nowIso
+      });
+      if(error) return error;
+      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username, usernameChangedAt: nowIso };
+      return null;
+    } else {
+      const { error } = await supabase.from("quest_stats")
+        .update({ username: username, username_changed_at: nowIso })
+        .eq("user_id", currentUser.id);
+      if(error) return error;
+      cachedStats.username = username;
+      cachedStats.usernameChangedAt = nowIso;
+      return null;
+    }
   }
 
   /* on page load, check for an existing session (keeps you logged in) */
@@ -750,6 +1010,152 @@
       viewActive(now, questDay);
     }
   }
+
+  /* =========================================================
+     SETTINGS
+     ========================================================= */
+  function openSettings(){
+    el.appView.classList.add("hidden");
+    el.settingsView.classList.remove("hidden");
+
+    el.settingsEmail.textContent = currentUser.email;
+    el.settingsUsername.textContent = "@" + cachedStats.username;
+    el.settingsUsernameForm.classList.add("hidden");
+    el.settingsUsernameInput.value = "";
+    el.settingsUsernameError.textContent = "";
+    el.settingsNewPassword.value = "";
+    el.settingsConfirmPassword.value = "";
+    el.settingsPasswordError.textContent = "";
+    el.settingsPasswordNote.textContent = "";
+
+    const cooldownInfo = usernameCooldown();
+    if(cooldownInfo.onCooldown){
+      el.settingsEditUsernameBtn.classList.add("hidden");
+      el.settingsUsernameCooldown.textContent = `you can change your username again on ${cooldownInfo.availableOn}`;
+    } else {
+      el.settingsEditUsernameBtn.classList.remove("hidden");
+      el.settingsUsernameCooldown.textContent = "";
+    }
+  }
+
+  function usernameCooldown(){
+    if(!cachedStats.usernameChangedAt) return { onCooldown: false };
+    const changed = new Date(cachedStats.usernameChangedAt);
+    const nextAllowed = new Date(changed);
+    nextAllowed.setDate(nextAllowed.getDate() + USERNAME_COOLDOWN_DAYS);
+    const now = new Date();
+    if(now < nextAllowed){
+      return {
+        onCooldown: true,
+        availableOn: `${pad2(nextAllowed.getDate())}/${pad2(nextAllowed.getMonth()+1)}`
+      };
+    }
+    return { onCooldown: false };
+  }
+
+  el.settingsBtn.addEventListener("click", openSettings);
+  el.settingsBackBtn.addEventListener("click", () => {
+    el.settingsView.classList.add("hidden");
+    el.appView.classList.remove("hidden");
+    tick();
+  });
+
+  el.settingsEditUsernameBtn.addEventListener("click", () => {
+    el.settingsUsernameForm.classList.remove("hidden");
+    el.settingsUsernameInput.focus();
+  });
+
+  el.settingsUsernameSaveBtn.addEventListener("click", async () => {
+    const username = el.settingsUsernameInput.value.trim();
+    el.settingsUsernameError.textContent = "";
+    if(!isValidUsername(username)){
+      el.settingsUsernameError.textContent = "Username must be 4-20 characters: letters, numbers, . or _ only.";
+      return;
+    }
+    el.settingsUsernameSaveBtn.disabled = true;
+    el.settingsUsernameSaveBtn.textContent = "Saving…";
+    const err = await claimUsername(username, false);
+    el.settingsUsernameSaveBtn.disabled = false;
+    el.settingsUsernameSaveBtn.textContent = "Save username";
+    if(err){
+      el.settingsUsernameError.textContent = (err.code === "23505")
+        ? "That username is already taken. Try another."
+        : "Couldn't save that username. Try another.";
+      return;
+    }
+    el.accountUsername.textContent = "@" + cachedStats.username;
+    openSettings();
+  });
+
+  el.settingsPasswordSaveBtn.addEventListener("click", async () => {
+    const p1 = el.settingsNewPassword.value;
+    const p2 = el.settingsConfirmPassword.value;
+    el.settingsPasswordError.textContent = "";
+    el.settingsPasswordNote.textContent = "";
+
+    if(p1.length < 6){
+      el.settingsPasswordError.textContent = "Password must be at least 6 characters.";
+      return;
+    }
+    if(p1 !== p2){
+      el.settingsPasswordError.textContent = "Passwords don't match.";
+      return;
+    }
+
+    el.settingsPasswordSaveBtn.disabled = true;
+    el.settingsPasswordSaveBtn.textContent = "Updating…";
+    const { error } = await supabase.auth.updateUser({ password: p1 });
+    el.settingsPasswordSaveBtn.disabled = false;
+    el.settingsPasswordSaveBtn.textContent = "Update password";
+
+    if(error){
+      el.settingsPasswordError.textContent = error.message;
+      return;
+    }
+    el.settingsNewPassword.value = "";
+    el.settingsConfirmPassword.value = "";
+    el.settingsPasswordNote.textContent = "Password updated.";
+  });
+
+  /* =========================================================
+     LEADERBOARD
+     ========================================================= */
+  async function openLeaderboard(){
+    el.appView.classList.add("hidden");
+    el.leaderboardView.classList.remove("hidden");
+    el.leaderboardList.innerHTML = `<p class="center-sub" style="text-align:center;">Loading…</p>`;
+
+    const { data, error } = await supabase
+      .from("quest_stats")
+      .select("username, total_xp")
+      .not("username", "is", null)
+      .order("total_xp", { ascending: false })
+      .limit(10);
+
+    if(error || !data || data.length === 0){
+      el.leaderboardList.innerHTML = `<p class="center-sub" style="text-align:center;">No one on the board yet. Be the first.</p>`;
+      return;
+    }
+
+    el.leaderboardList.innerHTML = data.map((row, i) => {
+      const lvl = levelInfo(row.total_xp).level;
+      const isMe = cachedStats.username && row.username.toLowerCase() === cachedStats.username.toLowerCase();
+      return `
+        <div class="leaderboard-row${isMe ? " me" : ""}">
+          <span class="leaderboard-rank">${i+1}</span>
+          <span class="leaderboard-name">@${row.username}</span>
+          <span class="leaderboard-level">lv ${lvl}</span>
+        </div>
+      `;
+    }).join("");
+  }
+
+  el.leaderboardBtn.addEventListener("click", openLeaderboard);
+  el.leaderboardBackBtn.addEventListener("click", () => {
+    el.leaderboardView.classList.add("hidden");
+    el.appView.classList.remove("hidden");
+    tick();
+  });
 
   /* ---------- admin/test toggle (device-only, disables quiet hours) ---------- */
   const adminBtn = document.getElementById("adminBtn");
