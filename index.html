@@ -1,7 +1,486 @@
-<html lng= "en">
-    <head>
-    </head>
-    <body>
-<button> "button" </button>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Questie — your daily quest</title>
+<meta name="theme-color" content="#11131b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void: #11131b;
+    --void-2: #1a1e2b;
+    --void-3: #232838;
+    --line: rgba(237,230,214,0.10);
+    --line-strong: rgba(237,230,214,0.20);
+    --parchment: #ECE6D6;
+    --parchment-dim: #9B9788;
+    --lantern: #E8A33D;
+    --lantern-dim: #6b5326;
+    --moss: #8FB37E;
+    --ember: #D97757;
+    --radius: 18px;
+    --radius-sm: 10px;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    min-height: 100dvh;
+    background: var(--void);
+    color: var(--parchment);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+    position:relative;
+    overflow-x:hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .stars{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .star{
+    position:absolute; width:2px; height:2px; border-radius:50%;
+    background: var(--parchment); opacity:.35;
+    animation: twinkle 4.5s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .star{ animation:none; } }
+  @keyframes twinkle{ 0%,100%{opacity:.15;} 50%{opacity:.6;} }
+
+  .app{
+    position:relative; z-index:1;
+    width:100%; max-width:420px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+
+  .wordmark{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding: 2px 4px 0;
+  }
+  .wordmark h1{
+    font-size: 22px; font-weight:700; letter-spacing:0.01em; margin:0;
+    color: var(--parchment);
+  }
+  .wordmark span{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--parchment-dim);
+  }
+
+  .stat-row{
+    display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+  }
+  .stat-card{
+    background: var(--void-2);
+    border:1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .stat-label{
+    font-size:11px; color:var(--parchment-dim); text-transform:lowercase;
+  }
+  .stat-value{
+    font-family:'IBM Plex Mono', monospace; font-size:20px; font-weight:600;
+    display:flex; align-items:center; gap:6px;
+  }
+  .stat-value svg{ width:16px; height:16px; flex-shrink:0; }
+
+  .xp-block{
+    background: var(--void-2);
+    border:1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .xp-top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--parchment-dim);
+    margin-bottom:8px;
+  }
+  .xp-bar-track{
+    height:8px; border-radius:999px; background: var(--void-3);
+    overflow:hidden; border:1px solid var(--line);
+  }
+  .xp-bar-fill{
+    height:100%; border-radius:999px;
+    background: linear-gradient(90deg, var(--lantern-dim), var(--lantern));
+    transition: width .6s ease;
+  }
+
+  .quest-card{
+    background: var(--void-2);
+    border:1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 22px 20px 20px;
+    display:flex; flex-direction:column; gap:14px;
+    min-height: 260px;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .quest-card::before{
+    content:"";
+    position:absolute; top:-40%; right:-30%;
+    width:220px; height:220px; border-radius:50%;
+    background: radial-gradient(circle, rgba(232,163,61,0.10), transparent 70%);
+    pointer-events:none;
+  }
+
+  .quest-eyebrow-icon{ width:22px; height:22px; color: var(--lantern); }
+  .quest-title{
+    font-size: clamp(19px, 5.2vw, 22px);
+    line-height:1.35;
+    font-weight:600;
+    margin:0;
+    color: var(--parchment);
+  }
+  .quest-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px; color:var(--parchment-dim);
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .quest-meta strong{ color: var(--lantern); font-weight:600; }
+
+  .btn{
+    appearance:none; border:none; cursor:pointer;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:16px; font-weight:600;
+    padding: 15px 18px;
+    border-radius: 999px;
+    background: var(--lantern);
+    color: var(--void);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    box-shadow: 0 6px 18px rgba(232,163,61,0.18);
+  }
+  .btn:active{ transform: scale(0.97); }
+  .btn:focus-visible{ outline: 2px solid var(--parchment); outline-offset:3px; }
+  .btn[disabled]{ opacity:.5; cursor:default; }
+  .btn svg{ width:18px; height:18px; }
+
+  .state-fade{ animation: fadeUp .45s ease; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .center-block{
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;
+  }
+  .big-icon{ width:44px; height:44px; color: var(--lantern); }
+  .big-icon.moss{ color: var(--moss); }
+  .center-title{ font-size:19px; font-weight:600; margin:0; }
+  .center-sub{ font-size:14px; color:var(--parchment-dim); margin:0; line-height:1.5; max-width:280px; }
+  .mono-note{ font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--lantern); }
+
+  .levelup-banner{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; text-align:center; color:var(--void);
+    background: var(--moss); border-radius: var(--radius-sm);
+    padding:8px; margin-top:-4px;
+  }
+
+  footer{
+    text-align:center; font-size:12px; color: var(--parchment-dim);
+    padding-top:4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="app">
+
+  <div class="wordmark">
+    <h1>Questie</h1>
+    <span id="clock">--:--</span>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="stat-label">level</span>
+      <span class="stat-value" id="levelValue">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">streak</span>
+      <span class="stat-value" id="streakValue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1-.5-2-1-2 1 4-1 5-2 5 1-2-1-3-1-5-1 2-3 3-3 6a5 5 0 0 0 10 0c0-5-4-6-6-11-1 2-3 2-3 0Z"/></svg>
+        0
+      </span>
+    </div>
+  </div>
+
+  <div class="xp-block">
+    <div class="xp-top">
+      <span id="xpText">0 / 150 xp</span>
+      <span id="xpToGo">150 to go</span>
+    </div>
+    <div class="xp-bar-track">
+      <div class="xp-bar-fill" id="xpFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="quest-card" id="questCard">
+    <!-- content injected by JS -->
+  </div>
+
+  <footer>One small quest a day.</footer>
+</div>
+
+<script>
+(function(){
+
+  /* ---------- content ---------- */
+  const QUESTS = [
+    "Give a genuine compliment to 20 different people today.",
+    "Start a real conversation with 5 people you've never talked to before.",
+    "Write a short note thanking someone who's helped you, and actually give it to them.",
+    "Learn 10 words in a language you don't speak, then use 3 of them out loud today.",
+    "Take a 20-minute walk somewhere in your area you've never been before.",
+    "Call someone you haven't spoken to in over a year. No texting allowed.",
+    "Ask 3 strangers what they're passionate about, and really listen to the answer.",
+    "Do something kind for a stranger without letting them know it was you.",
+    "Sit somewhere public for 20 minutes with your phone away, just observing.",
+    "Teach someone something you know how to do, start to finish."
+  ];
+
+  const STORAGE_KEY = "questie_state_v1";
+
+  /* ---------- icons ---------- */
+  const ICON_MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>`;
+  const ICON_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L16 10"/></svg>`;
+  const ICON_SCROLL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a2 2 0 0 1 2 2v13a1 1 0 0 1-1.6.8L15 18l-2.4 1.8a1 1 0 0 1-1.2 0L9 18l-2.4 1.8A1 1 0 0 1 5 19V6a2 2 0 0 1 1-1Z"/><path d="M9 9h6M9 12.5h6"/></svg>`;
+  const ICON_BTN_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg>`;
+
+  /* ---------- state ---------- */
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return { totalXP:0, streak:0, lastCompletedQuestDay:null };
+      const parsed = JSON.parse(raw);
+      return Object.assign({ totalXP:0, streak:0, lastCompletedQuestDay:null }, parsed);
+    }catch(e){
+      return { totalXP:0, streak:0, lastCompletedQuestDay:null };
+    }
+  }
+  function saveState(s){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+  }
+
+  /* ---------- date / time helpers ---------- */
+  function fmtDate(d){
+    const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,"0"), day=String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  }
+  function getQuestDay(now){
+    const d = new Date(now);
+    if(d.getHours() < 6){ d.setDate(d.getDate()-1); }
+    return fmtDate(d);
+  }
+  function addDaysStr(dateStr, n){
+    const [y,m,d] = dateStr.split("-").map(Number);
+    const dt = new Date(y, m-1, d);
+    dt.setDate(dt.getDate()+n);
+    return fmtDate(dt);
+  }
+  function hashStr(s){
+    let h=0;
+    for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; }
+    return Math.abs(h);
+  }
+  function getQuestForDay(dateStr){
+    return QUESTS[ hashStr(dateStr) % QUESTS.length ];
+  }
+  function xpForHour(hour){
+    if(hour < 6 || hour >= 22) return null;
+    return Math.max(5, 100 - (hour - 6) * 5);
+  }
+  function pad2(n){ return String(n).padStart(2,"0"); }
+
+  /* ---------- leveling ---------- */
+  function levelInfo(totalXP){
+    let level = 0, remaining = totalXP, needed = 150;
+    while(remaining >= needed){
+      remaining -= needed;
+      level += 1;
+      needed += 50;
+    }
+    return { level, into: remaining, needed };
+  }
+
+  /* ---------- dom refs ---------- */
+  const el = {
+    clock: document.getElementById("clock"),
+    level: document.getElementById("levelValue"),
+    streak: document.getElementById("streakValue"),
+    xpText: document.getElementById("xpText"),
+    xpToGo: document.getElementById("xpToGo"),
+    xpFill: document.getElementById("xpFill"),
+    card: document.getElementById("questCard"),
+  };
+
+  /* ---------- stars background ---------- */
+  (function makeStars(){
+    const wrap = document.getElementById("stars");
+    const n = 40;
+    for(let i=0;i<n;i++){
+      const s = document.createElement("div");
+      s.className = "star";
+      s.style.left = Math.random()*100 + "vw";
+      s.style.top = Math.random()*100 + "vh";
+      s.style.animationDelay = (Math.random()*4).toFixed(2) + "s";
+      wrap.appendChild(s);
+    }
+  })();
+
+  /* ---------- views ---------- */
+  function viewSleep(now){
+    const hour = now.getHours();
+    const wake = new Date(now);
+    if(hour >= 22){ wake.setDate(wake.getDate()+1); }
+    wake.setHours(6,0,0,0);
+    const diffMs = wake - now;
+    const h = Math.floor(diffMs / 3600000);
+    const m = Math.floor((diffMs % 3600000) / 60000);
+
+    el.card.innerHTML = `
+      <div class="center-block state-fade">
+        <div class="big-icon">${ICON_MOON}</div>
+        <p class="center-title">Questie is asleep</p>
+        <p class="center-sub">Quests run from 06:00 to 22:00. No sidequests during quiet hours — get some rest.</p>
+        <span class="mono-note">new quest in ${h}h ${pad2(m)}m</span>
+      </div>
+    `;
+  }
+
+  function viewCompleted(){
+    el.card.innerHTML = `
+      <div class="center-block state-fade">
+        <div class="big-icon moss">${ICON_CHECK}</div>
+        <p class="center-title">Quest complete</p>
+        <p class="center-sub">Nicely done. Come back tomorrow, from 06:00, for a new sidequest.</p>
+      </div>
+    `;
+  }
+
+  function viewActive(now, questDay){
+    const hour = now.getHours();
+    const quest = getQuestForDay(questDay);
+    const xpNow = xpForHour(hour);
+
+    let noteHTML;
+    if(hour === 21){
+      const closeAt = new Date(now); closeAt.setHours(22,0,0,0);
+      const mins = Math.max(0, Math.ceil((closeAt - now)/60000));
+      noteHTML = `worth <strong>${xpNow} xp</strong> right now · window closes in ${mins}m`;
+    } else {
+      const nextHour = hour+1;
+      const nextXp = xpForHour(nextHour);
+      const nextBoundary = new Date(now); nextBoundary.setHours(nextHour,0,0,0);
+      const mins = Math.max(0, Math.ceil((nextBoundary - now)/60000));
+      noteHTML = `worth <strong>${xpNow} xp</strong> right now · drops to ${nextXp} xp at ${pad2(nextHour)}:00 (${mins}m)`;
+    }
+
+    el.card.innerHTML = `
+      <div class="state-fade" style="display:flex; flex-direction:column; gap:14px;">
+        <div class="quest-eyebrow-icon">${ICON_SCROLL}</div>
+        <p class="quest-title">${quest}</p>
+        <div class="quest-meta">${noteHTML}</div>
+        <button class="btn" id="completeBtn">${ICON_BTN_CHECK} Mark as complete</button>
+      </div>
+    `;
+
+    document.getElementById("completeBtn").addEventListener("click", onComplete);
+  }
+
+  function viewJustCompleted(xpEarned, leveledUp, newLevel){
+    el.card.innerHTML = `
+      <div class="center-block state-fade">
+        <div class="big-icon moss">${ICON_CHECK}</div>
+        <p class="center-title">+${xpEarned} xp earned</p>
+        <p class="center-sub">Quest complete. Come back tomorrow, from 06:00, for a new sidequest.</p>
+        ${leveledUp ? `<div class="levelup-banner">level up — you're now level ${newLevel}</div>` : ``}
+      </div>
+    `;
+  }
+
+  /* ---------- top stat rendering ---------- */
+  function renderStats(state, questDay){
+    const lvl = levelInfo(state.totalXP);
+
+    // effective streak, resetting silently if a day was missed
+    let effectiveStreak = state.streak;
+    if(state.lastCompletedQuestDay && state.lastCompletedQuestDay !== questDay){
+      const prevDay = addDaysStr(questDay, -1);
+      if(state.lastCompletedQuestDay !== prevDay){
+        effectiveStreak = 0;
+        if(state.streak !== 0){
+          state.streak = 0;
+          saveState(state);
+        }
+      }
+    }
+
+    el.level.textContent = lvl.level;
+    el.streak.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1-.5-2-1-2 1 4-1 5-2 5 1-2-1-3-1-5-1 2-3 3-3 6a5 5 0 0 0 10 0c0-5-4-6-6-11-1 2-3 2-3 0Z"/></svg>
+      ${effectiveStreak}
+    `;
+    el.xpText.textContent = `${lvl.into} / ${lvl.needed} xp`;
+    el.xpToGo.textContent = `${lvl.needed - lvl.into} to go`;
+    el.xpFill.style.width = Math.min(100, Math.round((lvl.into / lvl.needed) * 100)) + "%";
+  }
+
+  /* ---------- complete handler ---------- */
+  function onComplete(){
+    const now = new Date();
+    const hour = now.getHours();
+    if(hour >= 22 || hour < 6) return;
+
+    const questDay = getQuestDay(now);
+    let state = loadState();
+    if(state.lastCompletedQuestDay === questDay) return;
+
+    const xp = xpForHour(hour);
+    const prevDay = addDaysStr(questDay, -1);
+    state.streak = (state.lastCompletedQuestDay === prevDay) ? state.streak + 1 : 1;
+
+    const beforeLevel = levelInfo(state.totalXP).level;
+    state.totalXP += xp;
+    state.lastCompletedQuestDay = questDay;
+    saveState(state);
+    const afterLevel = levelInfo(state.totalXP).level;
+
+    renderStats(state, questDay);
+    viewJustCompleted(xp, afterLevel > beforeLevel, afterLevel);
+  }
+
+  /* ---------- main tick ---------- */
+  function tick(){
+    const now = new Date();
+    el.clock.textContent = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+
+    const hour = now.getHours();
+    const questDay = getQuestDay(now);
+    const state = loadState();
+
+    renderStats(state, questDay);
+
+    const sleeping = hour >= 22 || hour < 6;
+    if(sleeping){
+      viewSleep(now);
+    } else if(state.lastCompletedQuestDay === questDay){
+      viewCompleted();
+    } else {
+      viewActive(now, questDay);
+    }
+  }
+
+  tick();
+  setInterval(tick, 15000);
+
+})();
+</script>
+
+</body>
 </html>
