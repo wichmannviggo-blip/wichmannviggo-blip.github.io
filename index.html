@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root{
     --void: #11131b;
@@ -57,6 +58,9 @@
     display:flex; flex-direction:column; gap:14px;
   }
 
+  .hidden{ display:none !important; }
+
+  /* ---------- header / wordmark ---------- */
   .wordmark{
     display:flex; align-items:baseline; justify-content:space-between;
     padding: 2px 4px 0;
@@ -69,6 +73,59 @@
     font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--parchment-dim);
   }
 
+  .account-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 0 4px;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--parchment-dim);
+  }
+  .account-row button{
+    background:none; border:none; color:var(--lantern); font-family:inherit;
+    font-size:11px; cursor:pointer; padding:2px;
+  }
+
+  /* ---------- login card ---------- */
+  .login-card{
+    background: var(--void-2);
+    border:1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 26px 22px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .login-card h2{ margin:0; font-size:18px; font-weight:600; }
+  .login-card p.sub{ margin:0; font-size:13px; color:var(--parchment-dim); line-height:1.5; }
+
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-size:12px; color:var(--parchment-dim); }
+  .field input{
+    background: var(--void-3);
+    border:1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 12px 13px;
+    color: var(--parchment);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:15px;
+    outline:none;
+  }
+  .field input:focus{ border-color: var(--lantern); }
+
+  .login-error{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color: var(--ember);
+    min-height:14px;
+  }
+  .login-note{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color: var(--moss);
+    min-height:14px;
+  }
+
+  .login-toggle{
+    text-align:center; font-size:13px; color:var(--parchment-dim);
+  }
+  .login-toggle button{
+    background:none; border:none; color:var(--lantern); font-family:inherit;
+    font-size:13px; cursor:pointer; text-decoration:underline; padding:0;
+  }
+
+  /* ---------- stat blocks ---------- */
   .stat-row{
     display:grid; grid-template-columns: 1fr 1fr; gap:10px;
   }
@@ -109,6 +166,7 @@
     transition: width .6s ease;
   }
 
+  /* ---------- quest card ---------- */
   .quest-card{
     background: var(--void-2);
     border:1px solid var(--line-strong);
@@ -159,6 +217,13 @@
   .btn:focus-visible{ outline: 2px solid var(--parchment); outline-offset:3px; }
   .btn[disabled]{ opacity:.5; cursor:default; }
   .btn svg{ width:18px; height:18px; }
+
+  .btn-ghost{
+    background: transparent;
+    color: var(--parchment);
+    border: 1px solid var(--line-strong);
+    box-shadow:none;
+  }
 
   .state-fade{ animation: fadeUp .45s ease; }
   @keyframes fadeUp{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
@@ -216,41 +281,87 @@
     <span id="clock">--:--</span>
   </div>
 
-  <div class="stat-row">
-    <div class="stat-card">
-      <span class="stat-label">level</span>
-      <span class="stat-value" id="levelValue">0</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">streak</span>
-      <span class="stat-value" id="streakValue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1-.5-2-1-2 1 4-1 5-2 5 1-2-1-3-1-5-1 2-3 3-3 6a5 5 0 0 0 10 0c0-5-4-6-6-11-1 2-3 2-3 0Z"/></svg>
-        0
-      </span>
+  <!-- ===== LOGIN VIEW ===== -->
+  <div id="loginView">
+    <div class="login-card">
+      <h2 id="loginHeading">Log in</h2>
+      <p class="sub" id="loginSub">Log in with your email to load your quests, level and streak on this device.</p>
+
+      <div class="field">
+        <label for="emailInput">Email</label>
+        <input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="passwordInput">Password</label>
+        <input id="passwordInput" type="password" autocomplete="current-password" placeholder="At least 6 characters">
+      </div>
+
+      <div class="login-error" id="loginError"></div>
+      <div class="login-note" id="loginNote"></div>
+
+      <button class="btn" id="loginSubmitBtn">Log in</button>
+
+      <div class="login-toggle">
+        <span id="toggleText">No account yet?</span>
+        <button id="toggleModeBtn">Create one</button>
+      </div>
     </div>
   </div>
 
-  <div class="xp-block">
-    <div class="xp-top">
-      <span id="xpText">0 / 150 xp</span>
-      <span id="xpToGo">150 to go</span>
+  <!-- ===== APP VIEW ===== -->
+  <div id="appView" class="hidden">
+
+    <div class="account-row">
+      <span id="accountEmail"></span>
+      <button id="signOutBtn">sign out</button>
     </div>
-    <div class="xp-bar-track">
-      <div class="xp-bar-fill" id="xpFill" style="width:0%"></div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <span class="stat-label">level</span>
+        <span class="stat-value" id="levelValue">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">streak</span>
+        <span class="stat-value" id="streakValue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1-.5-2-1-2 1 4-1 5-2 5 1-2-1-3-1-5-1 2-3 3-3 6a5 5 0 0 0 10 0c0-5-4-6-6-11-1 2-3 2-3 0Z"/></svg>
+          0
+        </span>
+      </div>
     </div>
+
+    <div class="xp-block">
+      <div class="xp-top">
+        <span id="xpText">0 / 150 xp</span>
+        <span id="xpToGo">150 to go</span>
+      </div>
+      <div class="xp-bar-track">
+        <div class="xp-bar-fill" id="xpFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="quest-card" id="questCard">
+      <!-- content injected by JS -->
+    </div>
+
+    <footer>One small quest a day.</footer>
   </div>
 
-  <div class="quest-card" id="questCard">
-    <!-- content injected by JS -->
-  </div>
-
-  <footer>One small quest a day.</footer>
 </div>
 
 <button class="admin-btn" id="adminBtn" type="button">test</button>
 
 <script>
 (function(){
+
+  /* =========================================================
+     SUPABASE CONFIG — paste your own project values here
+     Get these from: Supabase dashboard -> Project Settings -> API
+     ========================================================= */
+  const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+  const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_PUBLIC_KEY";
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   /* ---------- content ---------- */
   const QUESTS = [
@@ -266,20 +377,8 @@
     "Teach someone something you know how to do, start to finish."
   ];
 
-  const STORAGE_KEY = "questie_state_v1";
   const OVERRIDE_KEY = "questie_debug_override";
   const ADMIN_CODE = "Admin123";
-
-  function getOverride(){
-    return localStorage.getItem(OVERRIDE_KEY) === "1";
-  }
-  function setOverride(on){
-    localStorage.setItem(OVERRIDE_KEY, on ? "1" : "0");
-  }
-  function isSleeping(hour){
-    if(getOverride()) return false; // quiet hours disabled
-    return hour >= 22 || hour < 6;
-  }
 
   /* ---------- icons ---------- */
   const ICON_MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>`;
@@ -287,19 +386,12 @@
   const ICON_SCROLL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a2 2 0 0 1 2 2v13a1 1 0 0 1-1.6.8L15 18l-2.4 1.8a1 1 0 0 1-1.2 0L9 18l-2.4 1.8A1 1 0 0 1 5 19V6a2 2 0 0 1 1-1Z"/><path d="M9 9h6M9 12.5h6"/></svg>`;
   const ICON_BTN_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg>`;
 
-  /* ---------- state ---------- */
-  function loadState(){
-    try{
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return { totalXP:0, streak:0, lastCompletedQuestDay:null };
-      const parsed = JSON.parse(raw);
-      return Object.assign({ totalXP:0, streak:0, lastCompletedQuestDay:null }, parsed);
-    }catch(e){
-      return { totalXP:0, streak:0, lastCompletedQuestDay:null };
-    }
-  }
-  function saveState(s){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+  /* ---------- local debug override (device-only, not account data) ---------- */
+  function getOverride(){ return localStorage.getItem(OVERRIDE_KEY) === "1"; }
+  function setOverride(on){ localStorage.setItem(OVERRIDE_KEY, on ? "1" : "0"); }
+  function isSleeping(hour){
+    if(getOverride()) return false;
+    return hour >= 22 || hour < 6;
   }
 
   /* ---------- date / time helpers ---------- */
@@ -323,9 +415,7 @@
     for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; }
     return Math.abs(h);
   }
-  function getQuestForDay(dateStr){
-    return QUESTS[ hashStr(dateStr) % QUESTS.length ];
-  }
+  function getQuestForDay(dateStr){ return QUESTS[ hashStr(dateStr) % QUESTS.length ]; }
   function xpForHour(hour){
     if(hour < 6 || hour >= 22) return null;
     return Math.max(5, 100 - (hour - 6) * 5);
@@ -345,6 +435,8 @@
 
   /* ---------- dom refs ---------- */
   const el = {
+    loginView: document.getElementById("loginView"),
+    appView: document.getElementById("appView"),
     clock: document.getElementById("clock"),
     level: document.getElementById("levelValue"),
     streak: document.getElementById("streakValue"),
@@ -352,13 +444,24 @@
     xpToGo: document.getElementById("xpToGo"),
     xpFill: document.getElementById("xpFill"),
     card: document.getElementById("questCard"),
+    accountEmail: document.getElementById("accountEmail"),
+    signOutBtn: document.getElementById("signOutBtn"),
+
+    emailInput: document.getElementById("emailInput"),
+    passwordInput: document.getElementById("passwordInput"),
+    loginError: document.getElementById("loginError"),
+    loginNote: document.getElementById("loginNote"),
+    loginSubmitBtn: document.getElementById("loginSubmitBtn"),
+    loginHeading: document.getElementById("loginHeading"),
+    loginSub: document.getElementById("loginSub"),
+    toggleText: document.getElementById("toggleText"),
+    toggleModeBtn: document.getElementById("toggleModeBtn"),
   };
 
   /* ---------- stars background ---------- */
   (function makeStars(){
     const wrap = document.getElementById("stars");
-    const n = 40;
-    for(let i=0;i<n;i++){
+    for(let i=0;i<40;i++){
       const s = document.createElement("div");
       s.className = "star";
       s.style.left = Math.random()*100 + "vw";
@@ -368,7 +471,145 @@
     }
   })();
 
-  /* ---------- views ---------- */
+  /* =========================================================
+     AUTH
+     ========================================================= */
+  let mode = "signin"; // or "signup"
+  let currentUser = null;
+  let cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null };
+  let tickTimer = null;
+
+  function setMode(newMode){
+    mode = newMode;
+    el.loginError.textContent = "";
+    el.loginNote.textContent = "";
+    if(mode === "signin"){
+      el.loginHeading.textContent = "Log in";
+      el.loginSub.textContent = "Log in with your email to load your quests, level and streak on this device.";
+      el.loginSubmitBtn.textContent = "Log in";
+      el.toggleText.textContent = "No account yet?";
+      el.toggleModeBtn.textContent = "Create one";
+      el.passwordInput.setAttribute("autocomplete", "current-password");
+    } else {
+      el.loginHeading.textContent = "Create your account";
+      el.loginSub.textContent = "One account, any device. Your quests, level and streak follow you.";
+      el.loginSubmitBtn.textContent = "Create account";
+      el.toggleText.textContent = "Already have an account?";
+      el.toggleModeBtn.textContent = "Log in";
+      el.passwordInput.setAttribute("autocomplete", "new-password");
+    }
+  }
+  el.toggleModeBtn.addEventListener("click", () => setMode(mode === "signin" ? "signup" : "signin"));
+
+  el.loginSubmitBtn.addEventListener("click", async () => {
+    const email = el.emailInput.value.trim();
+    const password = el.passwordInput.value;
+    el.loginError.textContent = "";
+    el.loginNote.textContent = "";
+
+    if(!email || !password){
+      el.loginError.textContent = "Enter both an email and a password.";
+      return;
+    }
+
+    el.loginSubmitBtn.disabled = true;
+    el.loginSubmitBtn.textContent = "Please wait…";
+
+    try{
+      if(mode === "signup"){
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if(error){ el.loginError.textContent = error.message; return; }
+        if(data.session){
+          await onLoggedIn(data.user);
+        } else {
+          el.loginNote.textContent = "Account created. Check your email to confirm, then log in.";
+          setMode("signin");
+        }
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if(error){ el.loginError.textContent = error.message; return; }
+        await onLoggedIn(data.user);
+      }
+    } catch(err){
+      el.loginError.textContent = "Something went wrong. Try again.";
+    } finally {
+      el.loginSubmitBtn.disabled = false;
+      setMode(mode);
+    }
+  });
+
+  el.signOutBtn.addEventListener("click", async () => {
+    if(tickTimer) clearInterval(tickTimer);
+    await supabase.auth.signOut();
+    currentUser = null;
+    el.appView.classList.add("hidden");
+    el.loginView.classList.remove("hidden");
+    el.emailInput.value = "";
+    el.passwordInput.value = "";
+    setMode("signin");
+  });
+
+  async function onLoggedIn(user){
+    currentUser = user;
+    el.accountEmail.textContent = user.email;
+    await loadUserStats();
+    el.loginView.classList.add("hidden");
+    el.appView.classList.remove("hidden");
+    tick();
+    tickTimer = setInterval(tick, 15000);
+  }
+
+  async function loadUserStats(){
+    const { data, error } = await supabase
+      .from("quest_stats")
+      .select("total_xp, streak, last_completed_quest_day")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if(error){
+      console.error(error);
+      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null };
+      return;
+    }
+
+    if(!data){
+      // first login for this account: create the row
+      await supabase.from("quest_stats").insert({
+        user_id: currentUser.id,
+        total_xp: 0,
+        streak: 0,
+        last_completed_quest_day: null
+      });
+      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null };
+    } else {
+      cachedStats = {
+        totalXP: data.total_xp,
+        streak: data.streak,
+        lastCompletedQuestDay: data.last_completed_quest_day
+      };
+    }
+  }
+
+  async function saveUserStats(){
+    await supabase.from("quest_stats").update({
+      total_xp: cachedStats.totalXP,
+      streak: cachedStats.streak,
+      last_completed_quest_day: cachedStats.lastCompletedQuestDay,
+      updated_at: new Date().toISOString()
+    }).eq("user_id", currentUser.id);
+  }
+
+  /* on page load, check for an existing session (keeps you logged in) */
+  (async function initSession(){
+    const { data } = await supabase.auth.getSession();
+    if(data.session && data.session.user){
+      await onLoggedIn(data.session.user);
+    }
+  })();
+
+  /* =========================================================
+     QUEST VIEWS
+     ========================================================= */
   function viewSleep(now){
     const hour = now.getHours();
     const wake = new Date(now);
@@ -440,18 +681,17 @@
   }
 
   /* ---------- top stat rendering ---------- */
-  function renderStats(state, questDay){
-    const lvl = levelInfo(state.totalXP);
+  function renderStats(questDay){
+    const lvl = levelInfo(cachedStats.totalXP);
 
-    // effective streak, resetting silently if a day was missed
-    let effectiveStreak = state.streak;
-    if(state.lastCompletedQuestDay && state.lastCompletedQuestDay !== questDay){
+    let effectiveStreak = cachedStats.streak;
+    if(cachedStats.lastCompletedQuestDay && cachedStats.lastCompletedQuestDay !== questDay){
       const prevDay = addDaysStr(questDay, -1);
-      if(state.lastCompletedQuestDay !== prevDay){
+      if(cachedStats.lastCompletedQuestDay !== prevDay){
         effectiveStreak = 0;
-        if(state.streak !== 0){
-          state.streak = 0;
-          saveState(state);
+        if(cachedStats.streak !== 0){
+          cachedStats.streak = 0;
+          saveUserStats();
         }
       }
     }
@@ -467,51 +707,51 @@
   }
 
   /* ---------- complete handler ---------- */
-  function onComplete(){
+  async function onComplete(){
     const now = new Date();
     const hour = now.getHours();
     if(isSleeping(hour)) return;
 
     const questDay = getQuestDay(now);
-    let state = loadState();
-    if(state.lastCompletedQuestDay === questDay) return;
+    if(cachedStats.lastCompletedQuestDay === questDay) return;
 
     const xp = xpForHour(hour);
     const prevDay = addDaysStr(questDay, -1);
-    state.streak = (state.lastCompletedQuestDay === prevDay) ? state.streak + 1 : 1;
+    cachedStats.streak = (cachedStats.lastCompletedQuestDay === prevDay) ? cachedStats.streak + 1 : 1;
 
-    const beforeLevel = levelInfo(state.totalXP).level;
-    state.totalXP += xp;
-    state.lastCompletedQuestDay = questDay;
-    saveState(state);
-    const afterLevel = levelInfo(state.totalXP).level;
+    const beforeLevel = levelInfo(cachedStats.totalXP).level;
+    cachedStats.totalXP += xp;
+    cachedStats.lastCompletedQuestDay = questDay;
 
-    renderStats(state, questDay);
+    const afterLevel = levelInfo(cachedStats.totalXP).level;
+
+    renderStats(questDay);
     viewJustCompleted(xp, afterLevel > beforeLevel, afterLevel);
+
+    await saveUserStats();
   }
 
   /* ---------- main tick ---------- */
   function tick(){
+    if(!currentUser) return;
     const now = new Date();
     el.clock.textContent = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
 
     const hour = now.getHours();
     const questDay = getQuestDay(now);
-    const state = loadState();
 
-    renderStats(state, questDay);
+    renderStats(questDay);
 
-    const sleeping = isSleeping(hour);
-    if(sleeping){
+    if(isSleeping(hour)){
       viewSleep(now);
-    } else if(state.lastCompletedQuestDay === questDay){
+    } else if(cachedStats.lastCompletedQuestDay === questDay){
       viewCompleted();
     } else {
       viewActive(now, questDay);
     }
   }
 
-  /* ---------- admin/test toggle ---------- */
+  /* ---------- admin/test toggle (device-only, disables quiet hours) ---------- */
   const adminBtn = document.getElementById("adminBtn");
   function refreshAdminBtn(){
     const on = getOverride();
@@ -523,18 +763,12 @@
       ? "Enter code to turn quiet hours back on:"
       : "Enter code to disable quiet hours:");
     if(code === null) return;
-    if(code !== ADMIN_CODE){
-      alert("Wrong code.");
-      return;
-    }
+    if(code !== ADMIN_CODE){ alert("Wrong code."); return; }
     setOverride(!getOverride());
     refreshAdminBtn();
     tick();
   });
   refreshAdminBtn();
-
-  tick();
-  setInterval(tick, 15000);
 
 })();
 </script>
