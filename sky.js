@@ -32,10 +32,10 @@
      rather than sitting at one fixed color all day — this is what
      makes the panels actually track the gradient instead of just
      reading as a flat grey box on top of it */
-  const VOID_RGB     = [18, 19, 26];   // matches --void
-  const INK_LINE_RGB = [56, 58, 70];   // matches --ink-line
-  const CARD_MIX     = 0.34;           // how much sky color reaches the card fill
-  const BORDER_MIX   = 0.50;           // how much sky color reaches the card border
+  const VOID_RGB     = [20, 22, 27];   // matches --void
+  const LINE_RGB      = [58, 61, 72];  // mixing base for the hairline border
+  const CARD_MIX     = 0.34;           // how much sky color reaches the panel fill
+  const BORDER_MIX   = 0.50;           // how much sky color reaches the panel border
 
   function hexToRgb(hex){
     const n = parseInt(hex.slice(1), 16);
@@ -92,9 +92,12 @@
        navy tint just reads as grey against a bright daytime sky) */
     const skyMidRgb = mixRgb(hexToRgb(theme.top), hexToRgb(theme.bottom), 0.5);
     const cardRgb   = mixRgb(VOID_RGB, skyMidRgb, CARD_MIX);
-    const borderRgb = mixRgb(INK_LINE_RGB, skyMidRgb, BORDER_MIX);
+    const borderRgb = mixRgb(LINE_RGB, skyMidRgb, BORDER_MIX);
     document.documentElement.style.setProperty("--card-bg-rgb", rgbCss(cardRgb));
     document.documentElement.style.setProperty("--card-border-rgb", rgbCss(borderRgb));
+
+    /* clouds sit a touch dimmer at night than during the day */
+    document.documentElement.style.setProperty("--cloud-opacity", (0.62 - theme.stars * 0.26).toFixed(2));
 
     /* sun arcs up from 06:00, peaks at noon, sets by 18:00.
        moon covers the other 12 hours, peaking at midnight. */
@@ -129,6 +132,33 @@
     }
   }
 
+  /* drifting clouds — created once, then animated purely by CSS so
+     they cost nothing on the main loop. Randomized size/speed/position
+     so the four don't read as a repeating pattern. */
+  function makeClouds(){
+    const wrap = document.getElementById("clouds");
+    if(!wrap) return;
+    const CLOUD_COUNT = 4;
+    for(let i = 0; i < CLOUD_COUNT; i++){
+      const c = document.createElement("div");
+      c.className = "cloud";
+      const width = 220 + Math.random() * 220;      // 220-440px
+      const height = width * (0.32 + Math.random() * 0.1);
+      const top = 4 + Math.random() * 40;            // upper 4-44% of the sky
+      const duration = 130 + Math.random() * 110;    // 130-240s per crossing
+      const delay = -Math.random() * duration;       // negative = already mid-flight
+      const opacity = 0.35 + Math.random() * 0.35;
+      c.style.width = width.toFixed(0) + "px";
+      c.style.height = height.toFixed(0) + "px";
+      c.style.top = top.toFixed(1) + "%";
+      c.style.setProperty("--cloud-base-opacity", opacity.toFixed(2));
+      c.style.animationDuration = duration.toFixed(0) + "s";
+      c.style.animationDelay = delay.toFixed(0) + "s";
+      wrap.appendChild(c);
+    }
+  }
+
+  makeClouds();
   updateSky();
   setInterval(updateSky, 60000);
 })();
