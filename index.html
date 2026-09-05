@@ -7,13 +7,16 @@
 <meta name="theme-color" content="#11131b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
-<div class="stars" id="stars"></div>
+<div class="sky" id="sky">
+  <div class="stars" id="stars"></div>
+  <div class="celestial" id="celestial"></div>
+</div>
 
 <div class="app">
 
@@ -171,6 +174,7 @@
 <button class="admin-btn hidden" id="adminBtn" type="button">test</button>
 
 
+<script src="sky.js"></script>
 <script src="app.js"></script>
 
 </body>
