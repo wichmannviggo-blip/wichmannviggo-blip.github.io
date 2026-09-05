@@ -30,7 +30,7 @@
   const ICON_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L16 10"/></svg>`;
   const ICON_SCROLL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a2 2 0 0 1 2 2v13a1 1 0 0 1-1.6.8L15 18l-2.4 1.8a1 1 0 0 1-1.2 0L9 18l-2.4 1.8A1 1 0 0 1 5 19V6a2 2 0 0 1 1-1Z"/><path d="M9 9h6M9 12.5h6"/></svg>`;
   const ICON_BTN_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg>`;
-  const ICON_HAMMER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="2.5" width="7" height="4.5" rx="1" transform="rotate(45 16.5 4.75)"/><path d="M14.2 8.5 5 17.7l-1.8 2.8 2.8-1.8L15.2 9.5"/></svg>`;
+  const ICON_HAMMER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="2" width="9" height="6" rx="1.4" transform="rotate(45 17.5 5)"/><path d="M15.3 7.3 4.2 18.4"/><path d="M3 19.5 4.6 21"/></svg>`;
 
   /* ---------- date / time helpers ---------- */
   function fmtDate(d){
@@ -60,12 +60,42 @@
   }
   function pad2(n){ return String(n).padStart(2,"0"); }
 
+  /* ---------- streak xp multiplier: day 0 of a streak = x1, day 1 = x1.5,
+     day 2 = x2, etc. Resets back to x1 whenever the streak resets. ---------- */
+  function streakMultiplier(streakCount){
+    return 1 + 0.5 * Math.max(0, streakCount - 1);
+  }
+  function formatMultiplier(m){
+    return (Math.round(m * 10) / 10).toString().replace(/\.0$/, "");
+  }
+  /* works out the "real" current streak (accounting for a broken streak that
+     hasn't been re-rendered yet) plus what the streak WOULD be if the user
+     completes (or already completed) today's quest — used both to preview
+     the multiplier before completing and to apply it for real on completion */
+  function computeStreakState(questDay){
+    let effectiveStreak = cachedStats.streak;
+    const prevDay = addDaysStr(questDay, -1);
+    if(cachedStats.lastCompletedQuestDay && cachedStats.lastCompletedQuestDay !== questDay && cachedStats.lastCompletedQuestDay !== prevDay){
+      effectiveStreak = 0;
+    }
+    const alreadyCompletedToday = cachedStats.lastCompletedQuestDay === questDay;
+    let projectedStreak;
+    if(alreadyCompletedToday){
+      projectedStreak = cachedStats.streak;
+    } else if(cachedStats.lastCompletedQuestDay === prevDay){
+      projectedStreak = effectiveStreak + 1;
+    } else {
+      projectedStreak = 1;
+    }
+    return { effectiveStreak, alreadyCompletedToday, projectedStreak };
+  }
+
   /* ---------- badges ---------- */
   function badgeHTML(stats){
     let html = "";
-    if(stats.isOwner) html += `<span class="badge badge-gold" title="Owner">${ICON_CHECK}</span>`;
-    if(stats.isTester) html += `<span class="badge badge-blue" title="Tester">${ICON_CHECK}</span>`;
-    if(stats.isHelper) html += `<span class="badge badge-green" title="Helper">${ICON_HAMMER}</span>`;
+    if(stats.isOwner) html += `<span class="badge badge-gold" data-tooltip="Developer" aria-label="Developer">${ICON_CHECK}</span>`;
+    if(stats.isTester) html += `<span class="badge badge-blue" data-tooltip="Tester" aria-label="Tester">${ICON_CHECK}</span>`;
+    if(stats.isHelper) html += `<span class="badge badge-green" data-tooltip="Helper" aria-label="Helper">${ICON_HAMMER}</span>`;
     return html;
   }
   const USERNAME_RE = /^[A-Za-z0-9._]{4,20}$/;
@@ -109,6 +139,7 @@
     settingsBtn: document.getElementById("settingsBtn"),
 
     emailField: document.getElementById("emailField"),
+    emailLabel: document.getElementById("emailLabel"),
     usernameField: document.getElementById("usernameField"),
     passwordField: document.getElementById("passwordField"),
     loginToggleRow: document.getElementById("loginToggleRow"),
@@ -184,10 +215,12 @@
       el.passwordField.classList.remove("hidden");
       el.loginToggleRow.classList.remove("hidden");
       el.loginHeading.textContent = "Log in";
-      el.loginSub.textContent = "Log in with your email to load your quests, level and streak on this device.";
+      el.loginSub.textContent = "Log in with your email or username to load your quests, level and streak on this device.";
       el.loginSubmitBtn.textContent = "Log in";
       el.toggleText.textContent = "No account yet?";
       el.toggleModeBtn.textContent = "Create one";
+      el.emailLabel.textContent = "Email or username";
+      el.emailInput.placeholder = "you@example.com or username";
       el.passwordInput.setAttribute("autocomplete", "current-password");
     } else if(mode === "signup"){
       el.emailField.classList.remove("hidden");
@@ -199,6 +232,8 @@
       el.loginSubmitBtn.textContent = "Create account";
       el.toggleText.textContent = "Already have an account?";
       el.toggleModeBtn.textContent = "Log in";
+      el.emailLabel.textContent = "Email";
+      el.emailInput.placeholder = "you@example.com";
       el.passwordInput.setAttribute("autocomplete", "new-password");
     } else if(mode === "chooseUsername"){
       el.emailField.classList.add("hidden");
@@ -273,6 +308,7 @@
         } else {
           el.loginNote.textContent = "Account created. Check your email to confirm, then log in.";
           setMode("signin");
+          alert("Almost there! Confirm your email from Supabase Auth before you can log in — and check your spam folder if you don't see it.");
         }
       } catch(err){
         el.loginError.textContent = "Something went wrong. Try again.";
@@ -283,15 +319,24 @@
       return;
     }
 
-    // signin
+    // signin — the "email" field also accepts a username here
     if(!email || !password){
-      el.loginError.textContent = "Enter both an email and a password.";
+      el.loginError.textContent = "Enter both an email/username and a password.";
       return;
     }
     el.loginSubmitBtn.disabled = true;
     el.loginSubmitBtn.textContent = "Please wait…";
     try{
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      let loginEmail = email;
+      if(!email.includes("@")){
+        const { data: resolvedEmail, error: lookupError } = await supabase.rpc("get_email_by_username", { uname: email });
+        if(lookupError || !resolvedEmail){
+          el.loginError.textContent = "No account found with that username.";
+          return;
+        }
+        loginEmail = resolvedEmail;
+      }
+      const { data, error } = await supabase.auth.signInWithPassword({ email: loginEmail, password });
       if(error){ el.loginError.textContent = error.message; return; }
       currentUser = data.user;
       await loadUserStats();
@@ -309,6 +354,7 @@
   });
 
   el.signOutBtn.addEventListener("click", async () => {
+    if(!confirm("Are you sure you want to sign out?")) return;
     if(tickTimer) clearInterval(tickTimer);
     await supabase.auth.signOut();
     currentUser = null;
@@ -482,17 +528,23 @@
     const quest = getQuestForDay(questDay);
     const xpNow = xpForHour(hour);
 
+    const state = computeStreakState(questDay);
+    const multiplier = streakMultiplier(state.projectedStreak);
+    const effXpNow = Math.round(xpNow * multiplier);
+    const multiplierTxt = multiplier > 1 ? ` <span class="streak-mult">(x${formatMultiplier(multiplier)} streak)</span>` : "";
+
     let noteHTML;
     if(hour === 21){
       const closeAt = new Date(now); closeAt.setHours(22,0,0,0);
       const mins = Math.max(0, Math.ceil((closeAt - now)/60000));
-      noteHTML = `worth <strong>${xpNow} xp</strong> right now · window closes in ${mins}m`;
+      noteHTML = `worth <strong>${effXpNow} xp</strong>${multiplierTxt} right now · window closes in ${mins}m`;
     } else {
       const nextHour = hour+1;
       const nextXp = xpForHour(nextHour);
+      const effNextXp = Math.round(nextXp * multiplier);
       const nextBoundary = new Date(now); nextBoundary.setHours(nextHour,0,0,0);
       const mins = Math.max(0, Math.ceil((nextBoundary - now)/60000));
-      noteHTML = `worth <strong>${xpNow} xp</strong> right now · drops to ${nextXp} xp at ${pad2(nextHour)}:00 (${mins}m)`;
+      noteHTML = `worth <strong>${effXpNow} xp</strong>${multiplierTxt} right now · drops to ${effNextXp} xp at ${pad2(nextHour)}:00 (${mins}m)`;
     }
 
     el.card.innerHTML = `
@@ -507,11 +559,12 @@
     document.getElementById("completeBtn").addEventListener("click", onComplete);
   }
 
-  function viewJustCompleted(xpEarned, leveledUp, newLevel){
+  function viewJustCompleted(xpEarned, leveledUp, newLevel, multiplier){
+    const bonusNote = multiplier > 1 ? ` · x${formatMultiplier(multiplier)} streak bonus` : "";
     el.card.innerHTML = `
       <div class="center-block state-fade">
         <div class="big-icon moss">${ICON_CHECK}</div>
-        <p class="center-title">+${xpEarned} xp earned</p>
+        <p class="center-title">+${xpEarned} xp earned${bonusNote}</p>
         <p class="center-sub">Quest complete. Come back tomorrow, from 06:00, for a new sidequest.</p>
         ${leveledUp ? `<div class="levelup-banner">level up — you're now level ${newLevel}</div>` : ``}
       </div>
@@ -522,16 +575,10 @@
   function renderStats(questDay){
     const lvl = levelInfo(cachedStats.totalXP);
 
-    let effectiveStreak = cachedStats.streak;
-    if(cachedStats.lastCompletedQuestDay && cachedStats.lastCompletedQuestDay !== questDay){
-      const prevDay = addDaysStr(questDay, -1);
-      if(cachedStats.lastCompletedQuestDay !== prevDay){
-        effectiveStreak = 0;
-        if(cachedStats.streak !== 0){
-          cachedStats.streak = 0;
-          saveUserStats();
-        }
-      }
+    const { effectiveStreak } = computeStreakState(questDay);
+    if(effectiveStreak === 0 && cachedStats.streak !== 0){
+      cachedStats.streak = 0;
+      saveUserStats();
     }
 
     el.level.textContent = lvl.level;
@@ -557,14 +604,14 @@
     if(isSleeping(hour)) return;
 
     const questDay = getQuestDay(now);
-    const alreadyCompletedToday = cachedStats.lastCompletedQuestDay === questDay;
-    if(alreadyCompletedToday && !cachedStats.unlimitedQuests) return;
+    const state = computeStreakState(questDay);
+    if(state.alreadyCompletedToday && !cachedStats.unlimitedQuests) return;
 
-    const xp = xpForHour(hour);
+    const multiplier = streakMultiplier(state.projectedStreak);
+    const xp = Math.round(xpForHour(hour) * multiplier);
 
-    if(!alreadyCompletedToday){
-      const prevDay = addDaysStr(questDay, -1);
-      cachedStats.streak = (cachedStats.lastCompletedQuestDay === prevDay) ? cachedStats.streak + 1 : 1;
+    if(!state.alreadyCompletedToday){
+      cachedStats.streak = state.projectedStreak;
     }
 
     const beforeLevel = levelInfo(cachedStats.totalXP).level;
@@ -574,7 +621,7 @@
     const afterLevel = levelInfo(cachedStats.totalXP).level;
 
     renderStats(questDay);
-    viewJustCompleted(xp, afterLevel > beforeLevel, afterLevel);
+    viewJustCompleted(xp, afterLevel > beforeLevel, afterLevel, multiplier);
 
     await saveUserStats();
   }
@@ -772,7 +819,6 @@
     const { data, error } = await supabase
       .from("quest_stats")
       .select("user_id, username, total_xp, is_owner, is_tester, is_helper, bypass_sleep, unlimited_quests, is_invisible")
-      .eq("is_invisible", false)
       .order("username", { ascending: true });
 
     if(error || !data){
@@ -783,15 +829,17 @@
     el.adminList.innerHTML = data.map(row => {
       const lvl = levelInfo(row.total_xp).level;
       const name = row.username ? "@" + row.username : "(no username yet)";
-      const ownerBadge = row.is_owner ? `<span class="badge badge-gold" title="Owner">${ICON_CHECK}</span>` : "";
+      const ownerBadge = row.is_owner ? `<span class="badge badge-gold" data-tooltip="Developer">${ICON_CHECK}</span>` : "";
+      const invisibleTag = row.is_invisible ? `<span class="invisible-tag">hidden</span>` : "";
       return `
         <div class="admin-row" data-uid="${row.user_id}">
-          <span class="leaderboard-name">${name}${ownerBadge}</span>
+          <span class="leaderboard-name">${name}${ownerBadge}${invisibleTag}</span>
           <span class="leaderboard-level" data-role="level-display">lv ${lvl}</span>
           <button class="toggle-btn ${row.is_tester ? "active-blue" : ""}" data-field="is_tester" data-value="${!row.is_tester}">tester</button>
           <button class="toggle-btn ${row.is_helper ? "active-green" : ""}" data-field="is_helper" data-value="${!row.is_helper}">helper</button>
           <button class="toggle-btn ${row.bypass_sleep ? "active-orange" : ""}" data-field="bypass_sleep" data-value="${!row.bypass_sleep}">sleep off</button>
           <button class="toggle-btn ${row.unlimited_quests ? "active-teal" : ""}" data-field="unlimited_quests" data-value="${!row.unlimited_quests}">unlimited</button>
+          <button class="toggle-btn ${row.is_invisible ? "active-purple" : ""}" data-field="is_invisible" data-value="${!row.is_invisible}">hidden</button>
           <div class="admin-level-set">
             <input type="number" min="0" class="level-input" value="${lvl}">
             <button class="toggle-btn level-set-btn">set lvl</button>
@@ -842,6 +890,7 @@
     if(field === "is_helper") btn.classList.toggle("active-green", newValue);
     if(field === "bypass_sleep") btn.classList.toggle("active-orange", newValue);
     if(field === "unlimited_quests") btn.classList.toggle("active-teal", newValue);
+    if(field === "is_invisible") btn.classList.toggle("active-purple", newValue);
     btn.dataset.value = (!newValue).toString();
 
     // keep our own header badge / test flags in sync if we just toggled ourselves
@@ -850,6 +899,7 @@
       if(field === "is_helper") cachedStats.isHelper = newValue;
       if(field === "bypass_sleep") cachedStats.bypassSleep = newValue;
       if(field === "unlimited_quests") cachedStats.unlimitedQuests = newValue;
+      if(field === "is_invisible") cachedStats.isInvisible = newValue;
       el.accountUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
     }
   });
