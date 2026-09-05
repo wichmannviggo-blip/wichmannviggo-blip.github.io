@@ -1,9 +1,11 @@
 /* =========================================================
    SKY ENGINE
    Computes a continuously-shifting sky gradient, star visibility,
-   accent color, and a sun/moon that arcs across the screen —
-   all driven purely by the current time of day. Also drags the
-   clock along so it always sits right under the sun/moon.
+   and an accent color — all driven purely by the current time of
+   day. The sun/moon icon sits fixed in the top-right corner at all
+   times (it no longer arcs across the screen) — only its opacity
+   and whether it's showing the sun or the moon change with time.
+   The clock rides directly under it, always the same fixed gap.
    ========================================================= */
 (function(){
 
@@ -24,9 +26,14 @@
     { h: 24, top: "#0b0d18", bottom: "#171b2e", stars: 1.00, sun: 0.00, moon: 1.00, accent: "#E8A33D" }
   ];
 
+  /* fixed screen position for the sun/moon — top-right corner,
+     never changes regardless of time of day */
+  const FIXED_LEFT_PCT = 80;
+  const FIXED_TOP_PCT = 15;
+
   /* how far below the sun/moon's center the clock sits, in px —
-     keeps a constant visual gap regardless of screen size */
-  const CLOCK_GAP_PX = 34;
+     kept large enough to clear the (now much bigger) icon */
+  const CLOCK_GAP_PX = 150;
 
   /* card tint is mixed from these bases toward the current sky color,
      rather than sitting at one fixed color all day — this is what
@@ -99,36 +106,23 @@
     /* clouds sit a touch dimmer at night than during the day */
     document.documentElement.style.setProperty("--cloud-opacity", (0.4 - theme.stars * 0.18).toFixed(2));
 
-    /* sun arcs up from 06:00, peaks at noon, sets by 18:00.
-       moon covers the other 12 hours, peaking at midnight. */
-    let progress, isDay;
-    if(hourFloat >= 6 && hourFloat <= 18){
-      progress = (hourFloat - 6) / 12;
-      isDay = true;
-    } else {
-      const shifted = hourFloat < 6 ? hourFloat + 24 : hourFloat;
-      progress = (shifted - 18) / 12;
-      isDay = false;
-    }
-    progress = Math.max(0, Math.min(1, progress));
-
-    const leftPct = 8 + progress * 84;
-    const topPct = 60 - Math.sin(progress * Math.PI) * 38;
+    /* sun shows 06:00-18:00, moon shows the rest — but position is
+       always the same fixed top-right spot now, it never arcs */
+    const isDay = hourFloat >= 6 && hourFloat < 18;
 
     const celestial = document.getElementById("celestial");
     if(celestial){
-      celestial.style.left = leftPct + "%";
-      celestial.style.top = topPct + "%";
+      celestial.style.left = FIXED_LEFT_PCT + "%";
+      celestial.style.top = FIXED_TOP_PCT + "%";
       celestial.className = "celestial " + (isDay ? "sun" : "moon");
       celestial.style.opacity = isDay ? theme.sun : theme.moon;
     }
 
-    /* clock rides along with the sun/moon, always the same
-       fixed gap below its center */
+    /* clock rides along under it, at the same fixed gap */
     const clock = document.getElementById("clock");
     if(clock){
-      clock.style.left = leftPct + "%";
-      clock.style.top = `calc(${topPct}% + ${CLOCK_GAP_PX}px)`;
+      clock.style.left = FIXED_LEFT_PCT + "%";
+      clock.style.top = `calc(${FIXED_TOP_PCT}% + ${CLOCK_GAP_PX}px)`;
     }
   }
 
