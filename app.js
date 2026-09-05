@@ -23,7 +23,7 @@
     "Teach someone something you know how to do, start to finish."
   ];
 
-  const ADMIN_CODE = "Admin123";
+  const ADMIN_CODE = "Ksl14cpe!@";
 
   /* ---------- icons ---------- */
   const ICON_MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>`;
@@ -102,6 +102,20 @@
   function isValidUsername(u){ return USERNAME_RE.test(u); }
   const USERNAME_COOLDOWN_DAYS = 7;
 
+  /* ---------- badge tap/click tooltip (works on touch, not just hover) ----------
+     Tapping a badge toggles a small tooltip next to it; tapping elsewhere,
+     or tapping another badge, closes it. Delegated on document so this
+     keeps working for badges that get re-rendered dynamically. */
+  document.addEventListener("click", (e) => {
+    const badge = e.target.closest(".badge");
+    document.querySelectorAll(".badge.show-tip").forEach(b => {
+      if(b !== badge) b.classList.remove("show-tip");
+    });
+    if(badge){
+      badge.classList.toggle("show-tip");
+    }
+  });
+
   /* ---------- leveling ---------- */
   function levelInfo(totalXP){
     let level = 0, remaining = totalXP, needed = 150;
@@ -135,6 +149,9 @@
     card: document.getElementById("questCard"),
     accountUsername: document.getElementById("accountUsername"),
     signOutBtn: document.getElementById("signOutBtn"),
+    signOutModal: document.getElementById("signOutModal"),
+    signOutCancelBtn: document.getElementById("signOutCancelBtn"),
+    signOutConfirmBtn: document.getElementById("signOutConfirmBtn"),
     leaderboardBtn: document.getElementById("leaderboardBtn"),
     settingsBtn: document.getElementById("settingsBtn"),
 
@@ -353,8 +370,24 @@
     }
   });
 
-  el.signOutBtn.addEventListener("click", async () => {
-    if(!confirm("Are you sure you want to sign out?")) return;
+  /* ---------- sign out (custom in-page modal, not a native confirm()) ---------- */
+  el.signOutBtn.addEventListener("click", () => {
+    el.signOutModal.classList.remove("hidden");
+  });
+
+  el.signOutCancelBtn.addEventListener("click", () => {
+    el.signOutModal.classList.add("hidden");
+  });
+
+  // clicking the dimmed backdrop also cancels
+  el.signOutModal.addEventListener("click", (e) => {
+    if(e.target === el.signOutModal){
+      el.signOutModal.classList.add("hidden");
+    }
+  });
+
+  el.signOutConfirmBtn.addEventListener("click", async () => {
+    el.signOutModal.classList.add("hidden");
     if(tickTimer) clearInterval(tickTimer);
     await supabase.auth.signOut();
     currentUser = null;
@@ -833,16 +866,20 @@
       const invisibleTag = row.is_invisible ? `<span class="invisible-tag">hidden</span>` : "";
       return `
         <div class="admin-row" data-uid="${row.user_id}">
-          <span class="leaderboard-name">${name}${ownerBadge}${invisibleTag}</span>
-          <span class="leaderboard-level" data-role="level-display">lv ${lvl}</span>
-          <button class="toggle-btn ${row.is_tester ? "active-blue" : ""}" data-field="is_tester" data-value="${!row.is_tester}">tester</button>
-          <button class="toggle-btn ${row.is_helper ? "active-green" : ""}" data-field="is_helper" data-value="${!row.is_helper}">helper</button>
-          <button class="toggle-btn ${row.bypass_sleep ? "active-orange" : ""}" data-field="bypass_sleep" data-value="${!row.bypass_sleep}">sleep off</button>
-          <button class="toggle-btn ${row.unlimited_quests ? "active-teal" : ""}" data-field="unlimited_quests" data-value="${!row.unlimited_quests}">unlimited</button>
-          <button class="toggle-btn ${row.is_invisible ? "active-purple" : ""}" data-field="is_invisible" data-value="${!row.is_invisible}">hidden</button>
-          <div class="admin-level-set">
-            <input type="number" min="0" class="level-input" value="${lvl}">
-            <button class="toggle-btn level-set-btn">set lvl</button>
+          <div class="admin-row-top">
+            <span class="leaderboard-name">${name}${ownerBadge}${invisibleTag}</span>
+            <span class="leaderboard-level" data-role="level-display">lv ${lvl}</span>
+          </div>
+          <div class="admin-row-actions">
+            <button class="toggle-btn ${row.is_tester ? "active-blue" : ""}" data-field="is_tester" data-value="${!row.is_tester}">tester</button>
+            <button class="toggle-btn ${row.is_helper ? "active-green" : ""}" data-field="is_helper" data-value="${!row.is_helper}">helper</button>
+            <button class="toggle-btn ${row.bypass_sleep ? "active-orange" : ""}" data-field="bypass_sleep" data-value="${!row.bypass_sleep}">sleep off</button>
+            <button class="toggle-btn ${row.unlimited_quests ? "active-teal" : ""}" data-field="unlimited_quests" data-value="${!row.unlimited_quests}">unlimited</button>
+            <button class="toggle-btn ${row.is_invisible ? "active-purple" : ""}" data-field="is_invisible" data-value="${!row.is_invisible}">hidden</button>
+            <div class="admin-level-set">
+              <input type="number" min="0" class="level-input" value="${lvl}">
+              <button class="toggle-btn level-set-btn">set lvl</button>
+            </div>
           </div>
         </div>
       `;
