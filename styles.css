@@ -284,6 +284,7 @@ body{
   margin-bottom: 18px;
 }
 .quest-meta strong{ color: var(--lantern); font-weight:600; }
+.streak-mult{ color: var(--moss); font-weight:600; }
 
 /* ---------- buttons ---------- */
 .btn{
@@ -410,11 +411,43 @@ body{
 .badge{
   display:inline-flex; width:14px; height:14px; margin-left:5px;
   vertical-align:middle; flex-shrink:0;
+  position: relative;
 }
 .badge svg{ width:100%; height:100%; }
 .badge-gold{ color: var(--badge-gold); }
 .badge-blue{ color: var(--badge-blue); }
 .badge-green{ color: var(--moss); }
+
+.badge:hover::after{
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 140%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(var(--card-bg-rgb), 0.96);
+  border: 1px solid rgba(var(--card-border-rgb), 0.75);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-chip);
+  z-index: 20;
+}
+.badge:hover::before{
+  content: "";
+  position: absolute;
+  bottom: 118%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(var(--card-border-rgb), 0.75);
+  z-index: 20;
+}
 
 /* ---------- admin ---------- */
 .admin-row{
@@ -433,7 +466,19 @@ body{
 .toggle-btn.active-green{ color: var(--moss); border-color: var(--moss); background: rgba(127,174,120,0.12); }
 .toggle-btn.active-orange{ color: #E8A33D; border-color: #E8A33D; background: rgba(232,163,61,0.12); }
 .toggle-btn.active-teal{ color: #5BC2B0; border-color: #5BC2B0; background: rgba(91,194,176,0.12); }
+.toggle-btn.active-purple{ color: #A987D1; border-color: #A987D1; background: rgba(169,135,209,0.12); }
 .toggle-btn[disabled]{ opacity:.5; cursor:default; }
+
+.invisible-tag{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fog);
+  border: 1px solid rgba(var(--line-rgb), 0.25);
+  border-radius: var(--radius-pill);
+  padding: 1px 6px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
 
 .admin-level-set{
   display:flex; align-items:center; gap:6px;
