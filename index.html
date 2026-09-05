@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Questie</title>
 <meta name="theme-color" content="#11131b">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -18,11 +19,19 @@
   <div class="celestial" id="celestial"></div>
 </div>
 
+<div class="clock-tag text-outline" id="clock">--:--</div>
+
 <div class="app">
 
   <div class="wordmark">
-    <h1>Questie</h1>
-    <span id="clock">--:--</span>
+    <div class="brand-mark" role="img" aria-label="Questie">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="61" height="61" rx="18" fill="#12131a" stroke="#383a46" stroke-width="1.5"/>
+        <circle cx="29" cy="32" r="15" fill="#E8A33D"/>
+        <circle cx="37" cy="25" r="13" fill="#12131a"/>
+      </svg>
+      <span class="sr-only">Questie</span>
+    </div>
   </div>
 
   <!-- ===== LOGIN VIEW ===== -->
@@ -59,7 +68,7 @@
   <!-- ===== APP VIEW ===== -->
   <div id="appView" class="hidden">
 
-    <div class="account-row">
+    <div class="account-row text-outline">
       <span id="accountUsername"></span>
       <div class="account-links">
         <button id="leaderboardBtn" class="muted">leaderboard</button>
@@ -97,7 +106,7 @@
       <!-- content injected by JS -->
     </div>
 
-    <footer>One small quest a day.</footer>
+    <footer class="text-outline">One small quest a day.</footer>
   </div>
 
   <!-- ===== SETTINGS VIEW ===== -->
