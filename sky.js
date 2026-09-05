@@ -2,7 +2,8 @@
    SKY ENGINE
    Computes a continuously-shifting sky gradient, star visibility,
    accent color, and a sun/moon that arcs across the screen —
-   all driven purely by the current time of day.
+   all driven purely by the current time of day. Also drags the
+   clock along so it always sits right under the sun/moon.
    ========================================================= */
 (function(){
 
@@ -22,6 +23,10 @@
     { h: 23, top: "#0b0d18", bottom: "#171b2e", stars: 1.00, sun: 0.00, moon: 1.00, accent: "#E8A33D" },
     { h: 24, top: "#0b0d18", bottom: "#171b2e", stars: 1.00, sun: 0.00, moon: 1.00, accent: "#E8A33D" }
   ];
+
+  /* how far below the sun/moon's center the clock sits, in px —
+     keeps a constant visual gap regardless of screen size */
+  const CLOCK_GAP_PX = 34;
 
   function hexToRgb(hex){
     const n = parseInt(hex.slice(1), 16);
@@ -80,14 +85,23 @@
     }
     progress = Math.max(0, Math.min(1, progress));
 
+    const leftPct = 8 + progress * 84;
+    const topPct = 60 - Math.sin(progress * Math.PI) * 38;
+
     const celestial = document.getElementById("celestial");
     if(celestial){
-      const leftPct = 8 + progress * 84;
-      const topPct = 60 - Math.sin(progress * Math.PI) * 38;
       celestial.style.left = leftPct + "%";
       celestial.style.top = topPct + "%";
       celestial.className = "celestial " + (isDay ? "sun" : "moon");
       celestial.style.opacity = isDay ? theme.sun : theme.moon;
+    }
+
+    /* clock rides along with the sun/moon, always the same
+       fixed gap below its center */
+    const clock = document.getElementById("clock");
+    if(clock){
+      clock.style.left = leftPct + "%";
+      clock.style.top = `calc(${topPct}% + ${CLOCK_GAP_PX}px)`;
     }
   }
 
