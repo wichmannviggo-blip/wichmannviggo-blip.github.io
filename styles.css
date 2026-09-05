@@ -82,12 +82,12 @@ body{
   position:absolute;
   left:0;
   border-radius:50%;
-  opacity: var(--cloud-base-opacity, 0.5);
+  opacity: var(--cloud-base-opacity, 0.3);
   background:
-    radial-gradient(circle at 30% 55%, rgba(255,255,255,0.95), rgba(255,255,255,0) 60%),
-    radial-gradient(circle at 55% 38%, rgba(255,255,255,0.9), rgba(255,255,255,0) 65%),
-    radial-gradient(circle at 76% 58%, rgba(255,255,255,0.85), rgba(255,255,255,0) 62%);
-  filter: blur(11px);
+    radial-gradient(circle at 30% 55%, rgba(255,255,255,0.55), rgba(255,255,255,0) 60%),
+    radial-gradient(circle at 55% 38%, rgba(255,255,255,0.5), rgba(255,255,255,0) 65%),
+    radial-gradient(circle at 76% 58%, rgba(255,255,255,0.45), rgba(255,255,255,0) 62%);
+  filter: blur(8px);
   mix-blend-mode: screen;
   animation-name: drift;
   animation-timing-function: linear;
@@ -151,20 +151,6 @@ body{
   position:relative; z-index:1;
   width:100%; max-width:480px;
   display:flex; flex-direction:column; gap:16px;
-}
-
-.brand-row{
-  display:flex; align-items:center; gap:9px;
-  padding: 0 6px;
-}
-.brand-mark{ display:inline-flex; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
-.brand-name{
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: -0.01em;
-  color: var(--paper);
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
 /* ---------- shared panel: single elevated surface, no per-card
@@ -251,7 +237,9 @@ body{
 .stat-num{
   font-family: var(--font-mono);
   font-size:17px; font-weight:600; color: var(--paper);
+  display:inline-flex; align-items:center; gap:5px;
 }
+.stat-num svg{ width:16px; height:16px; flex-shrink:0; }
 .stat-num-hero{
   font-family: var(--font-display);
   font-size:26px; font-weight:600; line-height:1;
@@ -267,6 +255,7 @@ body{
   font-size:11px; color: var(--fog);
 }
 .xp-labels #xpText{ color: var(--paper); font-weight:500; }
+#xpToGo{ display:none; }
 .xp-bar-track{
   height:7px; border-radius:999px; background: rgba(var(--line-rgb), 0.12);
   overflow:hidden;
@@ -443,19 +432,6 @@ body{
 .toggle-btn.active-blue{ color: var(--badge-blue); border-color: var(--badge-blue); background: rgba(111,160,214,0.12); }
 .toggle-btn.active-green{ color: var(--moss); border-color: var(--moss); background: rgba(127,174,120,0.12); }
 .toggle-btn[disabled]{ opacity:.5; cursor:default; }
-
-/* ---------- footer tagline: sits directly on the sky, so it
-   gets its own small chip rather than relying on a text shadow ---------- */
-.tagline-chip{
-  align-self:center;
-  font-family: var(--font-display); font-style:italic;
-  font-size:12.5px; color: var(--fog);
-  background: rgba(var(--card-bg-rgb), 0.6);
-  border: 1px solid rgba(var(--card-border-rgb), 0.5);
-  border-radius: var(--radius-pill);
-  padding: 6px 16px;
-  box-shadow: var(--shadow-chip);
-}
 
 .admin-btn{
   position: fixed;
