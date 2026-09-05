@@ -23,7 +23,6 @@
     "Teach someone something you know how to do, start to finish."
   ];
 
-  const OVERRIDE_KEY = "questie_debug_override";
   const ADMIN_CODE = "Admin123";
 
   /* ---------- icons ---------- */
@@ -32,14 +31,6 @@
   const ICON_SCROLL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a2 2 0 0 1 2 2v13a1 1 0 0 1-1.6.8L15 18l-2.4 1.8a1 1 0 0 1-1.2 0L9 18l-2.4 1.8A1 1 0 0 1 5 19V6a2 2 0 0 1 1-1Z"/><path d="M9 9h6M9 12.5h6"/></svg>`;
   const ICON_BTN_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg>`;
   const ICON_HAMMER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="2.5" width="7" height="4.5" rx="1" transform="rotate(45 16.5 4.75)"/><path d="M14.2 8.5 5 17.7l-1.8 2.8 2.8-1.8L15.2 9.5"/></svg>`;
-
-  /* ---------- local debug override (device-only, not account data) ---------- */
-  function getOverride(){ return localStorage.getItem(OVERRIDE_KEY) === "1"; }
-  function setOverride(on){ localStorage.setItem(OVERRIDE_KEY, on ? "1" : "0"); }
-  function isSleeping(hour){
-    if(getOverride()) return false;
-    return hour >= 22 || hour < 6;
-  }
 
   /* ---------- date / time helpers ---------- */
   function fmtDate(d){
@@ -90,6 +81,13 @@
       needed += 50;
     }
     return { level, into: remaining, needed };
+  }
+  /* total XP required to sit at the very start of a given level —
+     used by the admin "set level" control */
+  function xpForLevelStart(level){
+    let xp = 0, needed = 150;
+    for(let i=0;i<level;i++){ xp += needed; needed += 50; }
+    return xp;
   }
 
   /* ---------- dom refs ---------- */
@@ -167,7 +165,11 @@
      ========================================================= */
   let mode = "signin"; // "signin" | "signup" | "chooseUsername"
   let currentUser = null;
-  let cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null, isOwner: false, isTester: false, isHelper: false };
+  let cachedStats = {
+    totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null,
+    isOwner: false, isTester: false, isHelper: false,
+    isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false
+  };
   let profileRowExists = false; // whether a quest_stats row already exists for currentUser
   let tickTimer = null;
 
@@ -318,7 +320,6 @@
     el.emailInput.value = "";
     el.passwordInput.value = "";
     el.usernameInput.value = "";
-    adminBtnEl().classList.add("hidden");
     el.adminNavBtn.classList.add("hidden");
     setMode("signin");
   });
@@ -336,11 +337,9 @@
   }
 
   function refreshOwnerUI(){
-    const owner = !!cachedStats.isOwner;
-    adminBtnEl().classList.toggle("hidden", !owner);
-    el.adminNavBtn.classList.toggle("hidden", !owner);
+    const canAdmin = !!cachedStats.isOwner || !!cachedStats.isAdmin;
+    el.adminNavBtn.classList.toggle("hidden", !canAdmin);
   }
-  function adminBtnEl(){ return document.getElementById("adminBtn"); }
 
   async function onLoggedIn(user){
     currentUser = user;
@@ -357,20 +356,28 @@
   async function loadUserStats(){
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper")
+      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests")
       .eq("user_id", currentUser.id)
       .maybeSingle();
 
     if(error){
       console.error(error);
-      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null, isOwner: false, isTester: false, isHelper: false };
+      cachedStats = {
+        totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null,
+        isOwner: false, isTester: false, isHelper: false,
+        isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false
+      };
       profileRowExists = false;
       return;
     }
 
     if(!data){
       profileRowExists = false;
-      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null, isOwner: false, isTester: false, isHelper: false };
+      cachedStats = {
+        totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null,
+        isOwner: false, isTester: false, isHelper: false,
+        isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false
+      };
     } else {
       profileRowExists = true;
       cachedStats = {
@@ -381,7 +388,11 @@
         usernameChangedAt: data.username_changed_at,
         isOwner: data.is_owner,
         isTester: data.is_tester,
-        isHelper: data.is_helper
+        isHelper: data.is_helper,
+        isAdmin: data.is_admin,
+        isInvisible: data.is_invisible,
+        bypassSleep: data.bypass_sleep,
+        unlimitedQuests: data.unlimited_quests
       };
     }
   }
@@ -409,7 +420,11 @@
         username_changed_at: nowIso
       });
       if(error) return error;
-      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username, usernameChangedAt: nowIso, isOwner: false, isTester: false, isHelper: false };
+      cachedStats = {
+        totalXP: 0, streak: 0, lastCompletedQuestDay: null, username, usernameChangedAt: nowIso,
+        isOwner: false, isTester: false, isHelper: false,
+        isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false
+      };
       return null;
     } else {
       const { error } = await supabase.from("quest_stats")
@@ -529,6 +544,12 @@
     el.xpFill.style.width = Math.min(100, Math.round((lvl.into / lvl.needed) * 100)) + "%";
   }
 
+  /* ---------- sleep check (per-account, set from the Admin panel) ---------- */
+  function isSleeping(hour){
+    if(cachedStats.bypassSleep) return false;
+    return hour >= 22 || hour < 6;
+  }
+
   /* ---------- complete handler ---------- */
   async function onComplete(){
     const now = new Date();
@@ -536,11 +557,15 @@
     if(isSleeping(hour)) return;
 
     const questDay = getQuestDay(now);
-    if(cachedStats.lastCompletedQuestDay === questDay) return;
+    const alreadyCompletedToday = cachedStats.lastCompletedQuestDay === questDay;
+    if(alreadyCompletedToday && !cachedStats.unlimitedQuests) return;
 
     const xp = xpForHour(hour);
-    const prevDay = addDaysStr(questDay, -1);
-    cachedStats.streak = (cachedStats.lastCompletedQuestDay === prevDay) ? cachedStats.streak + 1 : 1;
+
+    if(!alreadyCompletedToday){
+      const prevDay = addDaysStr(questDay, -1);
+      cachedStats.streak = (cachedStats.lastCompletedQuestDay === prevDay) ? cachedStats.streak + 1 : 1;
+    }
 
     const beforeLevel = levelInfo(cachedStats.totalXP).level;
     cachedStats.totalXP += xp;
@@ -567,7 +592,7 @@
 
     if(isSleeping(hour)){
       viewSleep(now);
-    } else if(cachedStats.lastCompletedQuestDay === questDay){
+    } else if(cachedStats.lastCompletedQuestDay === questDay && !cachedStats.unlimitedQuests){
       viewCompleted();
     } else {
       viewActive(now, questDay);
@@ -692,6 +717,7 @@
       .from("quest_stats")
       .select("username, total_xp, is_owner, is_tester, is_helper")
       .not("username", "is", null)
+      .eq("is_invisible", false)
       .order("total_xp", { ascending: false })
       .limit(10);
 
@@ -722,10 +748,10 @@
   });
 
   /* =========================================================
-     ADMIN (owner only)
+     ADMIN (owner + admin only)
      ========================================================= */
   el.adminNavBtn.addEventListener("click", async () => {
-    if(!cachedStats.isOwner) return;
+    if(!cachedStats.isOwner && !cachedStats.isAdmin) return;
     const code = prompt("Enter admin code:");
     if(code === null) return;
     if(code !== ADMIN_CODE){ alert("Wrong code."); return; }
@@ -745,7 +771,8 @@
 
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("user_id, username, total_xp, is_owner, is_tester, is_helper")
+      .select("user_id, username, total_xp, is_owner, is_tester, is_helper, bypass_sleep, unlimited_quests, is_invisible")
+      .eq("is_invisible", false)
       .order("username", { ascending: true });
 
     if(error || !data){
@@ -760,15 +787,44 @@
       return `
         <div class="admin-row" data-uid="${row.user_id}">
           <span class="leaderboard-name">${name}${ownerBadge}</span>
-          <span class="leaderboard-level">lv ${lvl}</span>
+          <span class="leaderboard-level" data-role="level-display">lv ${lvl}</span>
           <button class="toggle-btn ${row.is_tester ? "active-blue" : ""}" data-field="is_tester" data-value="${!row.is_tester}">tester</button>
           <button class="toggle-btn ${row.is_helper ? "active-green" : ""}" data-field="is_helper" data-value="${!row.is_helper}">helper</button>
+          <button class="toggle-btn ${row.bypass_sleep ? "active-orange" : ""}" data-field="bypass_sleep" data-value="${!row.bypass_sleep}">sleep off</button>
+          <button class="toggle-btn ${row.unlimited_quests ? "active-teal" : ""}" data-field="unlimited_quests" data-value="${!row.unlimited_quests}">unlimited</button>
+          <div class="admin-level-set">
+            <input type="number" min="0" class="level-input" value="${lvl}">
+            <button class="toggle-btn level-set-btn">set lvl</button>
+          </div>
         </div>
       `;
     }).join("");
   }
 
   el.adminList.addEventListener("click", async (e) => {
+    const levelBtn = e.target.closest(".level-set-btn");
+    if(levelBtn){
+      const row = levelBtn.closest(".admin-row");
+      const uid = row.dataset.uid;
+      const input = row.querySelector(".level-input");
+      const desiredLevel = Math.max(0, parseInt(input.value, 10) || 0);
+      const newXP = xpForLevelStart(desiredLevel);
+
+      levelBtn.disabled = true;
+      const { error } = await supabase.from("quest_stats").update({ total_xp: newXP }).eq("user_id", uid);
+      levelBtn.disabled = false;
+
+      if(error){ alert("Couldn't set that level: " + error.message); return; }
+
+      row.querySelector('[data-role="level-display"]').textContent = "lv " + desiredLevel;
+
+      if(currentUser && uid === currentUser.id){
+        cachedStats.totalXP = newXP;
+        tick();
+      }
+      return;
+    }
+
     const btn = e.target.closest(".toggle-btn");
     if(!btn) return;
     const row = btn.closest(".admin-row");
@@ -784,33 +840,18 @@
 
     if(field === "is_tester") btn.classList.toggle("active-blue", newValue);
     if(field === "is_helper") btn.classList.toggle("active-green", newValue);
+    if(field === "bypass_sleep") btn.classList.toggle("active-orange", newValue);
+    if(field === "unlimited_quests") btn.classList.toggle("active-teal", newValue);
     btn.dataset.value = (!newValue).toString();
 
-    // keep our own header badge in sync if we just toggled ourselves
+    // keep our own header badge / test flags in sync if we just toggled ourselves
     if(currentUser && uid === currentUser.id){
       if(field === "is_tester") cachedStats.isTester = newValue;
       if(field === "is_helper") cachedStats.isHelper = newValue;
+      if(field === "bypass_sleep") cachedStats.bypassSleep = newValue;
+      if(field === "unlimited_quests") cachedStats.unlimitedQuests = newValue;
       el.accountUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
     }
   });
-
-  /* ---------- admin/test toggle (device-only, disables quiet hours) ---------- */
-  const adminBtn = document.getElementById("adminBtn");
-  function refreshAdminBtn(){
-    const on = getOverride();
-    adminBtn.textContent = on ? "quiet hours: off" : "test";
-    adminBtn.classList.toggle("on", on);
-  }
-  adminBtn.addEventListener("click", function(){
-    const code = prompt(getOverride()
-      ? "Enter code to turn quiet hours back on:"
-      : "Enter code to disable quiet hours:");
-    if(code === null) return;
-    if(code !== ADMIN_CODE){ alert("Wrong code."); return; }
-    setOverride(!getOverride());
-    refreshAdminBtn();
-    tick();
-  });
-  refreshAdminBtn();
 
 })();
