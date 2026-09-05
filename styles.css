@@ -14,6 +14,8 @@
   --star-opacity: 1;
   --radius: 12px;
   --radius-sm: 9px;
+  --card-bg-rgb: 24,25,34;      /* overwritten live by sky.js to track the sky */
+  --card-border-rgb: 56,58,70;  /* overwritten live by sky.js to track the sky */
 }
 
 *{ box-sizing: border-box; }
@@ -99,11 +101,12 @@ body{
    the sky is doing behind it ---------- */
 .text-outline{
   text-shadow:
-    -1px -1px 0 rgba(0,0,0,0.55),
-     1px -1px 0 rgba(0,0,0,0.55),
-    -1px  1px 0 rgba(0,0,0,0.55),
-     1px  1px 0 rgba(0,0,0,0.55),
-     0 2px 6px rgba(0,0,0,0.40);
+    -1px -1px 0 rgba(0,0,0,0.65),
+     1px -1px 0 rgba(0,0,0,0.65),
+    -1px  1px 0 rgba(0,0,0,0.65),
+     1px  1px 0 rgba(0,0,0,0.65),
+     0 0 6px rgba(0,0,0,0.55),
+     0 2px 8px rgba(0,0,0,0.45);
 }
 
 .sr-only{
@@ -135,20 +138,24 @@ body{
 .account-links{ display:flex; align-items:center; gap:12px; }
 .account-links button.muted{ color: var(--parchment-dim); }
 
-/* ---------- shared card look: translucent + blurred so the
-   cycling sky shows through and the panel always matches whatever
-   colors are currently behind it, with a hard offset shadow for
-   the paper-cutout feel ---------- */
+/* ---------- shared card look: fill/border colors come from
+   --card-bg-rgb / --card-border-rgb, which sky.js recomputes every
+   tick by mixing the *current* sky colors into a dark base — so the
+   panel's hue and brightness genuinely track the cycling sky instead
+   of sitting at one fixed navy tint. Backdrop blur layers actual sky
+   detail on top where supported; hard offset shadow keeps the
+   paper-cutout feel. ---------- */
 .login-card, .quest-card, .stat-card, .xp-block{
-  background: rgba(24,25,34,0.72);
-  border: 1.5px solid rgba(236,230,214,0.14);
+  background: rgba(var(--card-bg-rgb), 0.74);
+  border: 1.5px solid rgba(var(--card-border-rgb), 0.7);
   border-radius: var(--radius);
   box-shadow: 4px 4px 0 rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.05);
   position:relative;
+  transition: background-color 4s ease, border-color 4s ease;
 }
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)){
   .login-card, .quest-card, .stat-card, .xp-block{
-    background: rgba(18,19,26,0.38);
+    background: rgba(var(--card-bg-rgb), 0.52);
     backdrop-filter: blur(22px) saturate(160%);
     -webkit-backdrop-filter: blur(22px) saturate(160%);
   }
