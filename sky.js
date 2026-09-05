@@ -28,6 +28,15 @@
      keeps a constant visual gap regardless of screen size */
   const CLOCK_GAP_PX = 34;
 
+  /* card tint is mixed from these bases toward the current sky color,
+     rather than sitting at one fixed color all day — this is what
+     makes the panels actually track the gradient instead of just
+     reading as a flat grey box on top of it */
+  const VOID_RGB     = [18, 19, 26];   // matches --void
+  const INK_LINE_RGB = [56, 58, 70];   // matches --ink-line
+  const CARD_MIX     = 0.34;           // how much sky color reaches the card fill
+  const BORDER_MIX   = 0.50;           // how much sky color reaches the card border
+
   function hexToRgb(hex){
     const n = parseInt(hex.slice(1), 16);
     return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
@@ -39,6 +48,12 @@
   function lerpColor(hexA, hexB, t){
     const a = hexToRgb(hexA), b = hexToRgb(hexB);
     return rgbToHex([lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)]);
+  }
+  function mixRgb(a, b, t){
+    return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+  }
+  function rgbCss(rgb){
+    return rgb.map(v => Math.round(Math.max(0, Math.min(255, v)))).join(",");
   }
 
   function getTheme(hourFloat){
@@ -71,6 +86,15 @@
 
     document.documentElement.style.setProperty("--lantern", theme.accent);
     document.documentElement.style.setProperty("--star-opacity", theme.stars);
+
+    /* card fill/border: mixed from the *current* sky colors so panels
+       actually shift hue and brightness with the gradient (a fixed
+       navy tint just reads as grey against a bright daytime sky) */
+    const skyMidRgb = mixRgb(hexToRgb(theme.top), hexToRgb(theme.bottom), 0.5);
+    const cardRgb   = mixRgb(VOID_RGB, skyMidRgb, CARD_MIX);
+    const borderRgb = mixRgb(INK_LINE_RGB, skyMidRgb, BORDER_MIX);
+    document.documentElement.style.setProperty("--card-bg-rgb", rgbCss(cardRgb));
+    document.documentElement.style.setProperty("--card-border-rgb", rgbCss(borderRgb));
 
     /* sun arcs up from 06:00, peaks at noon, sets by 18:00.
        moon covers the other 12 hours, peaking at midnight. */
