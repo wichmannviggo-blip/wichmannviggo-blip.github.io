@@ -97,7 +97,7 @@
     document.documentElement.style.setProperty("--card-border-rgb", rgbCss(borderRgb));
 
     /* clouds sit a touch dimmer at night than during the day */
-    document.documentElement.style.setProperty("--cloud-opacity", (0.62 - theme.stars * 0.26).toFixed(2));
+    document.documentElement.style.setProperty("--cloud-opacity", (0.4 - theme.stars * 0.18).toFixed(2));
 
     /* sun arcs up from 06:00, peaks at noon, sets by 18:00.
        moon covers the other 12 hours, peaking at midnight. */
@@ -138,16 +138,16 @@
   function makeClouds(){
     const wrap = document.getElementById("clouds");
     if(!wrap) return;
-    const CLOUD_COUNT = 4;
+    const CLOUD_COUNT = 3;
     for(let i = 0; i < CLOUD_COUNT; i++){
       const c = document.createElement("div");
       c.className = "cloud";
-      const width = 220 + Math.random() * 220;      // 220-440px
+      const width = 150 + Math.random() * 160;       // 150-310px
       const height = width * (0.32 + Math.random() * 0.1);
       const top = 4 + Math.random() * 40;            // upper 4-44% of the sky
-      const duration = 130 + Math.random() * 110;    // 130-240s per crossing
+      const duration = 150 + Math.random() * 110;    // 150-260s per crossing
       const delay = -Math.random() * duration;       // negative = already mid-flight
-      const opacity = 0.35 + Math.random() * 0.35;
+      const opacity = 0.16 + Math.random() * 0.2;
       c.style.width = width.toFixed(0) + "px";
       c.style.height = height.toFixed(0) + "px";
       c.style.top = top.toFixed(1) + "%";
