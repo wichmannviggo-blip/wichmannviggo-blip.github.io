@@ -22,6 +22,8 @@
     --lantern-dim: #6b5326;
     --moss: #8FB37E;
     --ember: #D97757;
+    --badge-gold: #F0C94E;
+    --badge-blue: #6FA8DC;
     --radius: 18px;
     --radius-sm: 10px;
   }
@@ -168,6 +170,32 @@
     font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--parchment-dim);
     flex-shrink:0;
   }
+
+  .badge{
+    display:inline-flex; width:14px; height:14px; margin-left:5px;
+    vertical-align:middle; flex-shrink:0;
+  }
+  .badge svg{ width:100%; height:100%; }
+  .badge-gold{ color: var(--badge-gold); }
+  .badge-blue{ color: var(--badge-blue); }
+  .badge-green{ color: var(--moss); }
+
+  /* ---------- admin ---------- */
+  .admin-row{
+    display:flex; align-items:center; flex-wrap:wrap; gap:8px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .admin-row:last-child{ border-bottom:none; }
+  .toggle-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px;
+    background: transparent; border:1px solid var(--line-strong); border-radius:999px;
+    padding: 5px 11px; cursor:pointer; color: var(--parchment-dim);
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .toggle-btn.active-blue{ color: var(--badge-blue); border-color: var(--badge-blue); }
+  .toggle-btn.active-green{ color: var(--moss); border-color: var(--moss); }
+  .toggle-btn[disabled]{ opacity:.5; cursor:default; }
 
   /* ---------- stat blocks ---------- */
   .stat-row{
@@ -364,6 +392,7 @@
       <div class="account-links">
         <button id="leaderboardBtn" class="muted">leaderboard</button>
         <button id="settingsBtn" class="muted">settings</button>
+        <button id="adminNavBtn" class="muted hidden">admin</button>
         <button id="signOutBtn">sign out</button>
       </div>
     </div>
@@ -458,9 +487,19 @@
     </div>
   </div>
 
+  <!-- ===== ADMIN VIEW (owner only) ===== -->
+  <div id="adminView" class="hidden">
+    <div class="login-card">
+      <button class="back-link" id="adminBackBtn">&larr; back to quest</button>
+      <h2>Admin</h2>
+      <p class="sub">Every account on Questie. Toggle badges below.</p>
+      <div class="leaderboard-list" id="adminList"></div>
+    </div>
+  </div>
+
 </div>
 
-<button class="admin-btn" id="adminBtn" type="button">test</button>
+<button class="admin-btn hidden" id="adminBtn" type="button">test</button>
 
 <script>
 (function(){
@@ -496,6 +535,7 @@
   const ICON_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L16 10"/></svg>`;
   const ICON_SCROLL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a2 2 0 0 1 2 2v13a1 1 0 0 1-1.6.8L15 18l-2.4 1.8a1 1 0 0 1-1.2 0L9 18l-2.4 1.8A1 1 0 0 1 5 19V6a2 2 0 0 1 1-1Z"/><path d="M9 9h6M9 12.5h6"/></svg>`;
   const ICON_BTN_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg>`;
+  const ICON_HAMMER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="2.5" width="7" height="4.5" rx="1" transform="rotate(45 16.5 4.75)"/><path d="M14.2 8.5 5 17.7l-1.8 2.8 2.8-1.8L15.2 9.5"/></svg>`;
 
   /* ---------- local debug override (device-only, not account data) ---------- */
   function getOverride(){ return localStorage.getItem(OVERRIDE_KEY) === "1"; }
@@ -533,7 +573,14 @@
   }
   function pad2(n){ return String(n).padStart(2,"0"); }
 
-  /* ---------- username rules ---------- */
+  /* ---------- badges ---------- */
+  function badgeHTML(stats){
+    let html = "";
+    if(stats.isOwner) html += `<span class="badge badge-gold" title="Owner">${ICON_CHECK}</span>`;
+    if(stats.isTester) html += `<span class="badge badge-blue" title="Tester">${ICON_CHECK}</span>`;
+    if(stats.isHelper) html += `<span class="badge badge-green" title="Helper">${ICON_HAMMER}</span>`;
+    return html;
+  }
   const USERNAME_RE = /^[A-Za-z0-9._]{4,20}$/;
   function isValidUsername(u){ return USERNAME_RE.test(u); }
   const USERNAME_COOLDOWN_DAYS = 7;
@@ -599,6 +646,11 @@
 
     leaderboardBackBtn: document.getElementById("leaderboardBackBtn"),
     leaderboardList: document.getElementById("leaderboardList"),
+
+    adminNavBtn: document.getElementById("adminNavBtn"),
+    adminView: document.getElementById("adminView"),
+    adminBackBtn: document.getElementById("adminBackBtn"),
+    adminList: document.getElementById("adminList"),
   };
 
   /* ---------- stars background ---------- */
@@ -619,7 +671,7 @@
      ========================================================= */
   let mode = "signin"; // "signin" | "signup" | "chooseUsername"
   let currentUser = null;
-  let cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null };
+  let cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null, isOwner: false, isTester: false, isHelper: false };
   let profileRowExists = false; // whether a quest_stats row already exists for currentUser
   let tickTimer = null;
 
@@ -765,22 +817,34 @@
     el.appView.classList.add("hidden");
     el.settingsView.classList.add("hidden");
     el.leaderboardView.classList.add("hidden");
+    el.adminView.classList.add("hidden");
     el.loginView.classList.remove("hidden");
     el.emailInput.value = "";
     el.passwordInput.value = "";
     el.usernameInput.value = "";
+    adminBtnEl().classList.add("hidden");
+    el.adminNavBtn.classList.add("hidden");
     setMode("signin");
   });
 
   async function enterApp(){
-    el.accountUsername.textContent = "@" + cachedStats.username;
+    el.accountUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
     el.loginView.classList.add("hidden");
     el.settingsView.classList.add("hidden");
     el.leaderboardView.classList.add("hidden");
+    el.adminView.classList.add("hidden");
     el.appView.classList.remove("hidden");
+    refreshOwnerUI();
     tick();
     if(!tickTimer) tickTimer = setInterval(tick, 15000);
   }
+
+  function refreshOwnerUI(){
+    const owner = !!cachedStats.isOwner;
+    adminBtnEl().classList.toggle("hidden", !owner);
+    el.adminNavBtn.classList.toggle("hidden", !owner);
+  }
+  function adminBtnEl(){ return document.getElementById("adminBtn"); }
 
   async function onLoggedIn(user){
     currentUser = user;
@@ -797,20 +861,20 @@
   async function loadUserStats(){
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at")
+      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper")
       .eq("user_id", currentUser.id)
       .maybeSingle();
 
     if(error){
       console.error(error);
-      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null };
+      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null, isOwner: false, isTester: false, isHelper: false };
       profileRowExists = false;
       return;
     }
 
     if(!data){
       profileRowExists = false;
-      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null };
+      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username: null, usernameChangedAt: null, isOwner: false, isTester: false, isHelper: false };
     } else {
       profileRowExists = true;
       cachedStats = {
@@ -818,7 +882,10 @@
         streak: data.streak,
         lastCompletedQuestDay: data.last_completed_quest_day,
         username: data.username,
-        usernameChangedAt: data.username_changed_at
+        usernameChangedAt: data.username_changed_at,
+        isOwner: data.is_owner,
+        isTester: data.is_tester,
+        isHelper: data.is_helper
       };
     }
   }
@@ -846,7 +913,7 @@
         username_changed_at: nowIso
       });
       if(error) return error;
-      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username, usernameChangedAt: nowIso };
+      cachedStats = { totalXP: 0, streak: 0, lastCompletedQuestDay: null, username, usernameChangedAt: nowIso, isOwner: false, isTester: false, isHelper: false };
       return null;
     } else {
       const { error } = await supabase.from("quest_stats")
@@ -1019,7 +1086,7 @@
     el.settingsView.classList.remove("hidden");
 
     el.settingsEmail.textContent = currentUser.email;
-    el.settingsUsername.textContent = "@" + cachedStats.username;
+    el.settingsUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
     el.settingsUsernameForm.classList.add("hidden");
     el.settingsUsernameInput.value = "";
     el.settingsUsernameError.textContent = "";
@@ -1083,7 +1150,7 @@
         : "Couldn't save that username. Try another.";
       return;
     }
-    el.accountUsername.textContent = "@" + cachedStats.username;
+    el.accountUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
     openSettings();
   });
 
@@ -1127,7 +1194,7 @@
 
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("username, total_xp")
+      .select("username, total_xp, is_owner, is_tester, is_helper")
       .not("username", "is", null)
       .order("total_xp", { ascending: false })
       .limit(10);
@@ -1140,10 +1207,11 @@
     el.leaderboardList.innerHTML = data.map((row, i) => {
       const lvl = levelInfo(row.total_xp).level;
       const isMe = cachedStats.username && row.username.toLowerCase() === cachedStats.username.toLowerCase();
+      const badges = badgeHTML({ isOwner: row.is_owner, isTester: row.is_tester, isHelper: row.is_helper });
       return `
         <div class="leaderboard-row${isMe ? " me" : ""}">
           <span class="leaderboard-rank">${i+1}</span>
-          <span class="leaderboard-name">@${row.username}</span>
+          <span class="leaderboard-name">@${row.username}${badges}</span>
           <span class="leaderboard-level">lv ${lvl}</span>
         </div>
       `;
@@ -1155,6 +1223,79 @@
     el.leaderboardView.classList.add("hidden");
     el.appView.classList.remove("hidden");
     tick();
+  });
+
+  /* =========================================================
+     ADMIN (owner only)
+     ========================================================= */
+  el.adminNavBtn.addEventListener("click", async () => {
+    if(!cachedStats.isOwner) return;
+    const code = prompt("Enter admin code:");
+    if(code === null) return;
+    if(code !== ADMIN_CODE){ alert("Wrong code."); return; }
+    await openAdminPanel();
+  });
+
+  el.adminBackBtn.addEventListener("click", () => {
+    el.adminView.classList.add("hidden");
+    el.appView.classList.remove("hidden");
+    tick();
+  });
+
+  async function openAdminPanel(){
+    el.appView.classList.add("hidden");
+    el.adminView.classList.remove("hidden");
+    el.adminList.innerHTML = `<p class="center-sub" style="text-align:center;">Loading…</p>`;
+
+    const { data, error } = await supabase
+      .from("quest_stats")
+      .select("user_id, username, total_xp, is_owner, is_tester, is_helper")
+      .order("username", { ascending: true });
+
+    if(error || !data){
+      el.adminList.innerHTML = `<p class="center-sub" style="text-align:center;">Couldn't load users.</p>`;
+      return;
+    }
+
+    el.adminList.innerHTML = data.map(row => {
+      const lvl = levelInfo(row.total_xp).level;
+      const name = row.username ? "@" + row.username : "(no username yet)";
+      const ownerBadge = row.is_owner ? `<span class="badge badge-gold" title="Owner">${ICON_CHECK}</span>` : "";
+      return `
+        <div class="admin-row" data-uid="${row.user_id}">
+          <span class="leaderboard-name">${name}${ownerBadge}</span>
+          <span class="leaderboard-level">lv ${lvl}</span>
+          <button class="toggle-btn ${row.is_tester ? "active-blue" : ""}" data-field="is_tester" data-value="${!row.is_tester}">tester</button>
+          <button class="toggle-btn ${row.is_helper ? "active-green" : ""}" data-field="is_helper" data-value="${!row.is_helper}">helper</button>
+        </div>
+      `;
+    }).join("");
+  }
+
+  el.adminList.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".toggle-btn");
+    if(!btn) return;
+    const row = btn.closest(".admin-row");
+    const uid = row.dataset.uid;
+    const field = btn.dataset.field;
+    const newValue = btn.dataset.value === "true";
+
+    btn.disabled = true;
+    const { error } = await supabase.from("quest_stats").update({ [field]: newValue }).eq("user_id", uid);
+    btn.disabled = false;
+
+    if(error){ alert("Couldn't update that badge: " + error.message); return; }
+
+    if(field === "is_tester") btn.classList.toggle("active-blue", newValue);
+    if(field === "is_helper") btn.classList.toggle("active-green", newValue);
+    btn.dataset.value = (!newValue).toString();
+
+    // keep our own header badge in sync if we just toggled ourselves
+    if(currentUser && uid === currentUser.id){
+      if(field === "is_tester") cachedStats.isTester = newValue;
+      if(field === "is_helper") cachedStats.isHelper = newValue;
+      el.accountUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
+    }
   });
 
   /* ---------- admin/test toggle (device-only, disables quiet hours) ---------- */
