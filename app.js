@@ -90,31 +90,47 @@
     return { effectiveStreak, alreadyCompletedToday, projectedStreak };
   }
 
-  /* ---------- badges ---------- */
-  function badgeHTML(stats){
+  / ---------- badges ---------- /
+  function badgeHTML(stats) {
     let html = "";
-    if(stats.isOwner) html += `<span class="badge badge-gold" data-tooltip="Developer" aria-label="Developer">${ICON_CHECK}</span>`;
-    if(stats.isTester) html += `<span class="badge badge-blue" data-tooltip="Tester" aria-label="Tester">${ICON_CHECK}</span>`;
-    if(stats.isHelper) html += `<span class="badge badge-green" data-tooltip="Helper" aria-label="Helper">${ICON_HAMMER}</span>`;
+    if (stats.isOwner) html += <span class="badge badge-gold" data-tooltip="Developer" aria-label="Developer">${ICON_CHECK}</span>;
+    if (stats.isTester) html += <span class="badge badge-blue" data-tooltip="Tester" aria-label="Tester">${ICON_CHECK}</span>;
+    if (stats.isHelper) html += <span class="badge badge-green" data-tooltip="Helper" aria-label="Helper">${ICON_HAMMER}</span>;
     return html;
   }
-  const USERNAME_RE = /^[A-Za-z0-9._]{4,20}$/;
-  function isValidUsername(u){ return USERNAME_RE.test(u); }
-  const USERNAME_COOLDOWN_DAYS = 7;
 
-  /* ---------- badge tap/click tooltip (works on touch, not just hover) ----------
-     Tapping a badge toggles a small tooltip next to it; tapping elsewhere,
-     or tapping another badge, closes it. Delegated on document so this
-     keeps working for badges that get re-rendered dynamically. */
+  const BADGE_DESCRIPTIONS = {
+    "badge-gold": "Developer - Has access to admin features.",
+    "badge-blue": "Tester - Can test new features.",
+    "badge-green": "Helper - Can assist users."
+  };
+
   document.addEventListener("click", (e) => {
     const badge = e.target.closest(".badge");
-    document.querySelectorAll(".badge.show-tip").forEach(b => {
-      if(b !== badge) b.classList.remove("show-tip");
-    });
-    if(badge){
-      badge.classList.toggle("show-tip");
+    if (!badge) return;
+
+    badge.classList.toggle("show-tip");
+
+    if (badge.classList.contains("show-tip")) {
+      const tooltipText = BADGE_DESCRIPTIONS[badge.className.split(' ')[0]];
+      badge.querySelector(':after').textContent = tooltipText;
     }
   });
+
+  / ---------- shooting star animation ---------- /
+  function makeStars() {
+    const wrap = document.getElementById("stars");
+    for (let i = 0; i < 40; i++) {
+      const s = document.createElement("div");
+      s.className = "star";
+      s.style.left = Math.random()  100 + "vw";
+      s.style.top = Math.random()  100 + "vh";
+      s.style.animationDelay = (Math.random()  4).toFixed(2) + "s";
+      wrap.appendChild(s);
+    }
+  }
+
+  setInterval(makeStars, 120000); // Every 2 minutes
 
   /* ---------- leveling ---------- */
   function levelInfo(totalXP){
