@@ -71,6 +71,34 @@ body{
 }
 @keyframes twinkle{ 0%,100%{opacity:.15;} 50%{opacity:.6;} }
 
+/* ---------- shooting star: streaks diagonally across the upper sky
+   and fades out, spawned occasionally at night by sky.js ---------- */
+.shooting-star{
+  position:absolute;
+  top: var(--ss-top, 10%);
+  left: var(--ss-left, 20%);
+  width:3px; height:3px; border-radius:50%;
+  background: #fff;
+  box-shadow: 0 0 6px 1px rgba(255,255,255,0.9);
+  pointer-events:none;
+  animation: shootingStarMove 1.15s cubic-bezier(.2,.6,.3,1) forwards;
+}
+.shooting-star::before{
+  content:"";
+  position:absolute;
+  top:50%; left:50%;
+  width:110px; height:2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0));
+  transform-origin: left center;
+  transform: translateY(-50%) rotate(var(--ss-angle, 20deg));
+}
+@keyframes shootingStarMove{
+  0%{ opacity:0; transform: translate(0,0); }
+  10%{ opacity:1; }
+  80%{ opacity:1; }
+  100%{ opacity:0; transform: translate(var(--ss-dx, -220px), var(--ss-dy, 140px)); }
+}
+
 /* ---------- clouds: slow, quiet, purely ambient ---------- */
 .clouds{
   position:absolute; inset:0; overflow:hidden;
@@ -125,6 +153,7 @@ body{
 @media (prefers-reduced-motion: reduce){
   .star{ animation:none; }
   .cloud{ animation:none; }
+  .shooting-star{ animation:none; display:none; }
   .celestial{ transition: opacity 2s ease; }
 }
 
@@ -399,10 +428,19 @@ body{
 }
 .leaderboard-row.me .leaderboard-rank,
 .leaderboard-row.me .leaderboard-name{ color: var(--lantern); }
+
+/* NOTE: overflow/ellipsis lives on the inner .name-text span only —
+   .leaderboard-name itself stays overflow:visible so badge tooltips
+   and the click-to-open badge legend popover aren't clipped. */
 .leaderboard-name{
-  flex:1; min-width:0; font-family: var(--font-body); font-weight:600; font-size:14.5px;
+  flex:1; min-width:0;
+  display:inline-flex; align-items:center;
+  font-family: var(--font-body); font-weight:600; font-size:14.5px;
   color: var(--paper);
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.leaderboard-name .name-text{
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;
+  flex: 1 1 auto;
 }
 .leaderboard-level{
   font-family: var(--font-mono);
@@ -421,10 +459,9 @@ body{
 .badge-blue{ color: var(--badge-blue); }
 .badge-green{ color: var(--moss); }
 
-/* Tooltip shows on hover (desktop) AND on tap/click via the
-   ".show-tip" class toggled by app.js — so it works on touch too. */
-.badge:hover::after,
-.badge.show-tip::after{
+/* Quick single-word label on hover (desktop mouse), works everywhere
+   the badge appears now that overflow isn't clipping it. */
+.badge:hover::after{
   content: attr(data-tooltip);
   position: absolute;
   bottom: 140%;
@@ -444,8 +481,7 @@ body{
   box-shadow: var(--shadow-chip);
   z-index: 20;
 }
-.badge:hover::before,
-.badge.show-tip::before{
+.badge:hover::before{
   content: "";
   position: absolute;
   bottom: 118%;
@@ -455,6 +491,41 @@ body{
   border-top-color: rgba(var(--card-border-rgb), 0.75);
   z-index: 20;
 }
+
+/* ---------- badge legend popover ----------
+   Opens on an actual click/tap of any badge, anywhere. Lists what
+   every badge on Questie means, not just the one that was clicked. */
+.badge-legend-popover{
+  position: fixed;
+  z-index: 60;
+  width: 220px;
+  background: rgba(var(--card-bg-rgb), 0.97);
+  border: 1px solid rgba(var(--card-border-rgb), 0.75);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-chip);
+  padding: 12px 14px;
+  animation: fadeUp .15s ease;
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)){
+  .badge-legend-popover{
+    background: rgba(var(--card-bg-rgb), 0.88);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+  }
+}
+.badge-legend-title{
+  font-family: var(--font-body); font-size:12px; font-weight:600; color: var(--fog);
+  margin-bottom: 8px; text-transform: uppercase; letter-spacing:.04em;
+}
+.badge-legend-row{
+  display:flex; align-items:flex-start; gap:9px;
+  padding: 6px 0;
+}
+.badge-legend-row + .badge-legend-row{ border-top: 1px solid rgba(var(--line-rgb), 0.1); }
+.badge-legend-row .badge{ cursor:default; margin-left:0; margin-top:2px; }
+.badge-legend-text{ display:flex; flex-direction:column; gap:1px; }
+.badge-legend-text strong{ font-size:12.5px; color: var(--paper); font-weight:600; }
+.badge-legend-text span{ font-size:11.5px; color: var(--fog); line-height:1.4; }
 
 /* ---------- admin ---------- */
 .admin-row{
