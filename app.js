@@ -26,69 +26,86 @@
   const ICON_HAMMER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="2" width="9" height="6" rx="1.4" transform="rotate(45 17.5 5)"/><path d="M15.3 7.3 4.2 18.4"/><path d="M3 19.5 4.6 21"/></svg>`;
 
   /* =========================================================
-     QUEST CONTENT — 17 per difficulty, ranked by time / effort /
-     social nerve required. Each carries a fixed xp reward.
+     QUEST CONTENT — ranked by time / effort / social nerve required.
+     Pools don't need to match the 16 daily hour-slots exactly; each
+     just needs at least 16 entries so a day's schedule can draw 16
+     unique picks per difficulty without repeats. Each carries a
+     fixed xp reward.
      ========================================================= */
   const EASY_XP = 15, MEDIUM_XP = 30, HARD_XP = 55;
 
   const EASY_QUESTS = [
-    "Drink a full glass of water right now.",
-    "Do 10 jumping jacks.",
-    "Write down one thing you're grateful for.",
-    "Send a friendly text to someone you care about.",
-    "Tidy your desk or workspace for 2 minutes.",
-    "Take 5 slow, deep breaths.",
-    "Say one genuine compliment to yourself, out loud.",
-    "Stretch your arms and legs for 3 minutes.",
-    "Name 3 things you can see, hear, and feel right now.",
-    "Doodle something small in under 5 minutes.",
-    "Text someone \"thinking of you\" for no reason.",
-    "Refill your water bottle.",
-    "Stand up and walk around for 2 minutes.",
-    "Write one sentence in a journal or notes app.",
-    "Water a plant, real or on your windowsill.",
-    "Pick up 5 pieces of litter near you.",
-    "Put your phone down and look out a window for 1 minute."
+    "Make your bed.",
+    "Drink a glass of water.",
+    "Do 10 squats.",
+    "Take a 5-minute walk.",
+    "Send a nice message to someone.",
+    "Take a photo of something interesting.",
+    "Give someone a compliment.",
+    "Listen to a song from a genre you've never explored before.",
+    "Do 10 push-ups (or as many as you comfortably can).",
+    "Look outside for 2 minutes.",
+    "Do absolutely nothing for 5 minutes.",
+    "Find and touch something blue.",
+    "Rearrange one small thing in your room.",
+    "Make someone smile.",
+    "Balance on one leg for 30 seconds.",
+    "Find the oldest item near you.",
+    "Change one small thing about your daily routine.",
+    "Find something you forgot you owned.",
+    "Draw something using only 60 seconds.",
+    "Try to beat your personal record at something.",
+    "Find an object that starts with the first letter of your name."
   ];
 
   const MEDIUM_QUESTS = [
-    "Call a family member for a 5-minute chat.",
-    "Ask a coworker or classmate how their day is really going.",
-    "Write a short thank-you note to someone.",
-    "Do 20 minutes of exercise.",
-    "Cook a homemade meal instead of ordering out.",
-    "Learn a new word and use it in conversation today.",
-    "Give a genuine compliment to a stranger.",
-    "Spend 15 minutes decluttering a drawer or shelf.",
-    "Read 10 pages of a book.",
-    "Introduce yourself to someone you don't know yet.",
-    "Ask someone for their honest opinion on something you made.",
-    "Share something you're working on with a friend.",
-    "Take a 20-minute walk somewhere you've never been.",
-    "Write down 3 goals for this week.",
-    "Message an old friend you haven't spoken to in a while.",
-    "Practice a hobby or skill for 15 minutes.",
-    "Ask a stranger for a small recommendation, like their favorite coffee spot."
+    "Take a 15-minute walk.",
+    "Clean one area of your room.",
+    "Spend 20 minutes without social media.",
+    "Make yourself a snack or drink.",
+    "Organize one drawer.",
+    "Listen to an entire album without scrolling.",
+    "Draw something in 15 minutes.",
+    "Write a short journal entry.",
+    "Start a conversation with someone.",
+    "Spend 15 minutes on a hobby.",
+    "Create a playlist with 5 songs.",
+    "Help someone with something.",
+    "Take a different route on a short walk.",
+    "Clean up your phone's home screen.",
+    "Find three things you've never noticed before around you.",
+    "Make something using only items you already have.",
+    "Go outside and take five interesting photos.",
+    "Write a 10-word story.",
+    "Try to make someone laugh without telling them the quest.",
+    "Rearrange your room or desk slightly.",
+    "Make a paper airplane and improve it three times.",
+    "Pick an object and draw it without looking at the paper.",
+    "Find the weirdest object you own and give it a backstory.",
+    "Create a 10-minute challenge for yourself."
   ];
 
   const HARD_QUESTS = [
-    "Start a conversation with 3 strangers today.",
-    "Give a compliment to someone in front of a group.",
-    "Call someone you haven't spoken to in over a year.",
-    "Ask for something you want but feel nervous asking for.",
-    "Share a personal story with a group of people.",
-    "Sing or perform something in front of at least one other person.",
-    "Introduce yourself to 5 new people today.",
-    "Have a deep, honest conversation with someone close to you.",
-    "Ask a stranger for directions and keep the conversation going.",
-    "Pitch an idea of yours to someone whose opinion matters to you.",
-    "Do something today that safely pushes you outside your comfort zone.",
-    "Ask someone out — a friend hangout, date, or activity.",
-    "Give someone honest, constructive feedback in person.",
-    "Speak up with your opinion in a meeting or group discussion.",
-    "Reach out to someone you admire professionally, out of the blue.",
-    "Try a new activity alone in public, like a class or event.",
-    "Apologize in person for something, even something small."
+    "Go on a 30-minute walk.",
+    "Create something and finish it within 30 minutes.",
+    "Complete a 20-minute workout at your own comfortable pace.",
+    "Explore somewhere nearby you've never properly explored.",
+    "Go 30 minutes without checking your phone.",
+    "Write a short story in 30 minutes.",
+    "Draw something you're proud of.",
+    "Take 10 creative photos around your surroundings.",
+    "Create a mini project and finish it.",
+    "Listen to a podcast or educational video and learn something.",
+    "Let a random number generator decide what you do for the next 20 minutes.",
+    "Recreate a photo or scene using only objects around you.",
+    "Write a letter to your future self.",
+    "Try to learn a simple magic trick.",
+    "Create something useful from something you would normally throw away.",
+    "Walk somewhere without choosing your route beforehand — make decisions randomly.",
+    "Invent a completely new game and play-test it.",
+    "Make a 30-minute time capsule containing items or notes from today.",
+    "Attempt a skill you've never tried before and record your progress.",
+    "Turn your room into a different environment using only things you already own."
   ];
 
   const HOUR_START = 6;   // quests begin unlocking at 06:00
