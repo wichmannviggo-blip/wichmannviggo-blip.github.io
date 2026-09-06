@@ -102,18 +102,83 @@
   function isValidUsername(u){ return USERNAME_RE.test(u); }
   const USERNAME_COOLDOWN_DAYS = 7;
 
-  /* ---------- badge tap/click tooltip (works on touch, not just hover) ----------
-     Tapping a badge toggles a small tooltip next to it; tapping elsewhere,
-     or tapping another badge, closes it. Delegated on document so this
-     keeps working for badges that get re-rendered dynamically. */
-  document.addEventListener("click", (e) => {
-    const badge = e.target.closest(".badge");
-    document.querySelectorAll(".badge.show-tip").forEach(b => {
-      if(b !== badge) b.classList.remove("show-tip");
-    });
-    if(badge){
-      badge.classList.toggle("show-tip");
+  /* ---------- badge legend popover ----------
+     Hovering a badge (desktop mouse) shows a quick single-word label via
+     CSS (data-tooltip). Actually CLICKING/TAPPING a badge — anywhere it
+     appears: header, leaderboard, admin, settings — opens a small popover
+     listing what every badge on Questie means, positioned next to the
+     badge that was clicked. Built once and reused so it works no matter
+     which view re-renders its badges. ---------- */
+  const BADGE_INFO = [
+    { cls: "badge-gold",  icon: ICON_CHECK,  name: "Developer", desc: "Builds and maintains Questie." },
+    { cls: "badge-blue",  icon: ICON_CHECK,  name: "Tester",    desc: "Helped test the app before others." },
+    { cls: "badge-green", icon: ICON_HAMMER, name: "Helper",    desc: "Helps support the Questie community." }
+  ];
+  const badgeLegendEl = document.createElement("div");
+  badgeLegendEl.className = "badge-legend-popover hidden";
+  badgeLegendEl.innerHTML = `
+    <div class="badge-legend-title">Badges</div>
+    ${BADGE_INFO.map(b => `
+      <div class="badge-legend-row">
+        <span class="badge ${b.cls}">${b.icon}</span>
+        <div class="badge-legend-text"><strong>${b.name}</strong><span>${b.desc}</span></div>
+      </div>
+    `).join("")}
+  `;
+  document.body.appendChild(badgeLegendEl);
+
+  let badgeLegendAnchor = null;
+
+  function positionBadgeLegend(anchorEl){
+    const rect = anchorEl.getBoundingClientRect();
+    const popRect = badgeLegendEl.getBoundingClientRect();
+    const margin = 10;
+
+    let left = rect.left;
+    const maxLeft = window.innerWidth - popRect.width - margin;
+    if(left > maxLeft) left = maxLeft;
+    if(left < margin) left = margin;
+
+    let top = rect.bottom + 8;
+    if(top + popRect.height > window.innerHeight - margin){
+      top = rect.top - popRect.height - 8;
     }
+    if(top < margin) top = margin;
+
+    badgeLegendEl.style.left = left + "px";
+    badgeLegendEl.style.top = top + "px";
+  }
+
+  function openBadgeLegend(anchorEl){
+    if(badgeLegendAnchor === anchorEl && !badgeLegendEl.classList.contains("hidden")){
+      closeBadgeLegend();
+      return;
+    }
+    badgeLegendAnchor = anchorEl;
+    badgeLegendEl.classList.remove("hidden");
+    positionBadgeLegend(anchorEl);
+  }
+
+  function closeBadgeLegend(){
+    badgeLegendEl.classList.add("hidden");
+    badgeLegendAnchor = null;
+  }
+
+  document.addEventListener("click", (e) => {
+    const insidePopover = e.target.closest(".badge-legend-popover");
+    if(insidePopover) return; // clicking inside the popover itself does nothing special
+
+    const badge = e.target.closest(".badge");
+    if(badge){
+      e.stopPropagation();
+      openBadgeLegend(badge);
+      return;
+    }
+    closeBadgeLegend();
+  });
+
+  window.addEventListener("resize", () => {
+    if(badgeLegendAnchor) positionBadgeLegend(badgeLegendAnchor);
   });
 
   /* ---------- leveling ---------- */
@@ -813,7 +878,7 @@
       return `
         <div class="leaderboard-row${isMe ? " me" : ""}">
           <span class="leaderboard-rank">${i+1}</span>
-          <span class="leaderboard-name">@${row.username}${badges}</span>
+          <span class="leaderboard-name"><span class="name-text">@${row.username}</span>${badges}</span>
           <span class="leaderboard-level">lv ${lvl}</span>
         </div>
       `;
@@ -867,7 +932,7 @@
       return `
         <div class="admin-row" data-uid="${row.user_id}">
           <div class="admin-row-top">
-            <span class="leaderboard-name">${name}${ownerBadge}${invisibleTag}</span>
+            <span class="leaderboard-name"><span class="name-text">${name}</span>${ownerBadge}${invisibleTag}</span>
             <span class="leaderboard-level" data-role="level-display">lv ${lvl}</span>
           </div>
           <div class="admin-row-actions">
