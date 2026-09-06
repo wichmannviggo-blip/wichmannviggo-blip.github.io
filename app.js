@@ -24,6 +24,7 @@
   const ICON_SCROLL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a2 2 0 0 1 2 2v13a1 1 0 0 1-1.6.8L15 18l-2.4 1.8a1 1 0 0 1-1.2 0L9 18l-2.4 1.8A1 1 0 0 1 5 19V6a2 2 0 0 1 1-1Z"/><path d="M9 9h6M9 12.5h6"/></svg>`;
   const ICON_BTN_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg>`;
   const ICON_HAMMER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="2" width="9" height="6" rx="1.4" transform="rotate(45 17.5 5)"/><path d="M15.3 7.3 4.2 18.4"/><path d="M3 19.5 4.6 21"/></svg>`;
+  const ICON_PERSON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.5c1.2-3.4 3.7-5 6.5-5s5.3 1.6 6.5 5"/></svg>`;
 
   /* =========================================================
      QUEST CONTENT — ranked by time / effort / social nerve required.
@@ -264,7 +265,7 @@
   /* ---------- badges ---------- */
   function badgeHTML(stats){
     let html = "";
-    if(stats.userNumber) html += `<span class="badge og-badge" data-tooltip="Member #${stats.userNumber}">${stats.userNumber}</span>`;
+    if(stats.userNumber && stats.userNumber <= 100) html += `<span class="badge og-badge" data-tooltip="OG #${stats.userNumber}">${ICON_PERSON}</span>`;
     if(stats.isOwner) html += `<span class="badge badge-gold" data-tooltip="Developer" aria-label="Developer">${ICON_CHECK}</span>`;
     if(stats.isTester) html += `<span class="badge badge-blue" data-tooltip="Tester" aria-label="Tester">${ICON_CHECK}</span>`;
     if(stats.isHelper) html += `<span class="badge badge-green" data-tooltip="Helper" aria-label="Helper">${ICON_HAMMER}</span>`;
@@ -293,8 +294,8 @@
   badgeLegendEl.innerHTML = `
     <div class="badge-legend-title">Badges</div>
     <div class="badge-legend-row">
-      <span class="badge og-badge">#</span>
-      <div class="badge-legend-text"><strong>Member number</strong><span>Shows the order you joined Questie in.</span></div>
+      <span class="badge og-badge">${ICON_PERSON}</span>
+      <div class="badge-legend-text"><strong>OG badge</strong><span>Awarded to the first 100 people who ever sign up.</span></div>
     </div>
     ${BADGE_INFO.map(b => `
       <div class="badge-legend-row">
