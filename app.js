@@ -482,9 +482,10 @@
       el.loginSubmitBtn.disabled = false;
       el.loginSubmitBtn.textContent = "Save username";
       if(err){
+        console.error("claimUsername error:", err);
         el.loginError.textContent = (err.code === "23505")
           ? "That username is already taken. Try another."
-          : "Couldn't save that username. Try another.";
+          : `Couldn't save that username: ${err.message || "unknown error"}`;
         return;
       }
       profileRowExists = true;
@@ -999,9 +1000,10 @@
     el.settingsUsernameSaveBtn.disabled = false;
     el.settingsUsernameSaveBtn.textContent = "Save username";
     if(err){
+      console.error("claimUsername error:", err);
       el.settingsUsernameError.textContent = (err.code === "23505")
         ? "That username is already taken. Try another."
-        : "Couldn't save that username. Try another.";
+        : `Couldn't save that username: ${err.message || "unknown error"}`;
       return;
     }
     el.accountUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
