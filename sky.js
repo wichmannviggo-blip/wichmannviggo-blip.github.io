@@ -6,6 +6,7 @@
    times (it no longer arcs across the screen) — only its opacity
    and whether it's showing the sun or the moon change with time.
    The clock rides directly under it, always the same fixed gap.
+   A shooting star also streaks across the night sky every so often.
    ========================================================= */
 (function(){
 
@@ -152,7 +153,48 @@
     }
   }
 
+  /* ---------- shooting star ----------
+     A single small star streaks diagonally across the upper sky and
+     fades out. Only appears at night (when the sky's own "stars"
+     opacity is high), roughly once every 1-2 minutes. */
+  function spawnShootingStar(){
+    const wrap = document.getElementById("stars");
+    if(!wrap) return;
+
+    const star = document.createElement("div");
+    star.className = "shooting-star";
+
+    const startTop = 4 + Math.random() * 38;   // upper part of the sky, in %
+    const startLeft = 15 + Math.random() * 55; // avoid hugging the very edges, in %
+    const dx = -(180 + Math.random() * 180);   // travels left, in px
+    const dy = 90 + Math.random() * 100;       // travels down, in px
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 180; // tail points back the way it came
+
+    star.style.setProperty("--ss-top", startTop.toFixed(1) + "%");
+    star.style.setProperty("--ss-left", startLeft.toFixed(1) + "%");
+    star.style.setProperty("--ss-dx", dx.toFixed(0) + "px");
+    star.style.setProperty("--ss-dy", dy.toFixed(0) + "px");
+    star.style.setProperty("--ss-angle", angle.toFixed(0) + "deg");
+
+    wrap.appendChild(star);
+    star.addEventListener("animationend", () => star.remove());
+  }
+
+  function scheduleNextShootingStar(){
+    const delay = (60 + Math.random() * 60) * 1000; // every 60-120s
+    setTimeout(() => {
+      const now = new Date();
+      const hourFloat = now.getHours() + now.getMinutes() / 60;
+      const theme = getTheme(hourFloat);
+      if(theme.stars >= 0.4){ // only spawn once it's properly dark out
+        spawnShootingStar();
+      }
+      scheduleNextShootingStar();
+    }, delay);
+  }
+
   makeClouds();
   updateSky();
   setInterval(updateSky, 60000);
+  scheduleNextShootingStar();
 })();
