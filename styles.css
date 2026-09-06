@@ -582,14 +582,16 @@ body{
 .leaderboard-me-wrap:empty{ margin-top:0; padding-top:0; border-top:none; }
 .leaderboard-me-wrap .leaderboard-row{ border-bottom:none; padding-bottom:0; }
 
-/* small red circle/pill showing signup order — "OG" indicator */
+/* small hollow ring showing signup order — same visual weight as the
+   other role badges, just with a number inside instead of an icon */
 .og-badge{
-  display:inline-flex; align-items:center; justify-content:center;
-  min-width:16px; height:16px; padding:0 4px;
   border-radius:999px;
-  background:#E1484D; color:#fff;
-  font-family: var(--font-mono); font-size:8.5px; font-weight:700; line-height:1;
-  margin-left:5px; vertical-align:middle; flex-shrink:0;
+  border: 1.4px solid #E1484D;
+  background: transparent;
+  color: #E1484D;
+  font-family: var(--font-mono); font-size:7.5px; font-weight:700; line-height:1;
+  width:auto; min-width:14px; height:14px; padding:0 3px;
+  justify-content:center;
 }
 
 /* ---------- admin (normal styling — overridden below when the
