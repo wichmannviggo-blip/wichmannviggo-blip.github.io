@@ -105,6 +105,12 @@
     if(d.getHours() < HOUR_START){ d.setDate(d.getDate()-1); }
     return fmtDate(d);
   }
+  function addDaysStr(dateStr, n){
+    const [y,m,d] = dateStr.split("-").map(Number);
+    const dt = new Date(y, m-1, d);
+    dt.setDate(dt.getDate()+n);
+    return fmtDate(dt);
+  }
   function hashStr(s){
     let h=0;
     for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; }
@@ -116,6 +122,17 @@
     next.setMinutes(0,0,0);
     next.setHours(next.getHours()+1);
     return Math.max(0, Math.ceil((next - now)/60000));
+  }
+
+  /* ---------- streak xp multiplier ----------
+     Applied ONCE per day, at settlement (22:00) — never per-quest.
+     Day 1 of a streak = x1, day 2 = x1.5, day 3 = x2, etc. Resets to
+     x1 the moment a day passes with zero quests completed. ---------- */
+  function streakMultiplier(streakCount){
+    return 1 + 0.5 * Math.max(0, streakCount - 1);
+  }
+  function formatMultiplier(m){
+    return (Math.round(m * 10) / 10).toString().replace(/\.0$/, "");
   }
 
   /* ---------- seeded randomness ----------
@@ -343,6 +360,8 @@
     settingsView: document.getElementById("settingsView"),
     leaderboardView: document.getElementById("leaderboardView"),
     level: document.getElementById("levelValue"),
+    streak: document.getElementById("streakValue"),
+    streakMult: document.getElementById("streakMultValue"),
     todayXp: document.getElementById("todayXpValue"),
     xpText: document.getElementById("xpText"),
     xpToGo: document.getElementById("xpToGo"),
@@ -418,6 +437,7 @@
     totalXP: 0, username: null, usernameChangedAt: null,
     isOwner: false, isTester: false, isHelper: false,
     isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+    streak: 0, lastStreakDay: null,
     dailyProgress: null
   };
   let profileRowExists = false;
@@ -465,6 +485,16 @@
     }
   }
   el.toggleModeBtn.addEventListener("click", () => setMode(mode === "signin" ? "signup" : "signin"));
+
+  // Enter key submits the login/signup/username form, same as clicking the button
+  [el.emailInput, el.usernameInput, el.passwordInput].forEach(input => {
+    input.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        el.loginSubmitBtn.click();
+      }
+    });
+  });
 
   el.loginSubmitBtn.addEventListener("click", async () => {
     el.loginError.textContent = "";
@@ -642,7 +672,7 @@
   async function loadUserStats(){
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("total_xp, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests, daily_progress")
+      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests, daily_progress")
       .eq("user_id", currentUser.id)
       .maybeSingle();
 
@@ -650,6 +680,7 @@
       totalXP: 0, username: null, usernameChangedAt: null,
       isOwner: false, isTester: false, isHelper: false,
       isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+      streak: 0, lastStreakDay: null,
       dailyProgress: null
     });
 
@@ -680,6 +711,8 @@
         isInvisible: data.is_invisible,
         bypassSleep: data.bypass_sleep,
         unlimitedQuests: data.unlimited_quests,
+        streak: data.streak || 0,
+        lastStreakDay: data.last_completed_quest_day,
         dailyProgress: dailyProgress
       };
     }
@@ -688,6 +721,8 @@
   async function saveUserStats(){
     await supabase.from("quest_stats").update({
       total_xp: cachedStats.totalXP,
+      streak: cachedStats.streak,
+      last_completed_quest_day: cachedStats.lastStreakDay,
       daily_progress: JSON.stringify(cachedStats.dailyProgress),
       updated_at: new Date().toISOString()
     }).eq("user_id", currentUser.id);
@@ -713,6 +748,7 @@
         totalXP: 0, username, usernameChangedAt: nowIso,
         isOwner: false, isTester: false, isHelper: false,
         isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+        streak: 0, lastStreakDay: null,
         dailyProgress: initialProgress
       };
       return null;
@@ -739,6 +775,35 @@
      DAILY PROGRESS ENGINE
      ========================================================= */
 
+  // Folds a finished day's banked xp into the real total exactly once,
+  // applying that day's streak multiplier at this single moment — the
+  // multiplier never touches individual quest completions, only the
+  // day's total when it settles.
+  function settleDay(progress){
+    if(progress.settled) return;
+    const questDay = progress.day;
+    const earnedToday = progress.pendingXp;
+
+    if(earnedToday > 0){
+      const prevDay = addDaysStr(questDay, -1);
+      if(cachedStats.lastStreakDay === prevDay){
+        cachedStats.streak += 1;
+      } else if(cachedStats.lastStreakDay !== questDay){
+        cachedStats.streak = 1;
+      }
+      cachedStats.lastStreakDay = questDay;
+
+      const multiplier = streakMultiplier(cachedStats.streak);
+      const boosted = Math.round(earnedToday * multiplier);
+      cachedStats.totalXP += boosted;
+      progress.pendingXp = 0;
+    } else {
+      cachedStats.streak = 0;
+    }
+
+    progress.settled = true;
+  }
+
   // makes sure cachedStats.dailyProgress correctly reflects "right now":
   // rolls over to a fresh day at 06:00, folds pending xp into the real
   // total once the day's active window ends (22:00), and resets the
@@ -750,8 +815,8 @@
     let progress = cachedStats.dailyProgress;
 
     if(!progress || progress.day !== questDay){
-      if(progress && !progress.settled && progress.pendingXp > 0){
-        cachedStats.totalXP += progress.pendingXp;
+      if(progress && !progress.settled){
+        settleDay(progress);
       }
       progress = defaultProgress(questDay);
       cachedStats.dailyProgress = progress;
@@ -763,9 +828,7 @@
 
     if(!awake){
       if(!progress.settled){
-        cachedStats.totalXP += progress.pendingXp;
-        progress.pendingXp = 0;
-        progress.settled = true;
+        settleDay(progress);
         saveUserStats();
       }
       return progress;
@@ -834,7 +897,7 @@
       <div class="center-block state-fade">
         <div class="big-icon">${ICON_MOON}</div>
         <p class="center-title">Questie is asleep</p>
-        <p class="center-sub">Hourly quests run 06:00–22:00. Today's xp has been folded into your total — a fresh set unlocks at 06:00.</p>
+        <p class="center-sub">Hourly quests run 06:00–22:00. Today's xp has been folded into your total with your streak multiplier applied — a fresh set unlocks at 06:00.</p>
         <span class="mono-note">new quests in ${h}h ${pad2(m)}m</span>
       </div>
     `;
@@ -916,6 +979,10 @@
   function renderStats(){
     const lvl = levelInfo(cachedStats.totalXP);
     el.level.textContent = lvl.level;
+
+    el.streak.textContent = cachedStats.streak;
+    const mult = streakMultiplier(cachedStats.streak);
+    el.streakMult.textContent = `x${formatMultiplier(mult)} mult`;
 
     const progress = cachedStats.dailyProgress;
     el.todayXp.textContent = `${progress ? progress.pendingXp : 0} xp`;
