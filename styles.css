@@ -558,6 +558,40 @@ body{
 .badge-legend-text strong{ font-size:12.5px; color: var(--paper); font-weight:600; }
 .badge-legend-text span{ font-size:11.5px; color: var(--fog); line-height:1.4; }
 
+/* ---------- leaderboard tabs + "your rank" ---------- */
+.leaderboard-tabs{
+  display:flex; gap:8px; margin-bottom:14px;
+}
+.leaderboard-tab{
+  flex:1;
+  font-family: var(--font-body); font-size:13px; font-weight:600;
+  padding:8px 10px; border-radius: var(--radius-pill);
+  border:1.5px solid rgba(var(--line-rgb),0.18);
+  background:transparent; color:var(--fog); cursor:pointer;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.leaderboard-tab:hover{ color: var(--paper); }
+.leaderboard-tab.active{
+  background: var(--lantern); color: var(--void); border-color: var(--lantern);
+}
+.leaderboard-me-wrap{
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(var(--line-rgb), 0.2);
+}
+.leaderboard-me-wrap:empty{ margin-top:0; padding-top:0; border-top:none; }
+.leaderboard-me-wrap .leaderboard-row{ border-bottom:none; padding-bottom:0; }
+
+/* small red circle/pill showing signup order — "OG" indicator */
+.og-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:16px; height:16px; padding:0 4px;
+  border-radius:999px;
+  background:#E1484D; color:#fff;
+  font-family: var(--font-mono); font-size:8.5px; font-weight:700; line-height:1;
+  margin-left:5px; vertical-align:middle; flex-shrink:0;
+}
+
 /* ---------- admin (normal styling — overridden below when the
    "old website" mode is active) ---------- */
 .admin-row{
