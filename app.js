@@ -264,6 +264,7 @@
   /* ---------- badges ---------- */
   function badgeHTML(stats){
     let html = "";
+    if(stats.userNumber) html += `<span class="og-badge" title="Member #${stats.userNumber}">${stats.userNumber}</span>`;
     if(stats.isOwner) html += `<span class="badge badge-gold" data-tooltip="Developer" aria-label="Developer">${ICON_CHECK}</span>`;
     if(stats.isTester) html += `<span class="badge badge-blue" data-tooltip="Tester" aria-label="Tester">${ICON_CHECK}</span>`;
     if(stats.isHelper) html += `<span class="badge badge-green" data-tooltip="Helper" aria-label="Helper">${ICON_HAMMER}</span>`;
@@ -428,6 +429,8 @@
 
     leaderboardBackBtn: document.getElementById("leaderboardBackBtn"),
     leaderboardList: document.getElementById("leaderboardList"),
+    leaderboardMe: document.getElementById("leaderboardMe"),
+    leaderboardTabs: document.querySelectorAll(".leaderboard-tab"),
 
     adminNavBtn: document.getElementById("adminNavBtn"),
     adminView: document.getElementById("adminView"),
@@ -458,6 +461,7 @@
     isOwner: false, isTester: false, isHelper: false,
     isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
     streak: 0, lastStreakDay: null,
+    questsCompleted: 0, userNumber: null,
     dailyProgress: null
   };
   let profileRowExists = false;
@@ -692,7 +696,7 @@
   async function loadUserStats(){
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests, daily_progress")
+      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests, daily_progress, quests_completed, user_number")
       .eq("user_id", currentUser.id)
       .maybeSingle();
 
@@ -701,6 +705,7 @@
       isOwner: false, isTester: false, isHelper: false,
       isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
       streak: 0, lastStreakDay: null,
+      questsCompleted: 0, userNumber: null,
       dailyProgress: null
     });
 
@@ -733,6 +738,8 @@
         unlimitedQuests: data.unlimited_quests,
         streak: data.streak || 0,
         lastStreakDay: data.last_completed_quest_day,
+        questsCompleted: data.quests_completed || 0,
+        userNumber: data.user_number || null,
         dailyProgress: dailyProgress
       };
     }
@@ -743,9 +750,22 @@
       total_xp: cachedStats.totalXP,
       streak: cachedStats.streak,
       last_completed_quest_day: cachedStats.lastStreakDay,
+      quests_completed: cachedStats.questsCompleted,
       daily_progress: JSON.stringify(cachedStats.dailyProgress),
       updated_at: new Date().toISOString()
     }).eq("user_id", currentUser.id);
+  }
+
+  // next sequential "member number" for a brand-new signup — used for
+  // the small red OG badge next to usernames everywhere
+  async function getNextUserNumber(){
+    const { data, error } = await supabase
+      .from("quest_stats")
+      .select("user_number")
+      .order("user_number", { ascending: false })
+      .limit(1);
+    if(error || !data || data.length === 0 || !data[0].user_number) return 1;
+    return data[0].user_number + 1;
   }
 
   /* creates (isNewRow=true) or updates (isNewRow=false) the username.
@@ -754,12 +774,15 @@
     const nowIso = new Date().toISOString();
     if(isNewRow){
       const initialProgress = defaultProgress(getQuestDay(new Date()));
+      const nextNumber = await getNextUserNumber();
       const { error } = await supabase.from("quest_stats").insert({
         user_id: currentUser.id,
         total_xp: 0,
         streak: 0,
         last_completed_quest_day: null,
         daily_progress: JSON.stringify(initialProgress),
+        quests_completed: 0,
+        user_number: nextNumber,
         username: username,
         username_changed_at: nowIso
       });
@@ -769,6 +792,7 @@
         isOwner: false, isTester: false, isHelper: false,
         isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
         streak: 0, lastStreakDay: null,
+        questsCompleted: 0, userNumber: nextNumber,
         dailyProgress: initialProgress
       };
       return null;
@@ -917,6 +941,7 @@
     progress.pendingXp += quest.xp;
     progress.resolved = true;
     progress.completed = true;
+    cachedStats.questsCompleted = (cachedStats.questsCompleted || 0) + 1;
 
     renderStats();
     viewHourComplete(slot, progress);
@@ -1037,7 +1062,7 @@
 
     el.streak.textContent = cachedStats.streak;
     const mult = streakMultiplier(cachedStats.streak);
-    el.streakMult.textContent = `x${formatMultiplier(mult)} mult`;
+    el.streakMult.textContent = `x${formatMultiplier(mult)} xp`;
 
     const progress = cachedStats.dailyProgress;
     el.todayXp.textContent = `${progress ? progress.pendingXp : 0} xp`;
@@ -1165,36 +1190,89 @@
   /* =========================================================
      LEADERBOARD
      ========================================================= */
+  let leaderboardTab = "levels"; // "levels" | "quests"
+
   async function openLeaderboard(){
     el.appView.classList.add("hidden");
     el.leaderboardView.classList.remove("hidden");
+    leaderboardTab = "levels";
+    el.leaderboardTabs.forEach(btn => btn.classList.toggle("active", btn.dataset.tab === leaderboardTab));
+    await renderLeaderboard();
+  }
+
+  el.leaderboardTabs.forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if(btn.dataset.tab === leaderboardTab) return;
+      leaderboardTab = btn.dataset.tab;
+      el.leaderboardTabs.forEach(b => b.classList.toggle("active", b === btn));
+      await renderLeaderboard();
+    });
+  });
+
+  async function renderLeaderboard(){
     el.leaderboardList.innerHTML = `<p class="center-sub" style="text-align:center;">Loading…</p>`;
+    el.leaderboardMe.innerHTML = "";
+
+    const sortField = leaderboardTab === "quests" ? "quests_completed" : "total_xp";
 
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("username, total_xp, is_owner, is_tester, is_helper")
+      .select("username, total_xp, quests_completed, is_owner, is_tester, is_helper, user_number")
       .not("username", "is", null)
       .eq("is_invisible", false)
-      .order("total_xp", { ascending: false })
+      .order(sortField, { ascending: false })
       .limit(10);
 
     if(error || !data || data.length === 0){
       el.leaderboardList.innerHTML = `<p class="center-sub" style="text-align:center;">No one on the board yet. Be the first.</p>`;
+    } else {
+      el.leaderboardList.innerHTML = data.map((row, i) => {
+        const displayValue = leaderboardTab === "quests"
+          ? `${row.quests_completed || 0} done`
+          : `lv ${levelInfo(row.total_xp).level}`;
+        const isMe = cachedStats.username && row.username.toLowerCase() === cachedStats.username.toLowerCase();
+        const badges = badgeHTML({ isOwner: row.is_owner, isTester: row.is_tester, isHelper: row.is_helper, userNumber: row.user_number });
+        return `
+          <div class="leaderboard-row${isMe ? " me" : ""}">
+            <span class="leaderboard-rank">${i+1}</span>
+            <span class="leaderboard-name"><span class="name-text">@${row.username}</span>${badges}</span>
+            <span class="leaderboard-level">${displayValue}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    await renderMyLeaderboardRank(sortField);
+  }
+
+  // shows your own placement even when you're outside the top 10 —
+  // "#53" instead of just not appearing on the board at all
+  async function renderMyLeaderboardRank(sortField){
+    if(!cachedStats.username || cachedStats.isInvisible){
+      el.leaderboardMe.innerHTML = "";
       return;
     }
 
-    el.leaderboardList.innerHTML = data.map((row, i) => {
-      const lvl = levelInfo(row.total_xp).level;
-      const isMe = cachedStats.username && row.username.toLowerCase() === cachedStats.username.toLowerCase();
-      const badges = badgeHTML({ isOwner: row.is_owner, isTester: row.is_tester, isHelper: row.is_helper });
-      return `
-        <div class="leaderboard-row${isMe ? " me" : ""}">
-          <span class="leaderboard-rank">${i+1}</span>
-          <span class="leaderboard-name"><span class="name-text">@${row.username}</span>${badges}</span>
-          <span class="leaderboard-level">lv ${lvl}</span>
-        </div>
-      `;
-    }).join("");
+    const myValue = sortField === "quests_completed" ? (cachedStats.questsCompleted || 0) : cachedStats.totalXP;
+
+    const { count, error } = await supabase
+      .from("quest_stats")
+      .select("user_id", { count: "exact", head: true })
+      .not("username", "is", null)
+      .eq("is_invisible", false)
+      .gt(sortField, myValue);
+
+    const myRank = error ? null : (count || 0) + 1;
+    const displayValue = sortField === "quests_completed" ? `${myValue} done` : `lv ${levelInfo(myValue).level}`;
+    const badges = badgeHTML(cachedStats);
+
+    el.leaderboardMe.innerHTML = `
+      <div class="leaderboard-row me">
+        <span class="leaderboard-rank">${myRank ? "#" + myRank : "—"}</span>
+        <span class="leaderboard-name"><span class="name-text">@${cachedStats.username}</span>${badges}</span>
+        <span class="leaderboard-level">${displayValue}</span>
+      </div>
+    `;
   }
 
   el.leaderboardBtn.addEventListener("click", openLeaderboard);
@@ -1232,7 +1310,7 @@
 
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("user_id, username, total_xp, is_owner, is_tester, is_helper, bypass_sleep, unlimited_quests, is_invisible")
+      .select("user_id, username, total_xp, is_owner, is_tester, is_helper, bypass_sleep, unlimited_quests, is_invisible, user_number")
       .order("username", { ascending: true });
 
     if(error || !data){
@@ -1243,12 +1321,13 @@
     el.adminList.innerHTML = data.map(row => {
       const lvl = levelInfo(row.total_xp).level;
       const name = row.username ? "@" + row.username : "(no username yet)";
+      const ogBadge = row.user_number ? `<span class="og-badge" title="Member #${row.user_number}">${row.user_number}</span>` : "";
       const ownerBadge = row.is_owner ? `<span class="badge badge-gold" data-tooltip="Developer">${ICON_CHECK}</span>` : "";
       const invisibleTag = row.is_invisible ? `<span class="invisible-tag">hidden</span>` : "";
       return `
         <div class="admin-row" data-uid="${row.user_id}">
           <div class="admin-row-top">
-            <span class="leaderboard-name"><span class="name-text">${name}</span>${ownerBadge}${invisibleTag}</span>
+            <span class="leaderboard-name"><span class="name-text">${name}</span>${ogBadge}${ownerBadge}${invisibleTag}</span>
             <span class="leaderboard-level" data-role="level-display">lv ${lvl}</span>
           </div>
           <div class="admin-row-actions">
