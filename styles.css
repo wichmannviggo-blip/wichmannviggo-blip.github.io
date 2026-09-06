@@ -238,7 +238,7 @@ body{
 
 /* ---------- stat strip ---------- */
 .log-stats{
-  display:flex; align-items:stretch; gap: 18px;
+  display:flex; flex-wrap:wrap; align-items:stretch; gap: 14px 18px;
 }
 .stat{ display:flex; flex-direction:column; gap:4px; justify-content:center; }
 .stat-label{
@@ -256,11 +256,18 @@ body{
   font-size:26px; font-weight:600; line-height:1;
   color: var(--lantern);
 }
+.stat-mult{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--moss);
+  letter-spacing: .01em;
+}
 .stat-divider{
   width:1px; align-self:stretch;
   background: rgba(var(--line-rgb), 0.14);
 }
-.stat-xp{ flex:1; min-width: 120px; gap:6px; }
+.stat-xp{ flex: 1 1 100%; order: 3; min-width: 120px; gap:6px; }
 .xp-labels{
   display:flex; justify-content:space-between; align-items:baseline;
   font-size:11px; color: var(--fog);
@@ -725,8 +732,5 @@ body.admin-old-style #adminView .level-input{
 @media (max-width: 380px){
   .panel{ padding: 22px 18px; }
   .log{ padding: 6px 18px 20px; }
-  .log-stats{ flex-wrap: wrap; row-gap: 14px; }
-  .stat-xp{ flex-basis: 100%; }
-  .stat-divider{ display:none; }
   .celestial{ width:170px; height:170px; }
 }
