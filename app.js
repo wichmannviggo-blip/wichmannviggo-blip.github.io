@@ -372,6 +372,9 @@
     signOutModal: document.getElementById("signOutModal"),
     signOutCancelBtn: document.getElementById("signOutCancelBtn"),
     signOutConfirmBtn: document.getElementById("signOutConfirmBtn"),
+    questConfirmModal: document.getElementById("questConfirmModal"),
+    questConfirmCancelBtn: document.getElementById("questConfirmCancelBtn"),
+    questConfirmYesBtn: document.getElementById("questConfirmYesBtn"),
     leaderboardBtn: document.getElementById("leaderboardBtn"),
     settingsBtn: document.getElementById("settingsBtn"),
 
@@ -860,10 +863,32 @@
     tick();
   }
 
+  // accounts less than 3 days old get an extra confirm step before a
+  // quest completion actually counts — cuts down on accidental/rushed
+  // taps from people still getting a feel for the app
+  const NEW_ACCOUNT_MS = 3 * 24 * 60 * 60 * 1000;
+  function isNewAccount(){
+    if(!currentUser || !currentUser.created_at) return false;
+    const ageMs = Date.now() - new Date(currentUser.created_at).getTime();
+    return ageMs < NEW_ACCOUNT_MS;
+  }
+
   async function onCompleteQuest(){
     const progress = cachedStats.dailyProgress;
     if(!progress || !progress.pick) return;
     if(progress.resolved && !cachedStats.unlimitedQuests) return;
+
+    if(isNewAccount()){
+      el.questConfirmModal.classList.remove("hidden");
+      return;
+    }
+
+    await finalizeQuestCompletion();
+  }
+
+  async function finalizeQuestCompletion(){
+    const progress = cachedStats.dailyProgress;
+    if(!progress || !progress.pick) return;
 
     const schedule = getDailySchedule(progress.day);
     const slot = schedule.find(s => s.hour === progress.hour);
@@ -880,6 +905,19 @@
     viewHourComplete(slot, progress);
     await saveUserStats();
   }
+
+  el.questConfirmCancelBtn.addEventListener("click", () => {
+    el.questConfirmModal.classList.add("hidden");
+  });
+  el.questConfirmModal.addEventListener("click", (e) => {
+    if(e.target === el.questConfirmModal){
+      el.questConfirmModal.classList.add("hidden");
+    }
+  });
+  el.questConfirmYesBtn.addEventListener("click", async () => {
+    el.questConfirmModal.classList.add("hidden");
+    await finalizeQuestCompletion();
+  });
 
   /* =========================================================
      QUEST VIEWS
