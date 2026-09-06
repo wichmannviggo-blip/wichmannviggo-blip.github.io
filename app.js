@@ -264,7 +264,7 @@
   /* ---------- badges ---------- */
   function badgeHTML(stats){
     let html = "";
-    if(stats.userNumber) html += `<span class="og-badge" title="Member #${stats.userNumber}">${stats.userNumber}</span>`;
+    if(stats.userNumber) html += `<span class="badge og-badge" data-tooltip="Member #${stats.userNumber}">${stats.userNumber}</span>`;
     if(stats.isOwner) html += `<span class="badge badge-gold" data-tooltip="Developer" aria-label="Developer">${ICON_CHECK}</span>`;
     if(stats.isTester) html += `<span class="badge badge-blue" data-tooltip="Tester" aria-label="Tester">${ICON_CHECK}</span>`;
     if(stats.isHelper) html += `<span class="badge badge-green" data-tooltip="Helper" aria-label="Helper">${ICON_HAMMER}</span>`;
@@ -292,6 +292,10 @@
   badgeLegendEl.className = "badge-legend-popover hidden";
   badgeLegendEl.innerHTML = `
     <div class="badge-legend-title">Badges</div>
+    <div class="badge-legend-row">
+      <span class="badge og-badge">#</span>
+      <div class="badge-legend-text"><strong>Member number</strong><span>Shows the order you joined Questie in.</span></div>
+    </div>
     ${BADGE_INFO.map(b => `
       <div class="badge-legend-row">
         <span class="badge ${b.cls}">${b.icon}</span>
