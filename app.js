@@ -1264,7 +1264,9 @@
           ? `${row.quests_completed || 0} done`
           : `lv ${levelInfo(row.total_xp).level}`;
         const isMe = cachedStats.username && row.username.toLowerCase() === cachedStats.username.toLowerCase();
-        const badges = badgeHTML({ isOwner: row.is_owner, isTester: row.is_tester, isHelper: row.is_helper, userNumber: row.user_number, showBadges: row.show_badges });
+        const badges = cachedStats.showBadges === false
+          ? ""
+          : badgeHTML({ isOwner: row.is_owner, isTester: row.is_tester, isHelper: row.is_helper, userNumber: row.user_number, showBadges: row.show_badges });
         return `
           <div class="leaderboard-row${isMe ? " me" : ""}">
             <span class="leaderboard-rank">${i+1}</span>
