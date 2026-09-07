@@ -483,6 +483,7 @@
   let profileRowExists = false;
   let tickTimer = null;
   let pendingProofSubmission = null; // { slot, progress, file } — waiting on the new-account confirm modal
+  let questUiLocked = false; // true while a proof photo is selected/uploading, so the 15s auto-refresh doesn't wipe it out
 
   function setMode(newMode){
     mode = newMode;
@@ -1055,6 +1056,7 @@
       const { slot, progress, file } = pendingProofSubmission;
       pendingProofSubmission = null;
       await uploadProofAndComplete(slot, progress, file, null);
+      questUiLocked = false;
     }
   });
 
@@ -1150,6 +1152,7 @@
       const file = fileInput.files[0];
       if(!file) return;
       selectedFile = file;
+      questUiLocked = true;
       errorEl.textContent = "";
       const reader = new FileReader();
       reader.onload = () => {
@@ -1166,6 +1169,7 @@
       submitBtn.textContent = "Uploading…";
       errorEl.textContent = "";
       await submitQuestProof(slot, progress, selectedFile, errorEl);
+      questUiLocked = false;
       if(document.body.contains(submitBtn)){
         submitBtn.disabled = false;
         submitBtn.innerHTML = `${ICON_BTN_CHECK} Submit & complete`;
@@ -1227,6 +1231,11 @@
     if(!currentUser) return;
     const progress = ensureProgressForNow();
     renderStats();
+    // don't blow away an in-progress proof photo/upload — only skip the
+    // redraw if nothing state-changing (hour rollover, etc.) happened
+    if(questUiLocked && progress.pick && !progress.resolved){
+      return;
+    }
     renderQuestArea(progress);
   }
 
