@@ -25,6 +25,7 @@
   const ICON_BTN_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg>`;
   const ICON_HAMMER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="2" width="9" height="6" rx="1.4" transform="rotate(45 17.5 5)"/><path d="M15.3 7.3 4.2 18.4"/><path d="M3 19.5 4.6 21"/></svg>`;
   const ICON_PERSON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.5c1.2-3.4 3.7-5 6.5-5s5.3 1.6 6.5 5"/></svg>`;
+  const ICON_CAMERA = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h1.2l.9-1.4A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.7 1l.9 1.4H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="13" r="3.4"/></svg>`;
 
   /* =========================================================
      QUEST CONTENT — ranked by time / effort / social nerve required.
@@ -406,10 +407,12 @@
     emailLabel: document.getElementById("emailLabel"),
     usernameField: document.getElementById("usernameField"),
     passwordField: document.getElementById("passwordField"),
+    confirmPasswordField: document.getElementById("confirmPasswordField"),
     loginToggleRow: document.getElementById("loginToggleRow"),
     emailInput: document.getElementById("emailInput"),
     usernameInput: document.getElementById("usernameInput"),
     passwordInput: document.getElementById("passwordInput"),
+    confirmPasswordInput: document.getElementById("confirmPasswordInput"),
     loginError: document.getElementById("loginError"),
     loginNote: document.getElementById("loginNote"),
     loginSubmitBtn: document.getElementById("loginSubmitBtn"),
@@ -444,6 +447,10 @@
     adminView: document.getElementById("adminView"),
     adminBackBtn: document.getElementById("adminBackBtn"),
     adminList: document.getElementById("adminList"),
+    submissionsNavBtn: document.getElementById("submissionsNavBtn"),
+    submissionsView: document.getElementById("submissionsView"),
+    submissionsBackBtn: document.getElementById("submissionsBackBtn"),
+    submissionsList: document.getElementById("submissionsList"),
   };
 
   /* ---------- stars background ---------- */
@@ -467,7 +474,7 @@
   let cachedStats = {
     totalXP: 0, username: null, usernameChangedAt: null,
     isOwner: false, isTester: false, isHelper: false,
-    isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+    isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false, isBanned: false,
     showBadges: true,
     streak: 0, lastStreakDay: null,
     questsCompleted: 0, userNumber: null,
@@ -475,6 +482,7 @@
   };
   let profileRowExists = false;
   let tickTimer = null;
+  let pendingProofSubmission = null; // { slot, progress, file } — waiting on the new-account confirm modal
 
   function setMode(newMode){
     mode = newMode;
@@ -485,6 +493,7 @@
       el.emailField.classList.remove("hidden");
       el.usernameField.classList.add("hidden");
       el.passwordField.classList.remove("hidden");
+      el.confirmPasswordField.classList.add("hidden");
       el.loginToggleRow.classList.remove("hidden");
       el.loginHeading.textContent = "Log in";
       el.loginSub.textContent = "Log in with your email or username to load your quests, level and streak on this device.";
@@ -498,6 +507,7 @@
       el.emailField.classList.remove("hidden");
       el.usernameField.classList.remove("hidden");
       el.passwordField.classList.remove("hidden");
+      el.confirmPasswordField.classList.remove("hidden");
       el.loginToggleRow.classList.remove("hidden");
       el.loginHeading.textContent = "Create your account";
       el.loginSub.textContent = "One account, any device. Your quests, level and streak follow you.";
@@ -511,6 +521,7 @@
       el.emailField.classList.add("hidden");
       el.usernameField.classList.remove("hidden");
       el.passwordField.classList.add("hidden");
+      el.confirmPasswordField.classList.add("hidden");
       el.loginToggleRow.classList.add("hidden");
       el.loginHeading.textContent = "Pick a username";
       el.loginSub.textContent = "Letters, numbers, . and _ only — at least 4 characters. This is how you'll show up on the leaderboard.";
@@ -520,7 +531,7 @@
   el.toggleModeBtn.addEventListener("click", () => setMode(mode === "signin" ? "signup" : "signin"));
 
   // Enter key submits the login/signup/username form, same as clicking the button
-  [el.emailInput, el.usernameInput, el.passwordInput].forEach(input => {
+  [el.emailInput, el.usernameInput, el.passwordInput, el.confirmPasswordInput].forEach(input => {
     input.addEventListener("keydown", (e) => {
       if(e.key === "Enter"){
         e.preventDefault();
@@ -568,6 +579,10 @@
       }
       if(!email || !password){
         el.loginError.textContent = "Enter an email and a password.";
+        return;
+      }
+      if(password !== el.confirmPasswordInput.value){
+        el.loginError.textContent = "Passwords don't match.";
         return;
       }
 
@@ -664,11 +679,14 @@
     el.settingsView.classList.add("hidden");
     el.leaderboardView.classList.add("hidden");
     el.adminView.classList.add("hidden");
+    el.submissionsView.classList.add("hidden");
     el.loginView.classList.remove("hidden");
     el.emailInput.value = "";
     el.passwordInput.value = "";
+    el.confirmPasswordInput.value = "";
     el.usernameInput.value = "";
     el.adminNavBtn.classList.add("hidden");
+    el.submissionsNavBtn.classList.add("hidden");
     setMode("signin");
   });
 
@@ -679,6 +697,7 @@
     el.settingsView.classList.add("hidden");
     el.leaderboardView.classList.add("hidden");
     el.adminView.classList.add("hidden");
+    el.submissionsView.classList.add("hidden");
     el.appView.classList.remove("hidden");
     refreshOwnerUI();
     tick();
@@ -688,6 +707,7 @@
   function refreshOwnerUI(){
     const canAdmin = !!cachedStats.isOwner || !!cachedStats.isAdmin;
     el.adminNavBtn.classList.toggle("hidden", !canAdmin);
+    el.submissionsNavBtn.classList.toggle("hidden", !canAdmin);
   }
 
   async function onLoggedIn(user){
@@ -705,14 +725,14 @@
   async function loadUserStats(){
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests, show_badges, daily_progress, quests_completed, user_number")
+      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests, show_badges, is_banned, daily_progress, quests_completed, user_number")
       .eq("user_id", currentUser.id)
       .maybeSingle();
 
     const blank = () => ({
       totalXP: 0, username: null, usernameChangedAt: null,
       isOwner: false, isTester: false, isHelper: false,
-      isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+      isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false, isBanned: false,
       showBadges: true,
       streak: 0, lastStreakDay: null,
       questsCompleted: 0, userNumber: null,
@@ -744,6 +764,7 @@
         isHelper: data.is_helper,
         isAdmin: data.is_admin,
         isInvisible: data.is_invisible,
+        isBanned: !!data.is_banned,
         bypassSleep: data.bypass_sleep,
         unlimitedQuests: data.unlimited_quests,
         showBadges: data.show_badges === false ? false : true,
@@ -811,7 +832,7 @@
       cachedStats = {
         totalXP: 0, username, usernameChangedAt: nowIso,
         isOwner: false, isTester: false, isHelper: false,
-        isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+        isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false, isBanned: false,
         showBadges: true,
         streak: 0, lastStreakDay: null,
         questsCompleted: 0, userNumber: nextNumber,
@@ -884,6 +905,13 @@
       if(progress && !progress.settled){
         settleDay(progress);
       }
+      // if today isn't exactly the day right after the last tracked day,
+      // at least one full day was skipped entirely (app never opened) —
+      // that's a missed day too, so the streak breaks regardless of
+      // whatever the last tracked day itself contributed.
+      if(progress && addDaysStr(progress.day, 1) !== questDay){
+        cachedStats.streak = 0;
+      }
       progress = defaultProgress(questDay);
       cachedStats.dailyProgress = progress;
       saveUserStats();
@@ -936,13 +964,54 @@
     return ageMs < NEW_ACCOUNT_MS;
   }
 
-  async function onCompleteQuest(){
-    const progress = cachedStats.dailyProgress;
+  const MAX_PROOF_BYTES = 8 * 1024 * 1024; // 8MB
+
+  // completing a quest now requires a proof photo — it uploads to
+  // Storage, gets logged to quest_submissions for review, and only
+  // then does the xp actually get awarded
+  async function submitQuestProof(slot, progress, file, errorEl){
     if(!progress || !progress.pick) return;
     if(progress.resolved && !cachedStats.unlimitedQuests) return;
 
+    if(file.size > MAX_PROOF_BYTES){
+      errorEl.textContent = "That photo is too large (max 8MB) — try a smaller one.";
+      return;
+    }
+
     if(isNewAccount()){
+      pendingProofSubmission = { slot, progress, file };
       el.questConfirmModal.classList.remove("hidden");
+      return;
+    }
+
+    await uploadProofAndComplete(slot, progress, file, errorEl);
+  }
+
+  async function uploadProofAndComplete(slot, progress, file, errorEl){
+    const quest = slot[progress.pick];
+    const ext = ((file.name || "").split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+    const path = `${currentUser.id}/${progress.day}_${progress.hour}_${progress.pick}_${Date.now()}.${ext}`;
+
+    try{
+      const { error: uploadError } = await supabase.storage
+        .from("quest-proofs")
+        .upload(path, file, { upsert: false, contentType: file.type || "image/jpeg" });
+      if(uploadError) throw uploadError;
+
+      const { error: insertError } = await supabase.from("quest_submissions").insert({
+        user_id: currentUser.id,
+        username: cachedStats.username,
+        quest_day: progress.day,
+        hour: progress.hour,
+        difficulty: progress.pick,
+        quest_text: quest.text,
+        xp: quest.xp,
+        image_path: path
+      });
+      if(insertError) throw insertError;
+    } catch(err){
+      console.error("proof upload failed:", err);
+      if(errorEl) errorEl.textContent = "Couldn't upload that photo. Check your connection and try again.";
       return;
     }
 
@@ -972,15 +1041,21 @@
 
   el.questConfirmCancelBtn.addEventListener("click", () => {
     el.questConfirmModal.classList.add("hidden");
+    pendingProofSubmission = null;
   });
   el.questConfirmModal.addEventListener("click", (e) => {
     if(e.target === el.questConfirmModal){
       el.questConfirmModal.classList.add("hidden");
+      pendingProofSubmission = null;
     }
   });
   el.questConfirmYesBtn.addEventListener("click", async () => {
     el.questConfirmModal.classList.add("hidden");
-    await finalizeQuestCompletion();
+    if(pendingProofSubmission){
+      const { slot, progress, file } = pendingProofSubmission;
+      pendingProofSubmission = null;
+      await uploadProofAndComplete(slot, progress, file, null);
+    }
   });
 
   /* =========================================================
@@ -1001,6 +1076,16 @@
         <p class="center-title">Questie is asleep</p>
         <p class="center-sub">Hourly quests run 06:00–22:00. Today's xp has been folded into your total with your streak multiplier applied — a fresh set unlocks at 06:00.</p>
         <span class="mono-note">new quests in ${h}h ${pad2(m)}m</span>
+      </div>
+    `;
+  }
+
+  function viewBanned(){
+    el.card.innerHTML = `
+      <div class="center-block state-fade">
+        <div class="big-icon" style="color:#E1484D;">${ICON_MOON}</div>
+        <p class="center-title">Account suspended</p>
+        <p class="center-sub">Your account has been flagged for suspicious activity. Reach out to the developer if you think this is a mistake.</p>
       </div>
     `;
   }
@@ -1041,10 +1126,51 @@
         <span class="quest-diff-pill quest-diff-${progress.pick}">${progress.pick}</span>
         <p class="quest-title">${quest.text}</p>
         <div class="quest-meta">worth <strong>${quest.xp} xp</strong> · ${mins}m left this hour</div>
-        <button class="btn" id="completeBtn">${ICON_BTN_CHECK} Mark as complete</button>
+        <div class="quest-proof">
+          <input type="file" accept="image/*" capture="environment" id="proofFileInput" class="hidden-file-input">
+          <label for="proofFileInput" class="btn btn-secondary" id="proofPickLabel">${ICON_CAMERA} Add proof photo</label>
+          <div class="quest-proof-preview hidden" id="proofPreviewWrap">
+            <img id="proofPreviewImg" class="quest-proof-thumb" alt="Proof preview">
+            <button class="btn" id="proofSubmitBtn">${ICON_BTN_CHECK} Submit & complete</button>
+          </div>
+          <div class="form-error" id="proofError"></div>
+        </div>
       </div>
     `;
-    document.getElementById("completeBtn").addEventListener("click", onCompleteQuest);
+
+    const fileInput = document.getElementById("proofFileInput");
+    const previewWrap = document.getElementById("proofPreviewWrap");
+    const previewImg = document.getElementById("proofPreviewImg");
+    const pickLabel = document.getElementById("proofPickLabel");
+    const submitBtn = document.getElementById("proofSubmitBtn");
+    const errorEl = document.getElementById("proofError");
+    let selectedFile = null;
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if(!file) return;
+      selectedFile = file;
+      errorEl.textContent = "";
+      const reader = new FileReader();
+      reader.onload = () => {
+        previewImg.src = reader.result;
+        previewWrap.classList.remove("hidden");
+        pickLabel.textContent = "Change photo";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    submitBtn.addEventListener("click", async () => {
+      if(!selectedFile) return;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Uploading…";
+      errorEl.textContent = "";
+      await submitQuestProof(slot, progress, selectedFile, errorEl);
+      if(document.body.contains(submitBtn)){
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `${ICON_BTN_CHECK} Submit & complete`;
+      }
+    });
   }
 
   function viewHourComplete(slot, progress){
@@ -1059,6 +1185,8 @@
   }
 
   function renderQuestArea(progress){
+    if(cachedStats.isBanned){ viewBanned(); return; }
+
     const now = new Date();
     const hour = now.getHours();
     const awake = cachedStats.bypassSleep || (hour >= HOUR_START && hour < HOUR_END);
@@ -1353,7 +1481,7 @@
 
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("user_id, username, total_xp, is_owner, is_tester, is_helper, bypass_sleep, unlimited_quests, is_invisible, user_number, show_badges")
+      .select("user_id, username, total_xp, is_owner, is_tester, is_helper, bypass_sleep, unlimited_quests, is_invisible, user_number, show_badges, is_banned")
       .order("username", { ascending: true });
 
     if(error || !data){
@@ -1366,10 +1494,11 @@
       const name = row.username ? "@" + row.username : "(no username yet)";
       const badges = badgeHTML({ isOwner: row.is_owner, userNumber: row.user_number, showBadges: row.show_badges });
       const invisibleTag = row.is_invisible ? `<span class="invisible-tag">hidden</span>` : "";
+      const bannedTag = row.is_banned ? `<span class="invisible-tag">banned</span>` : "";
       return `
         <div class="admin-row" data-uid="${row.user_id}">
           <div class="admin-row-top">
-            <span class="leaderboard-name"><span class="name-text">${name}</span>${badges}${invisibleTag}</span>
+            <span class="leaderboard-name"><span class="name-text">${name}</span>${badges}${invisibleTag}${bannedTag}</span>
             <span class="leaderboard-level" data-role="level-display">lv ${lvl}</span>
           </div>
           <div class="admin-row-actions">
@@ -1378,6 +1507,7 @@
             <button class="toggle-btn ${row.bypass_sleep ? "active-orange" : ""}" data-field="bypass_sleep" data-value="${!row.bypass_sleep}">sleep off</button>
             <button class="toggle-btn ${row.unlimited_quests ? "active-teal" : ""}" data-field="unlimited_quests" data-value="${!row.unlimited_quests}">unlimited</button>
             <button class="toggle-btn ${row.is_invisible ? "active-purple" : ""}" data-field="is_invisible" data-value="${!row.is_invisible}">hidden</button>
+            <button class="toggle-btn ${row.is_banned ? "active-red" : ""}" data-field="is_banned" data-value="${!row.is_banned}">ban</button>
             <div class="admin-level-set">
               <input type="number" min="0" class="level-input" value="${lvl}">
               <button class="toggle-btn level-set-btn">set lvl</button>
@@ -1430,6 +1560,7 @@
     if(field === "bypass_sleep") btn.classList.toggle("active-orange", newValue);
     if(field === "unlimited_quests") btn.classList.toggle("active-teal", newValue);
     if(field === "is_invisible") btn.classList.toggle("active-purple", newValue);
+    if(field === "is_banned") btn.classList.toggle("active-red", newValue);
     btn.dataset.value = (!newValue).toString();
 
     if(currentUser && uid === currentUser.id){
@@ -1438,8 +1569,61 @@
       if(field === "bypass_sleep") cachedStats.bypassSleep = newValue;
       if(field === "unlimited_quests") cachedStats.unlimitedQuests = newValue;
       if(field === "is_invisible") cachedStats.isInvisible = newValue;
+      if(field === "is_banned") cachedStats.isBanned = newValue;
       el.accountUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
+      tick();
     }
   });
+
+  /* =========================================================
+     SUBMISSIONS (owner + admin only) — review proof photos
+     ========================================================= */
+  el.submissionsNavBtn.addEventListener("click", async () => {
+    if(!cachedStats.isOwner && !cachedStats.isAdmin) return;
+    const code = prompt("Enter admin code:");
+    if(code === null) return;
+    if(code !== ADMIN_CODE){ alert("Wrong code."); return; }
+    await openSubmissionsPanel();
+  });
+
+  el.submissionsBackBtn.addEventListener("click", () => {
+    document.body.classList.remove("admin-old-style");
+    el.submissionsView.classList.add("hidden");
+    el.appView.classList.remove("hidden");
+    tick();
+  });
+
+  async function openSubmissionsPanel(){
+    document.body.classList.add("admin-old-style");
+    el.appView.classList.add("hidden");
+    el.submissionsView.classList.remove("hidden");
+    el.submissionsList.innerHTML = `<p class="center-sub" style="text-align:center;">Loading…</p>`;
+
+    const { data, error } = await supabase
+      .from("quest_submissions")
+      .select("id, username, quest_day, hour, difficulty, quest_text, xp, image_path, created_at")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if(error || !data || data.length === 0){
+      el.submissionsList.innerHTML = `<p class="center-sub" style="text-align:center;">No submissions yet.</p>`;
+      return;
+    }
+
+    el.submissionsList.innerHTML = data.map(row => {
+      const { data: urlData } = supabase.storage.from("quest-proofs").getPublicUrl(row.image_path);
+      const when = new Date(row.created_at).toLocaleString();
+      return `
+        <div class="submission-card">
+          <img src="${urlData.publicUrl}" alt="Proof photo" loading="lazy">
+          <div class="submission-quest">${row.quest_text}</div>
+          <div class="submission-meta">
+            <span>@${row.username} · ${row.difficulty} · +${row.xp} xp</span>
+            <span>${when}</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
 
 })();
