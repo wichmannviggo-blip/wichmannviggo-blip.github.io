@@ -641,6 +641,7 @@ body{
 .toggle-btn.active-orange{ color: #E8A33D; border-color: #E8A33D; background: rgba(232,163,61,0.12); }
 .toggle-btn.active-teal{ color: #5BC2B0; border-color: #5BC2B0; background: rgba(91,194,176,0.12); }
 .toggle-btn.active-purple{ color: #A987D1; border-color: #A987D1; background: rgba(169,135,209,0.12); }
+.toggle-btn.active-red{ color: #E1484D; border-color: #E1484D; background: rgba(225,72,77,0.14); }
 .toggle-btn[disabled]{ opacity:.5; cursor:default; }
 
 .invisible-tag{
@@ -683,7 +684,8 @@ body.admin-old-style{
 }
 body.admin-old-style .sky{ display:none; }
 
-body.admin-old-style #adminView .panel{
+body.admin-old-style #adminView .panel,
+body.admin-old-style #submissionsView .panel{
   background:#ffffff;
   border:none;
   box-shadow:none;
@@ -696,20 +698,23 @@ body.admin-old-style #adminView .panel{
   color:#000000;
   font-family: "Times New Roman", Times, serif;
 }
-body.admin-old-style #adminView h2{
+body.admin-old-style #adminView h2,
+body.admin-old-style #submissionsView h2{
   font-family: "Times New Roman", Times, serif;
   color:#000000;
   font-size:22px;
   font-weight:bold;
   margin:0 0 8px;
 }
-body.admin-old-style #adminView p.sub{
+body.admin-old-style #adminView p.sub,
+body.admin-old-style #submissionsView p.sub{
   color:#000000;
   font-family: "Times New Roman", Times, serif;
   font-size:14px;
   max-width:none;
 }
-body.admin-old-style #adminView .back-link{
+body.admin-old-style #adminView .back-link,
+body.admin-old-style #submissionsView .back-link{
   all: revert;
   color:#0000EE;
   text-decoration:underline;
@@ -750,6 +755,49 @@ body.admin-old-style #adminView .level-input{
   all: revert;
   font-family: "Times New Roman", Times, serif;
   width:50px;
+}
+body.admin-old-style #submissionsView .submission-card{
+  border:1px solid #000000;
+  border-radius:0;
+  font-family: "Times New Roman", Times, serif;
+  color:#000000;
+}
+body.admin-old-style #submissionsView .submission-quest{
+  color:#000000; font-family: "Times New Roman", Times, serif;
+}
+body.admin-old-style #submissionsView .submission-meta{
+  color:#000000; font-family: "Times New Roman", Times, serif;
+}
+
+/* ---------- quest proof upload (photo required to complete a quest) ---------- */
+.hidden-file-input{
+  position:absolute; width:1px; height:1px;
+  overflow:hidden; opacity:0; pointer-events:none;
+}
+.quest-proof{ display:flex; flex-direction:column; gap:10px; }
+.quest-proof-preview{ display:flex; flex-direction:column; gap:10px; align-items:stretch; }
+.quest-proof-thumb{
+  width:100%; max-height:220px; object-fit:cover;
+  border-radius: var(--radius-md);
+  border:1px solid rgba(var(--line-rgb), 0.2);
+}
+
+/* ---------- submissions list (owner/admin proof review) ---------- */
+.submissions-list{ display:flex; flex-direction:column; gap:14px; }
+.submission-card{
+  border:1px solid rgba(var(--line-rgb), 0.18);
+  border-radius: var(--radius-md);
+  padding:12px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.submission-card img{
+  width:100%; max-height:280px; object-fit:cover;
+  border-radius: var(--radius-sm);
+}
+.submission-quest{ font-family: var(--font-body); font-size:14px; font-weight:600; color: var(--paper); }
+.submission-meta{
+  display:flex; justify-content:space-between; align-items:center; gap:8px;
+  font-family: var(--font-mono); font-size:11.5px; color: var(--fog);
 }
 
 /* ---------- sign-out confirmation modal ---------- */
