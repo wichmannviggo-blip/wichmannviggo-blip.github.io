@@ -266,7 +266,7 @@
   function badgeHTML(stats){
     if(stats.showBadges === false) return "";
     let html = "";
-    if(stats.userNumber && stats.userNumber <= 100) html += `<span class="badge og-badge" data-tooltip="User #${stats.userNumber}">${ICON_PERSON}</span>`;
+    if(stats.userNumber && stats.userNumber <= 100) html += `<span class="badge og-badge" data-tooltip="OG #${stats.userNumber}">${ICON_PERSON}</span>`;
     if(stats.isOwner) html += `<span class="badge badge-gold" data-tooltip="Developer" aria-label="Developer">${ICON_CHECK}</span>`;
     if(stats.isTester) html += `<span class="badge badge-blue" data-tooltip="Tester" aria-label="Tester">${ICON_CHECK}</span>`;
     if(stats.isHelper) html += `<span class="badge badge-green" data-tooltip="Helper" aria-label="Helper">${ICON_HAMMER}</span>`;
