@@ -771,14 +771,22 @@
 
   // next sequential "member number" for a brand-new signup — used for
   // the small red OG badge next to usernames everywhere
+  // finds the lowest OG slot (1-100) not already taken — so a deleted
+  // account's number becomes available again — and returns null once
+  // all 100 slots are filled (no OG badge for anyone after that)
   async function getNextUserNumber(){
     const { data, error } = await supabase
       .from("quest_stats")
       .select("user_number")
-      .order("user_number", { ascending: false })
-      .limit(1);
-    if(error || !data || data.length === 0 || !data[0].user_number) return 1;
-    return data[0].user_number + 1;
+      .not("user_number", "is", null)
+      .lte("user_number", 100)
+      .order("user_number", { ascending: true });
+    if(error) return null;
+    const used = new Set((data || []).map(r => r.user_number));
+    for(let n = 1; n <= 100; n++){
+      if(!used.has(n)) return n;
+    }
+    return null;
   }
 
   /* creates (isNewRow=true) or updates (isNewRow=false) the username.
@@ -1080,7 +1088,7 @@
 
     const progress = cachedStats.dailyProgress;
     el.todayXp.textContent = `${progress ? progress.pendingXp : 0} xp`;
-3
+
     el.xpText.textContent = `${lvl.into} / ${lvl.needed} xp`;
     el.xpToGo.textContent = `${lvl.needed - lvl.into} to go`;
     el.xpFill.style.width = Math.min(100, Math.round((lvl.into / lvl.needed) * 100)) + "%";
