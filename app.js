@@ -264,6 +264,7 @@
 
   /* ---------- badges ---------- */
   function badgeHTML(stats){
+    if(stats.showBadges === false) return "";
     let html = "";
     if(stats.userNumber && stats.userNumber <= 100) html += `<span class="badge og-badge" data-tooltip="OG #${stats.userNumber}">${ICON_PERSON}</span>`;
     if(stats.isOwner) html += `<span class="badge badge-gold" data-tooltip="Developer" aria-label="Developer">${ICON_CHECK}</span>`;
@@ -426,6 +427,8 @@
     settingsUsernameInput: document.getElementById("settingsUsernameInput"),
     settingsUsernameError: document.getElementById("settingsUsernameError"),
     settingsUsernameSaveBtn: document.getElementById("settingsUsernameSaveBtn"),
+    sleepModeToggle: document.getElementById("sleepModeToggle"),
+    showBadgesToggle: document.getElementById("showBadgesToggle"),
     settingsNewPassword: document.getElementById("settingsNewPassword"),
     settingsConfirmPassword: document.getElementById("settingsConfirmPassword"),
     settingsPasswordError: document.getElementById("settingsPasswordError"),
@@ -465,6 +468,7 @@
     totalXP: 0, username: null, usernameChangedAt: null,
     isOwner: false, isTester: false, isHelper: false,
     isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+    showBadges: true,
     streak: 0, lastStreakDay: null,
     questsCompleted: 0, userNumber: null,
     dailyProgress: null
@@ -701,7 +705,7 @@
   async function loadUserStats(){
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests, daily_progress, quests_completed, user_number")
+      .select("total_xp, streak, last_completed_quest_day, username, username_changed_at, is_owner, is_tester, is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests, show_badges, daily_progress, quests_completed, user_number")
       .eq("user_id", currentUser.id)
       .maybeSingle();
 
@@ -709,6 +713,7 @@
       totalXP: 0, username: null, usernameChangedAt: null,
       isOwner: false, isTester: false, isHelper: false,
       isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+      showBadges: true,
       streak: 0, lastStreakDay: null,
       questsCompleted: 0, userNumber: null,
       dailyProgress: null
@@ -741,6 +746,7 @@
         isInvisible: data.is_invisible,
         bypassSleep: data.bypass_sleep,
         unlimitedQuests: data.unlimited_quests,
+        showBadges: data.show_badges === false ? false : true,
         streak: data.streak || 0,
         lastStreakDay: data.last_completed_quest_day,
         questsCompleted: data.quests_completed || 0,
@@ -756,6 +762,8 @@
       streak: cachedStats.streak,
       last_completed_quest_day: cachedStats.lastStreakDay,
       quests_completed: cachedStats.questsCompleted,
+      bypass_sleep: cachedStats.bypassSleep,
+      show_badges: cachedStats.showBadges,
       daily_progress: JSON.stringify(cachedStats.dailyProgress),
       updated_at: new Date().toISOString()
     }).eq("user_id", currentUser.id);
@@ -796,6 +804,7 @@
         totalXP: 0, username, usernameChangedAt: nowIso,
         isOwner: false, isTester: false, isHelper: false,
         isAdmin: false, isInvisible: false, bypassSleep: false, unlimitedQuests: false,
+        showBadges: true,
         streak: 0, lastStreakDay: null,
         questsCompleted: 0, userNumber: nextNumber,
         dailyProgress: initialProgress
@@ -1102,6 +1111,9 @@
     el.settingsPasswordError.textContent = "";
     el.settingsPasswordNote.textContent = "";
 
+    el.sleepModeToggle.setAttribute("aria-checked", cachedStats.bypassSleep ? "false" : "true");
+    el.showBadgesToggle.setAttribute("aria-checked", cachedStats.showBadges === false ? "false" : "true");
+
     const cooldownInfo = usernameCooldown();
     if(cooldownInfo.onCooldown){
       el.settingsEditUsernameBtn.classList.add("hidden");
@@ -1137,6 +1149,22 @@
   el.settingsEditUsernameBtn.addEventListener("click", () => {
     el.settingsUsernameForm.classList.remove("hidden");
     el.settingsUsernameInput.focus();
+  });
+
+  el.sleepModeToggle.addEventListener("click", async () => {
+    const sleepModeOn = el.sleepModeToggle.getAttribute("aria-checked") !== "true";
+    cachedStats.bypassSleep = !sleepModeOn; // sleep mode ON means bypassSleep is OFF
+    el.sleepModeToggle.setAttribute("aria-checked", sleepModeOn ? "true" : "false");
+    await saveUserStats();
+  });
+
+  el.showBadgesToggle.addEventListener("click", async () => {
+    const showOn = el.showBadgesToggle.getAttribute("aria-checked") !== "true";
+    cachedStats.showBadges = showOn;
+    el.showBadgesToggle.setAttribute("aria-checked", showOn ? "true" : "false");
+    el.accountUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
+    el.settingsUsername.innerHTML = "@" + cachedStats.username + badgeHTML(cachedStats);
+    await saveUserStats();
   });
 
   el.settingsUsernameSaveBtn.addEventListener("click", async () => {
@@ -1222,7 +1250,7 @@
 
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("username, total_xp, quests_completed, is_owner, is_tester, is_helper, user_number")
+      .select("username, total_xp, quests_completed, is_owner, is_tester, is_helper, user_number, show_badges")
       .not("username", "is", null)
       .eq("is_invisible", false)
       .order(sortField, { ascending: false })
@@ -1236,7 +1264,7 @@
           ? `${row.quests_completed || 0} done`
           : `lv ${levelInfo(row.total_xp).level}`;
         const isMe = cachedStats.username && row.username.toLowerCase() === cachedStats.username.toLowerCase();
-        const badges = badgeHTML({ isOwner: row.is_owner, isTester: row.is_tester, isHelper: row.is_helper, userNumber: row.user_number });
+        const badges = badgeHTML({ isOwner: row.is_owner, isTester: row.is_tester, isHelper: row.is_helper, userNumber: row.user_number, showBadges: row.show_badges });
         return `
           <div class="leaderboard-row${isMe ? " me" : ""}">
             <span class="leaderboard-rank">${i+1}</span>
@@ -1315,7 +1343,7 @@
 
     const { data, error } = await supabase
       .from("quest_stats")
-      .select("user_id, username, total_xp, is_owner, is_tester, is_helper, bypass_sleep, unlimited_quests, is_invisible, user_number")
+      .select("user_id, username, total_xp, is_owner, is_tester, is_helper, bypass_sleep, unlimited_quests, is_invisible, user_number, show_badges")
       .order("username", { ascending: true });
 
     if(error || !data){
@@ -1326,13 +1354,12 @@
     el.adminList.innerHTML = data.map(row => {
       const lvl = levelInfo(row.total_xp).level;
       const name = row.username ? "@" + row.username : "(no username yet)";
-      const ogBadge = row.user_number ? `<span class="og-badge" title="Member #${row.user_number}">${row.user_number}</span>` : "";
-      const ownerBadge = row.is_owner ? `<span class="badge badge-gold" data-tooltip="Developer">${ICON_CHECK}</span>` : "";
+      const badges = badgeHTML({ isOwner: row.is_owner, userNumber: row.user_number, showBadges: row.show_badges });
       const invisibleTag = row.is_invisible ? `<span class="invisible-tag">hidden</span>` : "";
       return `
         <div class="admin-row" data-uid="${row.user_id}">
           <div class="admin-row-top">
-            <span class="leaderboard-name"><span class="name-text">${name}</span>${ogBadge}${ownerBadge}${invisibleTag}</span>
+            <span class="leaderboard-name"><span class="name-text">${name}</span>${badges}${invisibleTag}</span>
             <span class="leaderboard-level" data-role="level-display">lv ${lvl}</span>
           </div>
           <div class="admin-row-actions">
