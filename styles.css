@@ -447,6 +447,8 @@ body{
 /* ---------- toggle switch (Sleep mode / Show badges in Settings) ---------- */
 .switch{
   all: unset;
+  display: inline-flex;
+  align-items: center;
   cursor:pointer;
   width:40px; height:22px;
   border-radius:999px;
