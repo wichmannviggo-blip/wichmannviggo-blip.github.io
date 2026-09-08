@@ -481,6 +481,16 @@
     leaderboardMe: document.getElementById("leaderboardMe"),
     leaderboardTabs: document.querySelectorAll(".leaderboard-tab"),
 
+    friendsBtn: document.getElementById("friendsBtn"),
+    friendsView: document.getElementById("friendsView"),
+    friendsBackBtn: document.getElementById("friendsBackBtn"),
+    friendAddInput: document.getElementById("friendAddInput"),
+    friendAddError: document.getElementById("friendAddError"),
+    friendAddBtn: document.getElementById("friendAddBtn"),
+    friendRequestsRow: document.getElementById("friendRequestsRow"),
+    friendRequestsList: document.getElementById("friendRequestsList"),
+    friendsList: document.getElementById("friendsList"),
+
     adminNavBtn: document.getElementById("adminNavBtn"),
     adminView: document.getElementById("adminView"),
     adminBackBtn: document.getElementById("adminBackBtn"),
@@ -770,6 +780,7 @@
     el.appView.classList.add("hidden");
     el.settingsView.classList.add("hidden");
     el.leaderboardView.classList.add("hidden");
+    el.friendsView.classList.add("hidden");
     el.adminView.classList.add("hidden");
     el.submissionsView.classList.add("hidden");
     el.loginView.classList.remove("hidden");
@@ -788,6 +799,7 @@
     el.loginView.classList.add("hidden");
     el.settingsView.classList.add("hidden");
     el.leaderboardView.classList.add("hidden");
+    el.friendsView.classList.add("hidden");
     el.adminView.classList.add("hidden");
     el.submissionsView.classList.add("hidden");
     el.appView.classList.remove("hidden");
@@ -1557,6 +1569,197 @@
     el.leaderboardView.classList.add("hidden");
     el.appView.classList.remove("hidden");
     tick();
+  });
+
+  /* =========================================================
+     FRIENDS — private circle: friend requests, a friends-only
+     leaderboard, and quick 👍/🔥 reactions on each friend.
+     ========================================================= */
+  el.friendsBtn.addEventListener("click", openFriendsPanel);
+  el.friendsBackBtn.addEventListener("click", () => {
+    el.friendsView.classList.add("hidden");
+    el.appView.classList.remove("hidden");
+    tick();
+  });
+
+  async function openFriendsPanel(){
+    el.appView.classList.add("hidden");
+    el.friendsView.classList.remove("hidden");
+    el.friendAddError.textContent = "";
+    el.friendAddInput.value = "";
+    await renderFriendsPanel();
+  }
+
+  async function renderFriendsPanel(){
+    el.friendRequestsList.innerHTML = "";
+    el.friendRequestsRow.classList.add("hidden");
+    el.friendsList.innerHTML = `<p class="center-sub" style="text-align:center;">Loading…</p>`;
+
+    const { data: rels, error } = await supabase
+      .from("friend_requests")
+      .select("id, requester_id, addressee_id, status")
+      .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`);
+
+    if(error){
+      el.friendsList.innerHTML = `<p class="center-sub" style="text-align:center;">Couldn't load friends.</p>`;
+      return;
+    }
+
+    const accepted = [];
+    const pending = [];
+    (rels || []).forEach(r => {
+      const otherId = r.requester_id === currentUser.id ? r.addressee_id : r.requester_id;
+      if(r.status === "accepted"){
+        accepted.push({ id: r.id, otherId });
+      } else {
+        pending.push({ id: r.id, otherId, incoming: r.addressee_id === currentUser.id });
+      }
+    });
+
+    const allOtherIds = [...new Set([...accepted.map(a => a.otherId), ...pending.map(p => p.otherId)])];
+
+    const profiles = {};
+    if(allOtherIds.length > 0){
+      const { data: profileRows } = await supabase
+        .from("quest_stats")
+        .select("user_id, username, total_xp, is_owner, user_number, show_badges")
+        .in("user_id", allOtherIds);
+      (profileRows || []).forEach(p => { profiles[p.user_id] = p; });
+    }
+
+    // ---------- requests (incoming to accept/decline, outgoing to cancel) ----------
+    if(pending.length > 0){
+      el.friendRequestsRow.classList.remove("hidden");
+      el.friendRequestsList.innerHTML = pending.map(p => {
+        const prof = profiles[p.otherId];
+        const name = prof ? "@" + prof.username : "@unknown";
+        if(p.incoming){
+          return `
+            <div class="leaderboard-row">
+              <span class="leaderboard-name"><span class="name-text">${name}</span></span>
+              <div class="friend-request-actions">
+                <button class="link-btn" data-accept="${p.id}">Accept</button>
+                <button class="link-btn link-btn-quiet" data-decline="${p.id}">Decline</button>
+              </div>
+            </div>
+          `;
+        }
+        return `
+          <div class="leaderboard-row">
+            <span class="leaderboard-name"><span class="name-text">${name}</span></span>
+            <div class="friend-request-actions">
+              <span class="settings-note" style="margin:0;">Pending</span>
+              <button class="link-btn link-btn-quiet" data-decline="${p.id}">Cancel</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ---------- accepted friends, sorted by level — the private leaderboard ----------
+    if(accepted.length === 0){
+      el.friendsList.innerHTML = `<p class="center-sub" style="text-align:center;">No friends yet — add one above.</p>`;
+      return;
+    }
+
+    const friendIds = accepted.map(a => a.otherId);
+    const { data: reactionRows } = await supabase
+      .from("reactions")
+      .select("from_user_id, to_user_id, emoji")
+      .in("to_user_id", friendIds);
+
+    const sorted = accepted
+      .map(a => profiles[a.otherId])
+      .filter(Boolean)
+      .sort((a, b) => b.total_xp - a.total_xp);
+
+    el.friendsList.innerHTML = sorted.map(prof => {
+      const lvl = levelInfo(prof.total_xp).level;
+      const badges = badgeHTML({ isOwner: prof.is_owner, userNumber: prof.user_number, showBadges: prof.show_badges });
+      const myThumbs = (reactionRows || []).some(r => r.to_user_id === prof.user_id && r.from_user_id === currentUser.id && r.emoji === "👍");
+      const myFire = (reactionRows || []).some(r => r.to_user_id === prof.user_id && r.from_user_id === currentUser.id && r.emoji === "🔥");
+      const thumbCount = (reactionRows || []).filter(r => r.to_user_id === prof.user_id && r.emoji === "👍").length;
+      const fireCount = (reactionRows || []).filter(r => r.to_user_id === prof.user_id && r.emoji === "🔥").length;
+      return `
+        <div class="leaderboard-row">
+          <span class="leaderboard-name"><span class="name-text">@${prof.username}</span>${badges}</span>
+          <span class="leaderboard-level">lv ${lvl}</span>
+          <div class="friend-reactions">
+            <button class="reaction-btn ${myThumbs ? "active" : ""}" data-uid="${prof.user_id}" data-emoji="👍">👍 ${thumbCount}</button>
+            <button class="reaction-btn ${myFire ? "active" : ""}" data-uid="${prof.user_id}" data-emoji="🔥">🔥 ${fireCount}</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  el.friendAddBtn.addEventListener("click", async () => {
+    const uname = el.friendAddInput.value.trim();
+    el.friendAddError.textContent = "";
+    if(!uname) return;
+    if(cachedStats.username && uname.toLowerCase() === cachedStats.username.toLowerCase()){
+      el.friendAddError.textContent = "That's you!";
+      return;
+    }
+
+    el.friendAddBtn.disabled = true;
+    const { data: targetRow, error: lookupErr } = await supabase
+      .from("quest_stats")
+      .select("user_id")
+      .ilike("username", uname)
+      .maybeSingle();
+
+    if(lookupErr || !targetRow){
+      el.friendAddBtn.disabled = false;
+      el.friendAddError.textContent = "No user found with that username.";
+      return;
+    }
+
+    const { error: insertErr } = await supabase.from("friend_requests").insert({
+      requester_id: currentUser.id,
+      addressee_id: targetRow.user_id,
+      status: "pending"
+    });
+    el.friendAddBtn.disabled = false;
+
+    if(insertErr){
+      el.friendAddError.textContent = (insertErr.code === "23505")
+        ? "You've already sent a request, or you're already friends."
+        : "Couldn't send that request.";
+      return;
+    }
+
+    el.friendAddInput.value = "";
+    await renderFriendsPanel();
+  });
+
+  el.friendRequestsList.addEventListener("click", async (e) => {
+    const acceptBtn = e.target.closest("[data-accept]");
+    const declineBtn = e.target.closest("[data-decline]");
+    if(acceptBtn){
+      await supabase.from("friend_requests").update({ status: "accepted" }).eq("id", acceptBtn.dataset.accept);
+      await renderFriendsPanel();
+    } else if(declineBtn){
+      await supabase.from("friend_requests").delete().eq("id", declineBtn.dataset.decline);
+      await renderFriendsPanel();
+    }
+  });
+
+  el.friendsList.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".reaction-btn");
+    if(!btn) return;
+    const toUid = btn.dataset.uid;
+    const emoji = btn.dataset.emoji;
+    const isActive = btn.classList.contains("active");
+
+    btn.disabled = true;
+    if(isActive){
+      await supabase.from("reactions").delete()
+        .eq("from_user_id", currentUser.id).eq("to_user_id", toUid).eq("emoji", emoji);
+    } else {
+      await supabase.from("reactions").insert({ from_user_id: currentUser.id, to_user_id: toUid, emoji });
+    }
+    await renderFriendsPanel();
   });
 
   /* =========================================================
