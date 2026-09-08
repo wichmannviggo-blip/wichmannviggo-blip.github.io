@@ -25,7 +25,10 @@
   <!-- ===== LOGIN VIEW ===== -->
   <div id="loginView">
     <div class="panel">
-      <h2 id="loginHeading">Log in</h2>
+      <div class="login-heading-row">
+        <h2 id="loginHeading">Log in</h2>
+        <button class="help-btn" id="helpGuideBtn" type="button" aria-label="How do I create an account?" title="How do I create an account?">?</button>
+      </div>
       <p class="sub" id="loginSub">Log in with your email to load your quests, level and streak on this device.</p>
 
       <div class="field" id="emailField">
@@ -238,6 +241,19 @@
       <button class="btn btn-secondary" id="questConfirmCancelBtn">Not yet</button>
       <button class="btn" id="questConfirmYesBtn">Yes, I did it</button>
     </div>
+  </div>
+</div>
+
+<!-- ===== ACCOUNT CREATION GUIDE (step-by-step) ===== -->
+<div id="guideModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <p class="modal-title" id="guideStepTitle">Step 1 of 7</p>
+    <p class="modal-sub" id="guideStepText">Type your email address.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="guideBackBtn">Back</button>
+      <button class="btn" id="guideNextBtn">Next</button>
+    </div>
+    <button class="link-btn guide-close-btn" id="guideCloseBtn">Close guide</button>
   </div>
 </div>
 
