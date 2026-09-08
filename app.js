@@ -1133,6 +1133,7 @@
         <p class="quest-title">${quest.text}</p>
         <div class="quest-meta">worth <strong>${quest.xp} xp</strong> · ${mins}m left this hour</div>
         <div class="quest-proof">
+          <p class="quest-proof-note">Only the developer team sees this photo, used to check for cheating. It's automatically deleted after 7 days.</p>
           <input type="file" accept="image/*" capture="environment" id="proofFileInput" class="hidden-file-input">
           <label for="proofFileInput" class="btn btn-secondary" id="proofPickLabel">${ICON_CAMERA} Add proof photo</label>
           <div class="quest-proof-preview hidden" id="proofPreviewWrap">
