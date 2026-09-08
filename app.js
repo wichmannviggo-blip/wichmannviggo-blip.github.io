@@ -993,26 +993,30 @@
     const ext = ((file.name || "").split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
     const path = `${currentUser.id}/${progress.day}_${progress.hour}_${progress.pick}_${Date.now()}.${ext}`;
 
-    try{
-      const { error: uploadError } = await supabase.storage
-        .from("quest-proofs")
-        .upload(path, file, { upsert: false, contentType: file.type || "image/jpeg" });
-      if(uploadError) throw uploadError;
+    const { error: uploadError } = await supabase.storage
+      .from("quest-proofs")
+      .upload(path, file, { upsert: false, contentType: file.type || "image/jpeg" });
 
-      const { error: insertError } = await supabase.from("quest_submissions").insert({
-        user_id: currentUser.id,
-        username: cachedStats.username,
-        quest_day: progress.day,
-        hour: progress.hour,
-        difficulty: progress.pick,
-        quest_text: quest.text,
-        xp: quest.xp,
-        image_path: path
-      });
-      if(insertError) throw insertError;
-    } catch(err){
-      console.error("proof upload failed:", err);
-      if(errorEl) errorEl.textContent = "Couldn't upload that photo. Check your connection and try again.";
+    if(uploadError){
+      console.error("proof upload (storage) failed:", uploadError);
+      if(errorEl) errorEl.textContent = `Upload failed: ${uploadError.message || "storage error"}`;
+      return;
+    }
+
+    const { error: insertError } = await supabase.from("quest_submissions").insert({
+      user_id: currentUser.id,
+      username: cachedStats.username,
+      quest_day: progress.day,
+      hour: progress.hour,
+      difficulty: progress.pick,
+      quest_text: quest.text,
+      xp: quest.xp,
+      image_path: path
+    });
+
+    if(insertError){
+      console.error("proof upload (insert) failed:", insertError);
+      if(errorEl) errorEl.textContent = `Saved the photo but couldn't log it: ${insertError.message || "database error"}`;
       return;
     }
 
