@@ -69,6 +69,7 @@
         <span id="accountUsername" class="who"></span>
         <nav class="log-nav">
           <button class="link-btn" id="leaderboardBtn">Leaderboard</button>
+          <button class="link-btn" id="friendsBtn">Friends</button>
           <button class="link-btn" id="settingsBtn">Settings</button>
           <button class="link-btn hidden" id="adminNavBtn">Admin</button>
           <button class="link-btn hidden" id="submissionsNavBtn">Submissions</button>
@@ -195,6 +196,34 @@
       </div>
       <div class="leaderboard-list" id="leaderboardList"></div>
       <div class="leaderboard-me-wrap" id="leaderboardMe"></div>
+    </div>
+  </div>
+
+  <!-- ===== FRIENDS VIEW ===== -->
+  <div id="friendsView" class="hidden">
+    <div class="panel">
+      <button class="back-link" id="friendsBackBtn">&larr; Back to quest</button>
+      <h2>Friends</h2>
+      <p class="sub">Your private circle — add friends, compare levels, and cheer each other on.</p>
+
+      <div class="settings-row">
+        <div class="settings-label">Add a friend</div>
+        <div class="field" style="margin-bottom:0;">
+          <input id="friendAddInput" type="text" autocomplete="off" placeholder="Their username">
+        </div>
+        <div class="form-error" id="friendAddError"></div>
+        <button class="btn btn-secondary" id="friendAddBtn" style="margin-top:8px;">Send friend request</button>
+      </div>
+
+      <div class="settings-row hidden" id="friendRequestsRow">
+        <div class="settings-label">Requests</div>
+        <div class="leaderboard-list" id="friendRequestsList"></div>
+      </div>
+
+      <div class="settings-row" style="border-bottom:none;">
+        <div class="settings-label">Your friends</div>
+        <div class="leaderboard-list" id="friendsList"></div>
+      </div>
     </div>
   </div>
 
