@@ -775,6 +775,7 @@ body.admin-old-style #submissionsView .submission-meta{
   overflow:hidden; opacity:0; pointer-events:none;
 }
 .quest-proof{ display:flex; flex-direction:column; gap:10px; }
+.quest-proof-note{ font-size:12px; color: var(--fog); line-height:1.5; margin:0; }
 .quest-proof-preview{ display:flex; flex-direction:column; gap:10px; align-items:stretch; }
 .quest-proof-thumb{
   width:100%; max-height:220px; object-fit:cover;
@@ -838,4 +839,4 @@ body.admin-old-style #submissionsView .submission-meta{
   .panel{ padding: 22px 18px; }
   .log{ padding: 6px 18px 20px; }
   .celestial{ width:170px; height:170px; }
-}
+}s
