@@ -9,7 +9,7 @@
      Everything else (total_xp, username, is_owner, is_tester,
      is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests,
      streak, last_completed_quest_day) stays as it already is — the
-     old streak/last_completed_quest_day columns are just left unused.
+     old streak/last_completed_quest_day columns are just left unused
      ========================================================= */
   const SUPABASE_URL = "https://ulnimalkakdkutcsiiqx.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_vinWN7-Ec9WP9rZX_c4szg_wyybhxPk";
