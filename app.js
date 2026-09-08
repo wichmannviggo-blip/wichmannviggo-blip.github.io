@@ -26,6 +26,7 @@
   const ICON_HAMMER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="2" width="9" height="6" rx="1.4" transform="rotate(45 17.5 5)"/><path d="M15.3 7.3 4.2 18.4"/><path d="M3 19.5 4.6 21"/></svg>`;
   const ICON_PERSON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.5c1.2-3.4 3.7-5 6.5-5s5.3 1.6 6.5 5"/></svg>`;
   const ICON_CAMERA = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h1.2l.9-1.4A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.7 1l.9 1.4H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="13" r="3.4"/></svg>`;
+  const ICON_CHAT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8A2.5 2.5 0 0 1 17.5 16H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5Z"/></svg>`;
 
   /* =========================================================
      QUEST CONTENT — ranked by time / effort / social nerve required.
@@ -109,6 +110,22 @@
     "Attempt a skill you've never tried before and record your progress.",
     "Turn your room into a different environment using only things you already own."
   ];
+
+  /* ---------- friend messaging: 50 preset quick-messages ---------- */
+  const QUICK_MESSAGES = [
+    "Hello", "Hi", "Hey", "Thank you", "Thanks a lot",
+    "You're welcome", "How are you?", "I'm good", "I'm great!", "Not bad",
+    "What's up?", "Nothing much", "I'm busy", "I'm free", "Let's hang out",
+    "See you soon", "Talk later", "Call me", "Text me", "On my way",
+    "Almost there", "Be right back", "Wait for me", "Good morning", "Good night",
+    "Good luck!", "Nice job!", "Great job!", "Congrats!", "Well done",
+    "Keep going", "Don't give up", "I believe in you", "Proud of you", "You got this!",
+    "Love this", "So true", "I agree", "I disagree", "Maybe",
+    "Sure", "Of course", "Not sure", "Sorry", "My bad",
+    "No worries", "Miss you", "Happy birthday!", "LOL", "Really?"
+  ];
+  let currentMessageFriend = null; // { userId, username }
+  let messagesPollTimer = null;
 
   const HOUR_START = 6;   // quests begin unlocking at 06:00
   const HOUR_END = 22;    // last hour window is 21:00-22:00
@@ -491,6 +508,12 @@
     friendRequestsList: document.getElementById("friendRequestsList"),
     friendsList: document.getElementById("friendsList"),
 
+    messagesView: document.getElementById("messagesView"),
+    messagesBackBtn: document.getElementById("messagesBackBtn"),
+    messagesHeading: document.getElementById("messagesHeading"),
+    messagesThread: document.getElementById("messagesThread"),
+    messagesQuickGrid: document.getElementById("messagesQuickGrid"),
+
     adminNavBtn: document.getElementById("adminNavBtn"),
     adminView: document.getElementById("adminView"),
     adminBackBtn: document.getElementById("adminBackBtn"),
@@ -775,12 +798,14 @@
     el.signOutModal.classList.add("hidden");
     document.body.classList.remove("admin-old-style");
     if(tickTimer) clearInterval(tickTimer);
+    if(messagesPollTimer){ clearInterval(messagesPollTimer); messagesPollTimer = null; }
     await supabase.auth.signOut();
     currentUser = null;
     el.appView.classList.add("hidden");
     el.settingsView.classList.add("hidden");
     el.leaderboardView.classList.add("hidden");
     el.friendsView.classList.add("hidden");
+    el.messagesView.classList.add("hidden");
     el.adminView.classList.add("hidden");
     el.submissionsView.classList.add("hidden");
     el.loginView.classList.remove("hidden");
@@ -800,6 +825,7 @@
     el.settingsView.classList.add("hidden");
     el.leaderboardView.classList.add("hidden");
     el.friendsView.classList.add("hidden");
+    el.messagesView.classList.add("hidden");
     el.adminView.classList.add("hidden");
     el.submissionsView.classList.add("hidden");
     el.appView.classList.remove("hidden");
@@ -1684,6 +1710,7 @@
         <div class="leaderboard-row">
           <span class="leaderboard-name"><span class="name-text">@${prof.username}</span>${badges}</span>
           <span class="leaderboard-level">lv ${lvl}</span>
+          <button class="icon-btn message-icon-btn" data-message-uid="${prof.user_id}" data-message-username="${prof.username}" title="Message @${prof.username}" aria-label="Message @${prof.username}">${ICON_CHAT}</button>
           <div class="friend-reactions">
             <button class="reaction-btn ${myThumbs ? "active" : ""}" data-uid="${prof.user_id}" data-emoji="👍">👍 ${thumbCount}</button>
             <button class="reaction-btn ${myFire ? "active" : ""}" data-uid="${prof.user_id}" data-emoji="🔥">🔥 ${fireCount}</button>
@@ -1746,6 +1773,16 @@
   });
 
   el.friendsList.addEventListener("click", async (e) => {
+    const messageBtn = e.target.closest(".message-icon-btn");
+    if(messageBtn){
+      currentMessageFriend = {
+        userId: messageBtn.dataset.messageUid,
+        username: messageBtn.dataset.messageUsername
+      };
+      await openMessagesView();
+      return;
+    }
+
     const btn = e.target.closest(".reaction-btn");
     if(!btn) return;
     const toUid = btn.dataset.uid;
@@ -1760,6 +1797,76 @@
       await supabase.from("reactions").insert({ from_user_id: currentUser.id, to_user_id: toUid, emoji });
     }
     await renderFriendsPanel();
+  });
+
+  /* =========================================================
+     MESSAGES — preset quick-messages between friends only
+     ========================================================= */
+  async function openMessagesView(){
+    el.friendsView.classList.add("hidden");
+    el.messagesView.classList.remove("hidden");
+    el.messagesHeading.textContent = "Messages with @" + currentMessageFriend.username;
+    renderQuickMessageGrid();
+    await renderMessagesThread();
+    if(messagesPollTimer) clearInterval(messagesPollTimer);
+    messagesPollTimer = setInterval(renderMessagesThread, 5000);
+  }
+
+  el.messagesBackBtn.addEventListener("click", async () => {
+    if(messagesPollTimer){ clearInterval(messagesPollTimer); messagesPollTimer = null; }
+    currentMessageFriend = null;
+    el.messagesView.classList.add("hidden");
+    el.friendsView.classList.remove("hidden");
+    await renderFriendsPanel();
+  });
+
+  function renderQuickMessageGrid(){
+    el.messagesQuickGrid.innerHTML = QUICK_MESSAGES
+      .map(m => `<button class="quick-msg-btn" data-msg="${m}">${m}</button>`)
+      .join("");
+  }
+
+  async function renderMessagesThread(){
+    if(!currentMessageFriend) return;
+    const { data, error } = await supabase
+      .from("friend_messages")
+      .select("from_user_id, to_user_id, message, created_at")
+      .or(`and(from_user_id.eq.${currentUser.id},to_user_id.eq.${currentMessageFriend.userId}),and(from_user_id.eq.${currentMessageFriend.userId},to_user_id.eq.${currentUser.id})`)
+      .order("created_at", { ascending: true })
+      .limit(200);
+
+    if(error || !data || data.length === 0){
+      el.messagesThread.innerHTML = `<p class="center-sub" style="text-align:center;">No messages yet — say hi!</p>`;
+      return;
+    }
+
+    el.messagesThread.innerHTML = data.map(m => {
+      const mine = m.from_user_id === currentUser.id;
+      const time = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      return `
+        <div class="message-bubble ${mine ? "mine" : "theirs"}">
+          ${m.message}
+          <span class="message-time">${time}</span>
+        </div>
+      `;
+    }).join("");
+    el.messagesThread.scrollTop = el.messagesThread.scrollHeight;
+  }
+
+  el.messagesQuickGrid.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".quick-msg-btn");
+    if(!btn || !currentMessageFriend) return;
+
+    btn.disabled = true;
+    const { error } = await supabase.from("friend_messages").insert({
+      from_user_id: currentUser.id,
+      to_user_id: currentMessageFriend.userId,
+      message: btn.dataset.msg
+    });
+    btn.disabled = false;
+
+    if(error){ console.error("send message failed:", error); return; }
+    await renderMessagesThread();
   });
 
   /* =========================================================
