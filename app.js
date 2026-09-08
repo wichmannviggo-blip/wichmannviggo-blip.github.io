@@ -9,7 +9,7 @@
      Everything else (total_xp, username, is_owner, is_tester,
      is_helper, is_admin, is_invisible, bypass_sleep, unlimited_quests,
      streak, last_completed_quest_day) stays as it already is — the
-     old streak/last_completed_quest_day columns are just left unused
+     old streak/last_completed_quest_day columns are just left unused.
      ========================================================= */
   const SUPABASE_URL = "https://ulnimalkakdkutcsiiqx.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_vinWN7-Ec9WP9rZX_c4szg_wyybhxPk";
@@ -276,6 +276,37 @@
   const USERNAME_RE = /^[A-Za-z0-9._]{4,20}$/;
   function isValidUsername(u){ return USERNAME_RE.test(u); }
   const USERNAME_COOLDOWN_DAYS = 7;
+
+  /* ---------- username content filter ----------
+     Blocks impersonation of the dev/mod team and common hate-speech
+     or pornographic terms. Checked as substrings (case-insensitive)
+     so obvious variants ("xAdminx", "Dev_Team99") still get caught. */
+  const BLOCKED_USERNAME_TERMS = [
+    // impersonation of staff/dev/official accounts
+    "admin", "administrator", "moderator", "official", "support", "staff",
+    "developer", "devteam", "dev_team", "dev-team", "creator", "founder", "owner",
+    "questieteam", "questie_team", "questiestaff", "questieadmin",
+    // hate speech / slurs (checked as substrings to catch variants)
+    "nigger", "nigga", "chink", "spic", "kike", "faggot", "fag", "retard",
+    "tranny", "paki", "gook", "wetback", "coon", "raghead",
+    // pornographic / sexually explicit terms
+    "porn", "pornhub", "xxx", "nude", "nudes", "boobs", "dick", "pussy",
+    "cock", "cum", "anal", "blowjob", "rape"
+  ];
+  function containsBlockedTerm(u){
+    const lower = u.toLowerCase();
+    return BLOCKED_USERNAME_TERMS.some(term => lower.includes(term));
+  }
+  // single source of truth for "is this username okay" — format AND content
+  function getUsernameError(u){
+    if(!isValidUsername(u)){
+      return "Username must be 4-20 characters: letters, numbers, . or _ only.";
+    }
+    if(containsBlockedTerm(u)){
+      return "That username isn't allowed. Please choose another.";
+    }
+    return null;
+  }
 
   /* ---------- badge legend popover ----------
      Hovering a badge (desktop mouse) shows a quick single-word label via
@@ -605,8 +636,9 @@
 
     if(mode === "chooseUsername"){
       const username = el.usernameInput.value.trim();
-      if(!isValidUsername(username)){
-        el.loginError.textContent = "Username must be 4-20 characters: letters, numbers, . or _ only.";
+      const usernameError = getUsernameError(username);
+      if(usernameError){
+        el.loginError.textContent = usernameError;
         return;
       }
       el.loginSubmitBtn.disabled = true;
@@ -632,8 +664,9 @@
 
     if(mode === "signup"){
       const username = el.usernameInput.value.trim();
-      if(!isValidUsername(username)){
-        el.loginError.textContent = "Username must be 4-20 characters: letters, numbers, . or _ only.";
+      const usernameError = getUsernameError(username);
+      if(usernameError){
+        el.loginError.textContent = usernameError;
         return;
       }
       if(!email || !password){
@@ -1378,8 +1411,9 @@
   el.settingsUsernameSaveBtn.addEventListener("click", async () => {
     const username = el.settingsUsernameInput.value.trim();
     el.settingsUsernameError.textContent = "";
-    if(!isValidUsername(username)){
-      el.settingsUsernameError.textContent = "Username must be 4-20 characters: letters, numbers, . or _ only.";
+    const usernameError = getUsernameError(username);
+    if(usernameError){
+      el.settingsUsernameError.textContent = usernameError;
       return;
     }
     el.settingsUsernameSaveBtn.disabled = true;
