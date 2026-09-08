@@ -420,6 +420,13 @@
     loginSub: document.getElementById("loginSub"),
     toggleText: document.getElementById("toggleText"),
     toggleModeBtn: document.getElementById("toggleModeBtn"),
+    helpGuideBtn: document.getElementById("helpGuideBtn"),
+    guideModal: document.getElementById("guideModal"),
+    guideStepTitle: document.getElementById("guideStepTitle"),
+    guideStepText: document.getElementById("guideStepText"),
+    guideBackBtn: document.getElementById("guideBackBtn"),
+    guideNextBtn: document.getElementById("guideNextBtn"),
+    guideCloseBtn: document.getElementById("guideCloseBtn"),
 
     settingsBackBtn: document.getElementById("settingsBackBtn"),
     settingsEmail: document.getElementById("settingsEmail"),
@@ -530,6 +537,57 @@
     }
   }
   el.toggleModeBtn.addEventListener("click", () => setMode(mode === "signin" ? "signup" : "signin"));
+
+  /* ---------- account creation guide (the "?" button) ---------- */
+  const ACCOUNT_GUIDE_STEPS = [
+    "Type your email address.",
+    "Create a username.",
+    "Create a password.",
+    "Click \"Create account\".",
+    "Click the link Supabase Auth sends to your email.",
+    "Come back to Questie.",
+    "Log in with your email and password."
+  ];
+  let guideStepIndex = 0;
+
+  function renderGuideStep(){
+    el.guideStepTitle.textContent = `Step ${guideStepIndex + 1} of ${ACCOUNT_GUIDE_STEPS.length}`;
+    el.guideStepText.textContent = ACCOUNT_GUIDE_STEPS[guideStepIndex];
+    el.guideBackBtn.disabled = guideStepIndex === 0;
+    el.guideNextBtn.textContent = guideStepIndex === ACCOUNT_GUIDE_STEPS.length - 1 ? "Done" : "Next";
+  }
+
+  el.helpGuideBtn.addEventListener("click", () => {
+    guideStepIndex = 0;
+    renderGuideStep();
+    el.guideModal.classList.remove("hidden");
+  });
+
+  el.guideBackBtn.addEventListener("click", () => {
+    if(guideStepIndex > 0){
+      guideStepIndex--;
+      renderGuideStep();
+    }
+  });
+
+  el.guideNextBtn.addEventListener("click", () => {
+    if(guideStepIndex < ACCOUNT_GUIDE_STEPS.length - 1){
+      guideStepIndex++;
+      renderGuideStep();
+    } else {
+      el.guideModal.classList.add("hidden");
+    }
+  });
+
+  el.guideCloseBtn.addEventListener("click", () => {
+    el.guideModal.classList.add("hidden");
+  });
+
+  el.guideModal.addEventListener("click", (e) => {
+    if(e.target === el.guideModal){
+      el.guideModal.classList.add("hidden");
+    }
+  });
 
   // Enter key submits the login/signup/username form, same as clicking the button
   [el.emailInput, el.usernameInput, el.passwordInput, el.confirmPasswordInput].forEach(input => {
