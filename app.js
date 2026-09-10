@@ -448,6 +448,10 @@
     questConfirmModal: document.getElementById("questConfirmModal"),
     questConfirmCancelBtn: document.getElementById("questConfirmCancelBtn"),
     questConfirmYesBtn: document.getElementById("questConfirmYesBtn"),
+    removeFriendModal: document.getElementById("removeFriendModal"),
+    removeFriendText: document.getElementById("removeFriendText"),
+    removeFriendCancelBtn: document.getElementById("removeFriendCancelBtn"),
+    removeFriendConfirmBtn: document.getElementById("removeFriendConfirmBtn"),
     leaderboardBtn: document.getElementById("leaderboardBtn"),
     settingsBtn: document.getElementById("settingsBtn"),
 
@@ -1741,7 +1745,10 @@
       .in("to_user_id", friendIds);
 
     const sorted = accepted
-      .map(a => profiles[a.otherId])
+      .map(a => {
+        const prof = profiles[a.otherId];
+        return prof ? { ...prof, relId: a.id } : null;
+      })
       .filter(Boolean)
       .sort((a, b) => b.total_xp - a.total_xp);
 
@@ -1761,6 +1768,7 @@
             <button class="reaction-btn ${myThumbs ? "active" : ""}" data-uid="${prof.user_id}" data-emoji="👍">👍 ${thumbCount}</button>
             <button class="reaction-btn ${myFire ? "active" : ""}" data-uid="${prof.user_id}" data-emoji="🔥">🔥 ${fireCount}</button>
           </div>
+          <button class="icon-btn remove-friend-btn" data-remove-rel="${prof.relId}" data-remove-username="${prof.username}" title="Remove @${prof.username}" aria-label="Remove @${prof.username}">✕</button>
         </div>
       `;
     }).join("");
@@ -1818,6 +1826,8 @@
     }
   });
 
+  let pendingRemoveFriend = null; // { relId, username }
+
   el.friendsList.addEventListener("click", async (e) => {
     const messageBtn = e.target.closest(".message-icon-btn");
     if(messageBtn){
@@ -1826,6 +1836,17 @@
         username: messageBtn.dataset.messageUsername
       };
       await openMessagesView();
+      return;
+    }
+
+    const removeBtn = e.target.closest("[data-remove-rel]");
+    if(removeBtn){
+      pendingRemoveFriend = {
+        relId: removeBtn.dataset.removeRel,
+        username: removeBtn.dataset.removeUsername
+      };
+      el.removeFriendText.textContent = `Remove @${pendingRemoveFriend.username} from your friends?`;
+      el.removeFriendModal.classList.remove("hidden");
       return;
     }
 
@@ -1842,6 +1863,26 @@
     } else {
       await supabase.from("reactions").insert({ from_user_id: currentUser.id, to_user_id: toUid, emoji });
     }
+    await renderFriendsPanel();
+  });
+
+  el.removeFriendCancelBtn.addEventListener("click", () => {
+    el.removeFriendModal.classList.add("hidden");
+    pendingRemoveFriend = null;
+  });
+  el.removeFriendModal.addEventListener("click", (e) => {
+    if(e.target === el.removeFriendModal){
+      el.removeFriendModal.classList.add("hidden");
+      pendingRemoveFriend = null;
+    }
+  });
+  el.removeFriendConfirmBtn.addEventListener("click", async () => {
+    if(!pendingRemoveFriend) return;
+    el.removeFriendConfirmBtn.disabled = true;
+    await supabase.from("friend_requests").delete().eq("id", pendingRemoveFriend.relId);
+    el.removeFriendConfirmBtn.disabled = false;
+    el.removeFriendModal.classList.add("hidden");
+    pendingRemoveFriend = null;
     await renderFriendsPanel();
   });
 
