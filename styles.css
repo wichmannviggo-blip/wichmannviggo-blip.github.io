@@ -642,6 +642,8 @@ body{
 }
 .icon-btn:hover{ color: var(--lantern); }
 .icon-btn svg{ width:16px; height:16px; }
+.icon-btn.remove-friend-btn{ font-size:14px; font-weight:600; }
+.icon-btn.remove-friend-btn:hover{ color: #E1484D; }
 
 /* ---------- messages: thread + preset quick-message grid ---------- */
 .messages-thread{
