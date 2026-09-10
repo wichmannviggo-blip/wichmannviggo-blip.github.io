@@ -1210,7 +1210,7 @@
         <div class="big-icon">${ICON_MOON}</div>
         <p class="center-title">Questie is asleep</p>
         <p class="center-sub">Hourly quests run 06:00–22:00. Today's xp has been folded into your total with your streak multiplier applied — a fresh set unlocks at 06:00.</p>
-        <span class="mono-note">new quests in ${h}h ${pad2(m)}m</span>
+        <span class="mono-note">new quests in <span id="questCountdownText">${h}h ${pad2(m)}m</span></span>
       </div>
     `;
   }
@@ -1230,7 +1230,7 @@
     el.card.innerHTML = `
       <div class="state-fade" style="display:flex; flex-direction:column; gap:14px;">
         <div class="quest-eyebrow-icon">${ICON_SCROLL}</div>
-        <p class="quest-hour-note">Pick one for this hour · new set in ${mins}m</p>
+        <p class="quest-hour-note">Pick one for this hour · new set in <span id="questCountdownText">${mins}m</span></p>
         <div class="quest-choice-list">
           <button class="quest-choice quest-choice-easy" data-diff="easy">
             <span class="quest-choice-tag">Easy · +${slot.easy.xp} xp</span>
@@ -1260,7 +1260,7 @@
         <div class="quest-eyebrow-icon">${ICON_SCROLL}</div>
         <span class="quest-diff-pill quest-diff-${progress.pick}">${progress.pick}</span>
         <p class="quest-title">${quest.text}</p>
-        <div class="quest-meta">worth <strong>${quest.xp} xp</strong> · ${mins}m left this hour</div>
+        <div class="quest-meta">worth <strong>${quest.xp} xp</strong> · <span id="questCountdownText">${mins}m</span> left this hour</div>
         <div class="quest-proof">
           <p class="quest-proof-note">Only the developer team sees this photo, used to check for cheating. It's automatically deleted after 7 days.</p>
           <input type="file" accept="image/*" capture="environment" id="proofFileInput" class="hidden-file-input">
@@ -1322,17 +1322,63 @@
     `;
   }
 
-  function renderQuestArea(progress){
-    if(cachedStats.isBanned){ viewBanned(); return; }
+  let lastQuestAreaSignature = null;
 
+  // updates just the visible countdown text (no DOM rebuild) when nothing
+  // about the underlying state has actually changed since the last render
+  function updateQuestCountdownInPlace(now){
+    const span = document.getElementById("questCountdownText");
+    if(!span) return;
+    if(cachedStats.isBanned) return;
+    const hour = now.getHours();
+    const awake = cachedStats.bypassSleep || (hour >= HOUR_START && hour < HOUR_END);
+    if(!awake){
+      const wake = new Date(now);
+      if(hour >= HOUR_END){ wake.setDate(wake.getDate()+1); }
+      wake.setHours(HOUR_START,0,0,0);
+      const diffMs = wake - now;
+      const h = Math.floor(diffMs / 3600000);
+      const m = Math.floor((diffMs % 3600000) / 60000);
+      span.textContent = `${h}h ${pad2(m)}m`;
+    } else {
+      span.textContent = `${minutesUntilNextHour(now)}m`;
+    }
+  }
+
+  function renderQuestArea(progress){
     const now = new Date();
+
+    if(cachedStats.isBanned){
+      if(lastQuestAreaSignature !== "banned"){
+        viewBanned();
+        lastQuestAreaSignature = "banned";
+      }
+      return;
+    }
+
     const hour = now.getHours();
     const awake = cachedStats.bypassSleep || (hour >= HOUR_START && hour < HOUR_END);
 
-    if(!awake){ viewSleep(now); return; }
+    if(!awake){
+      if(lastQuestAreaSignature !== "sleep"){
+        viewSleep(now);
+        lastQuestAreaSignature = "sleep";
+      } else {
+        updateQuestCountdownInPlace(now);
+      }
+      return;
+    }
 
     const schedule = getDailySchedule(progress.day);
     const slot = schedule.find(s => s.hour === progress.hour) || schedule[0];
+    const signature = `${progress.day}|${progress.hour}|${progress.pick}|${progress.resolved}|${progress.completed}`;
+
+    if(signature === lastQuestAreaSignature){
+      // nothing meaningful changed — just keep the countdown ticking in place
+      updateQuestCountdownInPlace(now);
+      return;
+    }
+    lastQuestAreaSignature = signature;
 
     if(progress.pick && progress.resolved && progress.completed){
       viewHourComplete(slot, progress);
@@ -1802,10 +1848,13 @@
   /* =========================================================
      MESSAGES — preset quick-messages between friends only
      ========================================================= */
+  let lastMessagesSignature = null;
+
   async function openMessagesView(){
     el.friendsView.classList.add("hidden");
     el.messagesView.classList.remove("hidden");
     el.messagesHeading.textContent = "Messages with @" + currentMessageFriend.username;
+    lastMessagesSignature = null;
     renderQuickMessageGrid();
     await renderMessagesThread();
     if(messagesPollTimer) clearInterval(messagesPollTimer);
@@ -1815,6 +1864,7 @@
   el.messagesBackBtn.addEventListener("click", async () => {
     if(messagesPollTimer){ clearInterval(messagesPollTimer); messagesPollTimer = null; }
     currentMessageFriend = null;
+    lastMessagesSignature = null;
     el.messagesView.classList.add("hidden");
     el.friendsView.classList.remove("hidden");
     await renderFriendsPanel();
@@ -1835,7 +1885,15 @@
       .order("created_at", { ascending: true })
       .limit(200);
 
-    if(error || !data || data.length === 0){
+    if(error) return;
+
+    const signature = data && data.length
+      ? `${data.length}|${data[data.length - 1].created_at}`
+      : "empty";
+    if(signature === lastMessagesSignature) return; // nothing new — skip the redraw
+    lastMessagesSignature = signature;
+
+    if(!data || data.length === 0){
       el.messagesThread.innerHTML = `<p class="center-sub" style="text-align:center;">No messages yet — say hi!</p>`;
       return;
     }
@@ -2041,5 +2099,13 @@
       `;
     }).join("");
   }
+
+
+  // force a full hard refresh periodically so nobody stays on an old,
+  // cached copy of the site for long — this is what caused the earlier
+  // "images won't load" and "friends button does nothing" bugs
+  setInterval(() => {
+    window.location.reload();
+  }, 20 * 60 * 1000);
 
 })();
