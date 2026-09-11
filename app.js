@@ -35,80 +35,88 @@
      unique picks per difficulty without repeats. Each carries a
      fixed xp reward.
      ========================================================= */
+  /* =========================================================
+     QUEST CONTENT — every quest is a photo prompt now. Ranked
+     easy/medium/hard by how much time, access, or creative/social
+     nerve the shot takes. Pools don't need to match the 16 daily
+     hour-slots exactly; each just needs at least 16 entries so a
+     day's schedule can draw 16 unique picks per difficulty without
+     repeats. Each carries a fixed xp reward.
+     ========================================================= */
   const EASY_XP = 15, MEDIUM_XP = 30, HARD_XP = 55;
 
   const EASY_QUESTS = [
-    "Make your bed.",
-    "Drink a glass of water.",
-    "Do 10 squats.",
-    "Take a 5-minute walk.",
-    "Send a nice message to someone.",
-    "Take a photo of something interesting.",
-    "Give someone a compliment.",
-    "Listen to a song from a genre you've never explored before.",
-    "Do 10 push-ups (or as many as you comfortably can).",
-    "Look outside for 2 minutes.",
-    "Do absolutely nothing for 5 minutes.",
-    "Find and touch something blue.",
-    "Rearrange one small thing in your room.",
-    "Make someone smile.",
-    "Balance on one leg for 30 seconds.",
-    "Find the oldest item near you.",
-    "Change one small thing about your daily routine.",
-    "Find something you forgot you owned.",
-    "Draw something using only 60 seconds.",
-    "Try to beat your personal record at something.",
-    "Find an object that starts with the first letter of your name."
+    "Take a photo of a landscape.",
+    "Take a photo of the sky right now.",
+    "Take a photo of your favorite mug or cup.",
+    "Take a photo of something red.",
+    "Take a photo of your shoes.",
+    "Take a photo of a plant.",
+    "Take a photo of your workspace or desk.",
+    "Take a photo of the view from your window.",
+    "Take a photo of something round.",
+    "Take a photo of a clock or watch.",
+    "Take a photo of your reflection in something.",
+    "Take a photo of a book you're reading, or want to.",
+    "Take a photo of something in your fridge.",
+    "Take a photo of a light source, like a lamp or the sun.",
+    "Take a photo of your hand.",
+    "Take a photo of something you use every day.",
+    "Take a photo of a doorway.",
+    "Take a photo of the ground beneath you.",
+    "Take a photo of something blue.",
+    "Take a photo of a piece of furniture.",
+    "Take a photo of a shadow."
   ];
 
   const MEDIUM_QUESTS = [
-    "Take a 15-minute walk.",
-    "Clean one area of your room.",
-    "Spend 20 minutes without social media.",
-    "Make yourself a snack or drink.",
-    "Organize one drawer.",
-    "Listen to an entire album without scrolling.",
-    "Draw something in 15 minutes.",
-    "Write a short journal entry.",
-    "Start a conversation with someone.",
-    "Spend 15 minutes on a hobby.",
-    "Create a playlist with 5 songs.",
-    "Help someone with something.",
-    "Take a different route on a short walk.",
-    "Clean up your phone's home screen.",
-    "Find three things you've never noticed before around you.",
-    "Make something using only items you already have.",
-    "Go outside and take five interesting photos.",
-    "Write a 10-word story.",
-    "Try to make someone laugh without telling them the quest.",
-    "Rearrange your room or desk slightly.",
-    "Make a paper airplane and improve it three times.",
-    "Pick an object and draw it without looking at the paper.",
-    "Find the weirdest object you own and give it a backstory.",
-    "Create a 10-minute challenge for yourself."
+    "Take a photo of a sunset or sunrise.",
+    "Take a photo of something in motion, blurred on purpose.",
+    "Take a photo from a high vantage point.",
+    "Take a photo of your meal before eating it.",
+    "Take a photo of a stranger's pet, with their okay.",
+    "Take a photo of graffiti or street art.",
+    "Take a photo using only natural light.",
+    "Take a photo of a reflection in water or glass.",
+    "Take a photo of something old or vintage.",
+    "Take a photo of a local landmark.",
+    "Take a photo of the night sky.",
+    "Take a close-up, macro-style photo of a small object.",
+    "Take a photo of a pattern or texture.",
+    "Take a photo of your outfit for today.",
+    "Take a photo of a busy street or public place.",
+    "Take a photo through a window or piece of glass.",
+    "Take a photo of something symmetrical.",
+    "Take a photo of a tree.",
+    "Take a photo of rain, snow, fog, or its aftermath.",
+    "Take a photo of a road or path leading somewhere.",
+    "Take a photo of your hands doing something creative.",
+    "Take a photo of a sign or piece of text you find interesting.",
+    "Take a silhouette photo of an object against the light.",
+    "Take a photo of something you'd like to change about a space."
   ];
 
   const HARD_QUESTS = [
-    "Go on a 30-minute walk.",
-    "Create something and finish it within 30 minutes.",
-    "Complete a 20-minute workout at your own comfortable pace.",
-    "Explore somewhere nearby you've never properly explored.",
-    "Go 30 minutes without checking your phone.",
-    "Write a short story in 30 minutes.",
-    "Draw something you're proud of.",
-    "Take 10 creative photos around your surroundings.",
-    "Create a mini project and finish it.",
-    "Listen to a podcast or educational video and learn something.",
-    "Let a random number generator decide what you do for the next 20 minutes.",
-    "Recreate a photo or scene using only objects around you.",
-    "Write a letter to your future self.",
-    "Try to learn a simple magic trick.",
-    "Create something useful from something you would normally throw away.",
-    "Walk somewhere without choosing your route beforehand — make decisions randomly.",
-    "Invent a completely new game and play-test it.",
-    "Make a 30-minute time capsule containing items or notes from today.",
-    "Attempt a skill you've never tried before and record your progress.",
-    "Turn your room into a different environment using only things you already own."
+    "Take a photo with a stranger in the frame, with their permission.",
+    "Take a self-portrait without showing your face.",
+    "Take a photo that tells a story in one frame.",
+    "Take a photo using a creative or unusual angle.",
+    "Take a photo of yourself doing something you're proud of.",
+    "Take a photo somewhere you've never taken a photo before.",
+    "Take a photo using forced perspective.",
+    "Take a photo of a local business worker, with their permission.",
+    "Take a photo of the same object from three different angles.",
+    "Take a photo at golden hour, right before sunset.",
+    "Take a group photo with at least 2 other people.",
+    "Take a photo with intentional motion blur.",
+    "Take a photo of a stranger's smile, with their permission.",
+    "Take a creative photo using only your front camera.",
+    "Take a photo of something that represents \"home\" to you.",
+    "Take a photo where a reflection changes the meaning of the scene.",
+    "Take a photo in low light without using flash.",
+    "Take a photo that creatively includes your own shadow.",
+    "Take a street-style photo of a stranger's shoes, with permission.",
+    "Take a photo somewhere outside your comfort zone."
   ];
 
   /* ---------- friend messaging: 50 preset quick-messages ---------- */
@@ -195,7 +203,7 @@
   const scheduleCache = {}; // questDay -> slots[], avoids recomputing every tick
   function getDailySchedule(questDay){
     if(scheduleCache[questDay]) return scheduleCache[questDay];
-    const rng = mulberry32(hashStr("questie-schedule-" + questDay));
+    const rng = mulberry32(hashStr("phototy-schedule-" + questDay));
     const easyOrder = seededShuffle(EASY_QUESTS, rng);
     const mediumOrder = seededShuffle(MEDIUM_QUESTS, rng);
     const hardOrder = seededShuffle(HARD_QUESTS, rng);
@@ -302,7 +310,7 @@
     // impersonation of staff/dev/official accounts
     "admin", "administrator", "moderator", "official", "support", "staff",
     "developer", "devteam", "dev_team", "dev-team", "creator", "founder", "owner",
-    "questieteam", "questie_team", "questiestaff", "questieadmin",
+    "phototyteam", "phototy_team", "phototystaff", "phototyadmin",
     // hate speech / slurs (checked as substrings to catch variants)
     "nigger", "nigga", "chink", "spic", "kike", "faggot", "fag", "retard",
     "tranny", "paki", "gook", "wetback", "coon", "raghead",
@@ -329,13 +337,13 @@
      Hovering a badge (desktop mouse) shows a quick single-word label via
      CSS (data-tooltip). Actually CLICKING/TAPPING a badge — anywhere it
      appears: header, leaderboard, admin, settings — opens a small popover
-     listing what every badge on Questie means, positioned next to the
+     listing what every badge on Phototy means, positioned next to the
      badge that was clicked.
 
      Helper ranks above Tester — helpers find bugs, pitch ideas, and
      contribute scripts, which is a step up from testing. ---------- */
   const BADGE_INFO = [
-    { cls: "badge-gold",  icon: ICON_CHECK,  name: "Developer", desc: "Builds and maintains Questie." },
+    { cls: "badge-gold",  icon: ICON_CHECK,  name: "Developer", desc: "Builds and maintains Phototy." },
     { cls: "badge-green", icon: ICON_HAMMER, name: "Helper",    desc: "Finds bugs, pitches ideas, and contributes scripts." },
     { cls: "badge-blue",  icon: ICON_CHECK,  name: "Tester",    desc: "Helps test the app before others." }
   ];
@@ -613,7 +621,7 @@
     "Create a password.",
     "Click \"Create account\".",
     "Click the link Supabase Auth sends to your email.",
-    "Come back to Questie.",
+    "Come back to Phototy.",
     "Log in with your email and password."
   ];
   let guideStepIndex = 0;
@@ -1212,7 +1220,7 @@
     el.card.innerHTML = `
       <div class="center-block state-fade">
         <div class="big-icon">${ICON_MOON}</div>
-        <p class="center-title">Questie is asleep</p>
+        <p class="center-title">Phototy is asleep</p>
         <p class="center-sub">Hourly quests run 06:00–22:00. Today's xp has been folded into your total with your streak multiplier applied — a fresh set unlocks at 06:00.</p>
         <span class="mono-note">new quests in <span id="questCountdownText">${h}h ${pad2(m)}m</span></span>
       </div>
