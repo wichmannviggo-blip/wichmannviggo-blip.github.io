@@ -1,5 +1,5 @@
 /* =========================================================
-   QUESTIE — design tokens
+   PHOTOTY — design tokens
    One dynamic accent (--lantern) drives the whole palette as it
    shifts through the day; everything else is a fixed neutral.
    Panel fill/border (--card-bg-rgb / --card-border-rgb) are
@@ -547,7 +547,7 @@ body{
 
 /* ---------- badge legend popover ----------
    Opens on an actual click/tap of any badge, anywhere. Lists what
-   every badge on Questie means, not just the one that was clicked. */
+   every badge on Phototy means, not just the one that was clicked. */
 .badge-legend-popover{
   position: fixed;
   z-index: 60;
