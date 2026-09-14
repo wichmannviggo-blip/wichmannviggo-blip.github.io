@@ -771,8 +771,13 @@ body{
    background and bare-bones, unstyled markup — default browser
    fonts and buttons — without touching how anything actually works.
    ========================================================= */
+/* Admin/Submissions grids can get much taller than the viewport. Vertically
+   centering that (the default body behavior above) would push the earliest
+   rows above y=0, where scrolling can never reach them — so switch to
+   top-aligned while in this mode instead. */
 body.admin-old-style{
   background: #ffffff;
+  align-items: flex-start !important;
 }
 body.admin-old-style .sky{ display:none; }
 
