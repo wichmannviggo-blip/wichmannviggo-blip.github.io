@@ -785,7 +785,7 @@ body.admin-old-style #submissionsView .panel{
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
   padding:16px;
-  max-width:640px;
+  max-width:1160px;
   margin:0 auto;
   color:#000000;
   font-family: "Times New Roman", Times, serif;
@@ -815,20 +815,39 @@ body.admin-old-style #submissionsView .back-link{
   display:block;
   margin-bottom:10px;
 }
+body.admin-old-style #adminList{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:10px;
+}
+@media (max-width: 1000px){
+  body.admin-old-style #adminList{ grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 620px){
+  body.admin-old-style #adminList{ grid-template-columns: repeat(2, 1fr); }
+}
 body.admin-old-style #adminView .admin-row{
-  border-bottom:1px solid #000000;
-  padding:8px 0;
+  border:1px solid #000000;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+body.admin-old-style #adminView .admin-row-actions{
+  flex-direction:column;
+  align-items:stretch;
+  gap:4px;
 }
 body.admin-old-style #adminView .leaderboard-name{
   color:#000000;
   font-family: "Times New Roman", Times, serif;
   font-weight:normal;
-  font-size:14px;
+  font-size:13px;
 }
 body.admin-old-style #adminView .leaderboard-level{
   color:#000000;
   font-family: "Times New Roman", Times, serif;
-  font-size:14px;
+  font-size:13px;
 }
 body.admin-old-style #adminView .invisible-tag{
   border:1px solid #000000;
@@ -841,7 +860,11 @@ body.admin-old-style #adminView .toggle-btn,
 body.admin-old-style #adminView .level-set-btn{
   all: revert;
   font-family: "Times New Roman", Times, serif;
-  margin: 2px 6px 2px 0;
+  width:100%;
+  margin:0;
+}
+body.admin-old-style #adminView .admin-level-set{
+  width:100%;
 }
 body.admin-old-style #adminView .level-input{
   all: revert;
@@ -876,21 +899,31 @@ body.admin-old-style #submissionsView .submission-meta{
 }
 
 /* ---------- submissions list (owner/admin proof review) ---------- */
-.submissions-list{ display:flex; flex-direction:column; gap:14px; }
+.submissions-list{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:14px;
+}
+@media (max-width: 1000px){
+  .submissions-list{ grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 620px){
+  .submissions-list{ grid-template-columns: repeat(2, 1fr); }
+}
 .submission-card{
   border:1px solid rgba(var(--line-rgb), 0.18);
   border-radius: var(--radius-md);
-  padding:12px;
-  display:flex; flex-direction:column; gap:8px;
+  padding:10px;
+  display:flex; flex-direction:column; gap:6px;
 }
 .submission-card img{
-  width:100%; max-height:280px; object-fit:cover;
+  width:100%; height:140px; object-fit:cover;
   border-radius: var(--radius-sm);
 }
-.submission-quest{ font-family: var(--font-body); font-size:14px; font-weight:600; color: var(--paper); }
+.submission-quest{ font-family: var(--font-body); font-size:12.5px; font-weight:600; color: var(--paper); line-height:1.35; }
 .submission-meta{
-  display:flex; justify-content:space-between; align-items:center; gap:8px;
-  font-family: var(--font-mono); font-size:11.5px; color: var(--fog);
+  display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+  font-family: var(--font-mono); font-size:10.5px; color: var(--fog);
 }
 
 /* ---------- sign-out confirmation modal ---------- */
