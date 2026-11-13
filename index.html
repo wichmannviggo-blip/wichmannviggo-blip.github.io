@@ -1,315 +1,147 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Phototy</title>
-<meta name="theme-color" content="#14161b">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hatchling</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <main>
+    <h1>Hatchling</h1>
+    <div id="acct" hidden><span>Signed in as <b id="who"></b></span></div>
 
-<div class="sky" id="sky">
-  <div class="clouds" id="clouds"></div>
-  <div class="stars" id="stars"></div>
-  <div class="celestial" id="celestial"></div>
-</div>
-
-<div class="app">
-
-  <!-- ===== LOGIN VIEW ===== -->
-  <div id="loginView">
-    <div class="panel">
-      <div class="login-heading-row">
-        <h2 id="loginHeading">Log in</h2>
-        <button class="help-btn" id="helpGuideBtn" type="button" aria-label="How do I create an account?" title="How do I create an account?">?</button>
+    <section id="auth" hidden>
+      <div id="authlogo"></div>
+      <h2 id="auth-h">Welcome back</h2>
+      <p class="sub" id="auth-sub">Log in to continue with your pet.</p>
+      <div class="seg">
+        <button id="m-in" class="on">Log in</button>
+        <button id="m-up">Sign up</button>
       </div>
-      <p class="sub" id="loginSub">Log in with your email to load your quests, level and streak on this device.</p>
-
-      <div class="field" id="emailField">
-        <label for="emailInput" id="emailLabel">Email</label>
-        <input id="emailInput" type="text" autocomplete="username" placeholder="you@example.com">
+      <label for="em">Email</label>
+      <input id="em" type="email" autocomplete="email" placeholder="you@example.com">
+      <label for="pw">Password</label>
+      <input id="pw" type="password" autocomplete="current-password" placeholder="At least 8 characters">
+      <div id="cpw-wrap" hidden>
+        <label for="pw2">Confirm password</label>
+        <input id="pw2" type="password" autocomplete="new-password">
       </div>
-      <div class="field hidden" id="usernameField">
-        <label for="usernameInput">Username</label>
-        <input id="usernameInput" type="text" autocomplete="off" placeholder="letters, numbers, . and _ — min 4">
-      </div>
-      <div class="field" id="passwordField">
-        <label for="passwordInput">Password</label>
-        <input id="passwordInput" type="password" autocomplete="current-password" placeholder="At least 6 characters">
-      </div>
-      <div class="field hidden" id="confirmPasswordField">
-        <label for="confirmPasswordInput">Confirm password</label>
-        <input id="confirmPasswordInput" type="password" autocomplete="new-password" placeholder="Re-enter your password">
-      </div>
-
-      <div class="form-error" id="loginError"></div>
-      <div class="form-note" id="loginNote"></div>
-
-      <button class="btn btn-primary" id="loginSubmitBtn">Log in</button>
-
-      <div class="form-toggle" id="loginToggleRow">
-        <span id="toggleText">No account yet?</span>
-        <button class="link-btn" id="toggleModeBtn">Create one</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== APP VIEW ===== -->
-  <div id="appView" class="hidden">
-
-    <section class="panel log">
-
-      <div class="log-row log-header">
-        <span id="accountUsername" class="who"></span>
-        <nav class="log-nav">
-          <button class="link-btn" id="leaderboardBtn">Leaderboard</button>
-          <button class="link-btn" id="friendsBtn">Friends</button>
-          <button class="link-btn" id="settingsBtn">Settings</button>
-          <button class="link-btn hidden" id="adminNavBtn">Admin</button>
-          <button class="link-btn hidden" id="submissionsNavBtn">Submissions</button>
-          <button class="link-btn link-btn-quiet" id="signOutBtn">Sign out</button>
-        </nav>
-      </div>
-
-      <div class="log-row log-stats">
-        <div class="stat">
-          <span class="stat-label">Level</span>
-          <span class="stat-num stat-num-hero" id="levelValue">0</span>
-        </div>
-        <span class="stat-divider" aria-hidden="true"></span>
-        <div class="stat">
-          <span class="stat-label">Streak</span>
-          <span class="stat-num" id="streakValue">0</span>
-          <span class="stat-mult" id="streakMultValue">x1 mult</span>
-        </div>
-        <span class="stat-divider" aria-hidden="true"></span>
-        <div class="stat">
-          <span class="stat-label">Today</span>
-          <span class="stat-num" id="todayXpValue">0 xp</span>
-        </div>
-        <div class="stat stat-xp">
-          <div class="xp-labels">
-            <span id="xpText">0 / 150 xp</span>
-            <span id="xpToGo" class="stat-label">150 to go</span>
-          </div>
-          <div class="xp-bar-track">
-            <div class="xp-bar-fill" id="xpFill" style="width:0%"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="log-row log-quest" id="questCard">
-        <!-- content injected by JS -->
-      </div>
-
+      <p id="aerr" role="alert"></p>
+      <button id="authgo" class="primary">Log in</button>
+      <button id="guest" class="link">Continue without an account</button>
     </section>
-  </div>
 
-  <!-- ===== SETTINGS VIEW ===== -->
-  <div id="settingsView" class="hidden">
-    <div class="panel">
-      <button class="back-link" id="settingsBackBtn">&larr; Back to quest</button>
-      <h2>Account settings</h2>
+    <section id="verify" hidden>
+      <h2>Check your email</h2>
+      <p class="sub">We sent a verification link to <b id="vmail"></b>. Open it to finish creating your account.</p>
+      <button id="vback" class="primary">Back to log in</button>
+    </section>
 
-      <div class="settings-row">
-        <div class="settings-row-top">
-          <div>
-            <div class="settings-label">Email</div>
-            <div class="settings-value" id="settingsEmail">—</div>
-          </div>
+    <section id="uname" hidden>
+      <h2>Choose a username</h2>
+      <p class="sub">3–16 characters, letters and numbers only. It appears on the leaderboard and can’t be changed later.</p>
+      <label for="un">Username</label>
+      <input id="un" maxlength="16" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="e.g. DragonFan7">
+      <p id="uerr" role="alert"></p>
+      <button id="ugo" class="primary">Save username</button>
+    </section>
+
+    <section id="egg" hidden>
+      <div id="eggart"></div>
+      <button id="hatchbtn">Hatch the egg</button>
+      <div id="namebox" hidden>
+        <p id="got"></p>
+        <input id="nm" maxlength="16" placeholder="Name your pet" aria-label="Pet name">
+        <button id="go">Start</button>
+      </div>
+    </section>
+
+    <section id="game" hidden>
+      <nav id="tabs" hidden>
+        <button id="tab-pet" class="on">Pet</button>
+        <button id="tab-finds">Finds</button>
+        <button id="tab-trophies">Trophies</button>
+        <button id="tab-board" hidden>Ranks</button>
+        <button id="tab-settings">Settings</button>
+      </nav>
+      <div id="petview">
+        <div id="stage">
+          <div id="sky"></div>
+          <div id="sun"></div>
+          <div id="tree"></div>
+          <div id="decor"></div>
+          <div id="shadow" hidden></div>
+          <div id="pet"></div>
+          <div id="fx"></div>
+          <div id="wx"></div>
+        </div>
+        <div id="namerow"><h2 id="pname" tabindex="0" role="button" title="Click to rename"></h2><span id="pencil" aria-hidden="true"></span></div>
+        <div id="nameedit" hidden>
+          <input id="ne" maxlength="16" aria-label="Pet name">
+          <button id="nesave">Save</button>
+          <button id="necancel" class="ghost">Cancel</button>
+        </div>
+        <div id="stats">
+          <div><span>Animal</span><b id="s-sp"></b></div>
+          <div><span>Stage</span><b id="s-st"></b></div>
+          <div><span>Age</span><b id="s-age"></b></div>
+          <div><span>XP</span><b id="s-xp"></b></div>
+          <div><span>Mood</span><b id="s-mood"></b></div>
+        </div>
+        <div class="bars">
+          <label id="lh" hidden>Hunger<div class="bar"><i id="bh"></i></div></label>
+          <label>Happiness<div class="bar"><i id="bp"></i></div></label>
+          <label id="xl">Growth<div class="bar"><i id="bx"></i></div></label>
+        </div>
+        <p id="need"></p>
+        <div id="tasks"></div>
+        <div id="act"></div>
+        <p id="toast" role="status"></p>
+      </div>
+      <div id="lbbox" hidden>
+        <h3>Global leaderboard</h3>
+        <p class="sub">Tap a player to visit their pet.</p>
+        <div id="lb"></div>
+        <div id="visit" hidden>
+          <button id="vclose" class="ghost">← Back</button>
+          <div id="vscene"></div>
+          <h2 id="vname"></h2>
+          <p class="sub" id="vinfo"></p>
+          <p id="vmsg" role="status"></p>
+          <div class="opts"><button id="vwave">Wave</button><button id="vtreat">Give treat</button></div>
         </div>
       </div>
-
-      <div class="settings-row">
-        <div class="settings-row-top">
-          <div>
-            <div class="settings-label">Username</div>
-            <div class="settings-value" id="settingsUsername">—</div>
-          </div>
-          <button class="link-btn" id="settingsEditUsernameBtn">Change</button>
-        </div>
-        <div id="settingsUsernameCooldown" class="settings-note"></div>
-
-        <div id="settingsUsernameForm" class="hidden settings-form">
-          <div class="field">
-            <input id="settingsUsernameInput" type="text" autocomplete="off" placeholder="letters, numbers, . and _ — min 4">
-          </div>
-          <div class="form-error" id="settingsUsernameError"></div>
-          <button class="btn btn-primary" id="settingsUsernameSaveBtn">Save username</button>
-        </div>
+      <div id="findsbox" hidden>
+        <div class="card2" id="streak"></div>
+        <div class="card2" id="degg"></div>
+        <h3>Collection</h3><div class="grid" id="coll"></div>
+        <h3>Workshop</h3><div id="shop"></div>
       </div>
-
-      <div class="settings-row">
-        <div class="settings-row-top">
-          <div>
-            <div class="settings-label">Sleep mode</div>
-            <div class="settings-note">Quests only run 06:00–22:00. Turn off to play any time.</div>
-          </div>
-          <button class="switch" id="sleepModeToggle" role="switch" aria-checked="true">
-            <span class="switch-knob"></span>
-          </button>
-        </div>
+      <div id="trophybox" hidden>
+        <h3>Trophies <span id="tcount"></span></h3>
+        <div id="shelf"></div>
       </div>
-
-      <div class="settings-row">
-        <div class="settings-row-top">
-          <div>
-            <div class="settings-label">Show badges</div>
-            <div class="settings-note">Hides every badge you have — OG, Developer, Helper, Tester — everywhere.</div>
-          </div>
-          <button class="switch" id="showBadgesToggle" role="switch" aria-checked="true">
-            <span class="switch-knob"></span>
-          </button>
-        </div>
+      <div id="settings" hidden>
+        <h3>Settings</h3>
+        <div class="set"><div><b>Animations</b><small>Turn movement and effects on or off</small></div><button id="set-anim"></button></div>
+        <div class="set"><div><b>Notifications</b><small>Tell me when my pet needs something (while the page is open)</small></div><button id="set-notify"></button></div>
+        <div class="set"><div><b>Real weather</b><small>Use your approximate location for rain, snow and clouds</small></div><button id="set-weather"></button></div>
+        <div class="set"><div><b>Care</b><small id="set-care"></small><small>Quick answers grow a polished adult, ignoring requests a scruffy one</small></div></div>
+        <div class="set"><div><b>Pet name</b><small id="set-name"></small><small>You can rename once per hour</small></div><button id="set-rename">Rename</button></div>
+        <div class="set" id="set-acct" hidden><div><b>Account</b><small id="set-user"></small></div><button id="set-logout">Log out</button></div>
+        <div class="set"><div><b>Start over</b><small>Delete this pet and hatch a new egg</small></div><button id="set-reset" class="danger">Reset</button></div>
       </div>
-
-      <div class="settings-row">
-        <div class="settings-label">Change password</div>
-        <div class="field">
-          <input id="settingsNewPassword" type="password" autocomplete="new-password" placeholder="New password (min 6 characters)">
-        </div>
-        <div class="field">
-          <input id="settingsConfirmPassword" type="password" autocomplete="new-password" placeholder="Confirm new password">
-        </div>
-        <div class="form-error" id="settingsPasswordError"></div>
-        <div class="form-note" id="settingsPasswordNote"></div>
-        <button class="btn btn-secondary" id="settingsPasswordSaveBtn">Update password</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== LEADERBOARD VIEW ===== -->
-  <div id="leaderboardView" class="hidden">
-    <div class="panel">
-      <button class="back-link" id="leaderboardBackBtn">&larr; Back to quest</button>
-      <h2>Leaderboard</h2>
-      <p class="sub">The top 10 worldwide — plus where you stand.</p>
-      <div class="leaderboard-tabs">
-        <button class="leaderboard-tab active" data-tab="levels">Levels</button>
-        <button class="leaderboard-tab" data-tab="quests">Quests</button>
-      </div>
-      <div class="leaderboard-list" id="leaderboardList"></div>
-      <div class="leaderboard-me-wrap" id="leaderboardMe"></div>
-    </div>
-  </div>
-
-  <!-- ===== FRIENDS VIEW ===== -->
-  <div id="friendsView" class="hidden">
-    <div class="panel">
-      <button class="back-link" id="friendsBackBtn">&larr; Back to quest</button>
-      <h2>Friends</h2>
-      <p class="sub">Your private circle — add friends, compare levels, and cheer each other on.</p>
-
-      <div class="settings-row">
-        <div class="settings-label">Add a friend</div>
-        <div class="field" style="margin-bottom:0;">
-          <input id="friendAddInput" type="text" autocomplete="off" placeholder="Their username">
-        </div>
-        <div class="form-error" id="friendAddError"></div>
-        <button class="btn btn-secondary" id="friendAddBtn" style="margin-top:8px;">Send friend request</button>
-      </div>
-
-      <div class="settings-row hidden" id="friendRequestsRow">
-        <div class="settings-label">Requests</div>
-        <div class="leaderboard-list" id="friendRequestsList"></div>
-      </div>
-
-      <div class="settings-row" style="border-bottom:none;">
-        <div class="settings-label">Your friends</div>
-        <div class="leaderboard-list" id="friendsList"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== MESSAGES VIEW (preset quick-messages with a friend) ===== -->
-  <div id="messagesView" class="hidden">
-    <div class="panel">
-      <button class="back-link" id="messagesBackBtn">&larr; Back to friends</button>
-      <h2 id="messagesHeading">Messages</h2>
-      <div class="messages-thread" id="messagesThread"></div>
-      <div class="messages-quick-grid" id="messagesQuickGrid"></div>
-    </div>
-  </div>
-
-  <!-- ===== ADMIN VIEW (owner / admin only) ===== -->
-  <div id="adminView" class="hidden">
-    <div class="panel">
-      <button class="back-link" id="adminBackBtn">&larr; Back to quest</button>
-      <h2>Admin</h2>
-      <p class="sub">Every visible account on Phototy. Toggle badges, sleep bypass, unlimited quests, or set a level below.</p>
-      <div class="leaderboard-list" id="adminList"></div>
-    </div>
-  </div>
-
-  <!-- ===== SUBMISSIONS VIEW (owner / admin only) ===== -->
-  <div id="submissionsView" class="hidden">
-    <div class="panel">
-      <button class="back-link" id="submissionsBackBtn">&larr; Back to quest</button>
-      <h2>Quest submissions</h2>
-      <p class="sub">Proof photos from completed quests, most recent first. Use this to spot anyone cheating.</p>
-      <div class="submissions-list" id="submissionsList"></div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ===== SIGN OUT CONFIRM MODAL ===== -->
-<div id="signOutModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <p class="modal-title">Sign out?</p>
-    <p class="modal-sub">You'll need to log back in to see your quests, level and streak on this device.</p>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" id="signOutCancelBtn">Cancel</button>
-      <button class="btn" id="signOutConfirmBtn">Sign out</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== QUEST COMPLETE CONFIRM MODAL (new accounts only) ===== -->
-<div id="questConfirmModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <p class="modal-title">Quick check</p>
-    <p class="modal-sub">Since your account is new, we just want to double check — did you actually complete this quest?</p>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" id="questConfirmCancelBtn">Not yet</button>
-      <button class="btn" id="questConfirmYesBtn">Yes, I did it</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== REMOVE FRIEND CONFIRM MODAL ===== -->
-<div id="removeFriendModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <p class="modal-title">Remove friend?</p>
-    <p class="modal-sub" id="removeFriendText">Remove this person from your friends?</p>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" id="removeFriendCancelBtn">Cancel</button>
-      <button class="btn" id="removeFriendConfirmBtn">Remove</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== ACCOUNT CREATION GUIDE (step-by-step) ===== -->
-<div id="guideModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <p class="modal-title" id="guideStepTitle">Step 1 of 7</p>
-    <p class="modal-sub" id="guideStepText">Type your email address.</p>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" id="guideBackBtn">Back</button>
-      <button class="btn" id="guideNextBtn">Next</button>
-    </div>
-    <button class="link-btn guide-close-btn" id="guideCloseBtn">Close guide</button>
-  </div>
-</div>
-
-<script src="sky.js"></script>
-<script src="app.js"></script>
-
+    </section>
+  </main>
+  <button id="adminbtn" hidden>Admin</button>
+  <button id="switchbtn" hidden></button>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="sprites.js"></script>
+  <script src="config.js"></script>
+  <script src="world.js"></script>
+  <script src="extras.js"></script>
+  <script src="game.js"></script>
 </body>
 </html>
